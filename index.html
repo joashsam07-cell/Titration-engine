@@ -584,7 +584,7 @@
     <div class="btn-action-grid">
       <button class="btn-action" onclick="calculate('std_burette')">Find Normality of Burette Titrant</button>
       <button class="btn-action" onclick="calculate('norm_flask')">Find Normality of Flask Titrand</button>
-      <button class="btn-action" onclick="calculate('assay')">Calculate Assay / Purity (% w/v)</button>
+      <button class="btn-action" onclick="calculate('assay')">Calculate Assay / Purity (% w/v or % w/w)</button>
       <button class="btn-action" onclick="calculate('solubility')">Calculate Solubility (g/100 mL & g/L)</button>
     </div>
 
@@ -611,7 +611,7 @@
 
     <div class="form-group" id="resAssayContainer" style="display: none;">
       <label>Percentage Purity / Assay:</label>
-      <div class="res-val" id="outAssay">0.0000 % w/v</div>
+      <div class="res-val" id="outAssay">0.00 %</div>
     </div>
 
     <div class="form-group" id="resSolubilityContainer" style="display: none;">
@@ -626,7 +626,7 @@
 </div>
 
 <script>
- const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzkaI7_sznvCCu7bOIsZb2ZiXZ68pKxNGTX3QN71CA6_htPSX2bi7HgMWoJiJB_0nBX/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzkaI7_sznvCCu7bOIsZb2ZiXZ68pKxNGTX3QN71CA6_htPSX2bi7HgMWoJiJB_0nBX/exec";
 
   let flaskInputMode = 'normality';
   let simVol = 0.0;
@@ -925,6 +925,7 @@
 
   function sendDataToSheet(payload) {
     const syncStatus = document.getElementById('syncStatus');
+    if (!syncStatus) return;
     syncStatus.style.color = '#0369a1';
     syncStatus.innerText = "⌛ Transmitting data to Google Sheets...";
 
@@ -932,7 +933,7 @@
       method: "POST",
       mode: "no-cors",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "text/plain;charset=utf-8"
       },
       body: JSON.stringify(payload)
     })
@@ -1043,14 +1044,31 @@
         return;
       }
       const calculatedFlaskNormality = (buretteNormalityInput * V2) / V1;
-      const gramsPerLitre = calculatedFlaskNormality * flaskEqWt;
-      const purityPercent = gramsPerLitre / 10;
-
       document.getElementById('outNormFlask').innerText = calculatedFlaskNormality.toFixed(4) + ' N';
-      document.getElementById('outAssay').innerText = purityPercent.toFixed(2) + ' % w/v';
+
+      let purityPercent = 0;
+      let purityLabel = "% w/v";
+
+      if (flaskInputMode === 'weight') {
+        const flaskMass = parseFloat(document.getElementById('flaskMass').value) || 0;
+        const flaskVolMade = parseFloat(document.getElementById('flaskVolMade').value) || 1;
+        if (flaskMass > 0 && flaskVolMade > 0) {
+          const pureGramsInAliquot = (V2 * buretteNormalityInput * flaskEqWt) / 1000;
+          const totalPureGrams = pureGramsInAliquot * (flaskVolMade / V1);
+          purityPercent = (totalPureGrams / flaskMass) * 100;
+          purityLabel = "% w/w (Purity)";
+        } else {
+          purityPercent = (calculatedFlaskNormality * flaskEqWt) / 10;
+        }
+      } else {
+        const gramsPerLitre = calculatedFlaskNormality * flaskEqWt;
+        purityPercent = gramsPerLitre / 10;
+      }
+
+      document.getElementById('outAssay').innerText = purityPercent.toFixed(2) + ' ' + purityLabel;
 
       payload.calculatedFlaskNormality = calculatedFlaskNormality.toFixed(4);
-      payload.assayPurity = purityPercent.toFixed(2) + ' % w/v';
+      payload.assayPurity = purityPercent.toFixed(2) + ' ' + purityLabel;
 
       resNormBuretteContainer.style.display = 'none';
       resNormFlaskContainer.style.display = 'block';
