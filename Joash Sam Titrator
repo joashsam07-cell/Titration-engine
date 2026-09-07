@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universal Dynamic Titration Calculator</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --secondary: #2563eb;
+      --accent: #059669;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --border: #cbd5e1;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: #334155;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      max-width: 820px;
+      width: 100%;
+    }
+    .card {
+      background: var(--card);
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+    .header-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 2px solid #cbd5e1;
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+    }
+    .header-box h2 {
+      margin: 0;
+      color: var(--primary);
+    }
+    .author-tag {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #64748b;
+      font-style: italic;
+    }
+    .section-title {
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-size: 1.05rem;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 5px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+    .input-with-bulb {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    select, input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 0.95rem;
+    }
+    .bulb-btn {
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .bulb-btn:hover {
+      background: #fde047;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .radio-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 6px;
+    }
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: normal;
+      cursor: pointer;
+    }
+    .radio-label input {
+      width: auto;
+    }
+    .input-mode-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .toggle-btn {
+      flex: 1;
+      padding: 10px 6px;
+      border: 1px solid var(--border);
+      background: #e2e8f0;
+      cursor: pointer;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.82rem;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+    .toggle-btn.active {
+      background: var(--secondary);
+      color: white;
+      border-color: var(--secondary);
+    }
+    .unknown-note {
+      background-color: #fef3c7;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      margin-bottom: 12px;
+    }
+    .chem-info-card {
+      display: none;
+      background-color: #f8fafc;
+      border: 1px dashed #94a3b8;
+      border-radius: 8px;
+      padding: 12px 15px;
+      margin-top: 8px;
+      margin-bottom: 16px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+    .chem-info-card strong {
+      color: var(--primary);
+    }
+
+    /* SIMULATOR STYLES */
+    .sim-container {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      transition: opacity 0.3s ease;
+    }
+    .sim-container.disabled-sim {
+      opacity: 0.45;
+    }
+    .sim-viewport {
+      width: 220px;
+      height: 260px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .sim-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .sim-btn {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .sim-btn:hover {
+      background: #1d4ed8;
+    }
+    .sim-btn.reset {
+      background: #ef4444;
+    }
+    .sim-btn.reset:hover {
+      background: #b91c1c;
+    }
+    .sim-btn:disabled {
+      background: #94a3b8 !important;
+      cursor: not-allowed !important;
+    }
+    .sim-readout {
+      font-size: 0.88rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin-top: 6px;
+    }
+    .sim-freeze-banner {
+      display: none;
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+      color: #991b1b;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: bold;
+      margin-bottom: 12px;
+      text-align: center;
+      width: 90%;
+    }
+
+    .collapsible-btn {
+      background-color: #e2e8f0;
+      color: var(--primary);
+      cursor: pointer;
+      padding: 12px 15px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      outline: none;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .collapsible-btn:after {
+      content: '\276F';
+      transition: transform 0.3s;
+    }
+    .active:after {
+      transform: rotate(90deg);
+    }
+    .content-table {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+      background-color: #fff;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f8fafc;
+      font-size: 0.85rem;
+    }
+    .btn-action-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .btn-action {
+      background-color: var(--secondary);
+      color: white;
+      border: none;
+      padding: 12px 15px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-action:hover {
+      background-color: var(--primary);
+    }
+    .btn-row {
+      background: #cbd5e1;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 8px;
+      font-size: 0.8rem;
+    }
+    .results-card {
+      display: none;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+    }
+    .res-val {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #065f46;
+    }
+    .factor-box {
+      background-color: #e0f2fe;
+      border: 1px solid #7dd3fc;
+      color: #0369a1;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.92rem;
+      margin-top: 15px;
+    }
+    .sync-status {
+      font-size: 0.82rem;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  
+  <div class="card">
+    <div class="header-box">
+      <h2>🧪 Universal Titration Engine</h2>
+      <span class="author-tag">by Joash Sam</span>
+    </div>
+    
+    <!-- 1. BURETTE SETUP -->
+    <div class="section-title">1. In Burette (Titrant)</div>
+    <div class="grid-2 form-group">
+      <div>
+        <label for="buretteChem">Select Reagent:</label>
+        <div class="input-with-bulb">
+          <select id="buretteChem" onchange="updateBuretteInfo(); updateSimColors();">
+            <option value="naoh">Sodium Hydroxide (NaOH)</option>
+            <option value="hcl">Hydrochloric Acid (HCl)</option>
+            <option value="kmno4">Potassium Permanganate (KMnO4)</option>
+            <option value="na2s2o3">Sodium Thiosulphate (Na2S2O3)</option>
+            <option value="i2">Iodine Solution (I2)</option>
+            <option value="hclo4">Perchloric Acid (HClO4)</option>
+            <option value="ceric">Ceric Ammonium Sulphate</option>
+            <option value="edta">Disodium EDTA</option>
+          </select>
+          <button type="button" class="bulb-btn" onclick="toggleInfo('buretteInfoCard')" title="View Chemical Information">💡</button>
+        </div>
+      </div>
+      <div>
+        <label>Working Concentration Status:</label>
+        <div class="radio-group">
+          <label class="radio-label"><input type="radio" name="buretteStatus" value="estimated" checked> Estimated (~N)</label>
+          <label class="radio-label"><input type="radio" name="buretteStatus" value="standardized"> Standardized (Exact N)</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="chem-info-card" id="buretteInfoCard"></div>
+
+    <div class="form-group">
+      <label for="buretteNormality">Burette Normality (N):</label>
+      <input type="number" id="buretteNormality" value="0.1000" step="0.0001" placeholder="e.g. 0.1000">
+    </div>
+
+    <!-- 2. CONICAL FLASK SETUP -->
+    <div class="section-title">2. In Conical Flask (Titrand)</div>
+    <div class="form-group">
+      <label for="flaskChem">Select Chemical / Sample:</label>
+      <div class="input-with-bulb">
+        <select id="flaskChem" onchange="updateFlaskInfo(); updateSimColors();">
+          <option value="oxalic">Oxalic Acid Dihydrate</option>
+          <option value="khp">Potassium Hydrogen Phthalate (KHP)</option>
+          <option value="na2co3">Sodium Carbonate (Na2CO3)</option>
+          <option value="benzoic">Benzoic Acid</option>
+          <option value="salicylic">Salicylic Acid</option>
+          <option value="aspirin">Acetylsalicylic Acid (Aspirin)</option>
+          <option value="nahco3">Sodium Bicarbonate (NaHCO3)</option>
+          <option value="nh4cl">Ammonium Chloride (NH4Cl)</option>
+          <option value="acetic">Acetic Acid</option>
+          <option value="h2o2">Hydrogen Peroxide (H2O2)</option>
+          <option value="feso4">Ferrous Sulphate (FeSO4)</option>
+          <option value="na_benzoate">Sodium Benzoate</option>
+          <option value="boric">Boric Acid</option>
+        </select>
+        <button type="button" class="bulb-btn" onclick="toggleInfo('flaskInfoCard')" title="View Chemical Information">💡</button>
+      </div>
+    </div>
+
+    <div class="chem-info-card" id="flaskInfoCard"></div>
+
+    <div class="form-group">
+      <label>Specify Sample Amount Method:</label>
+      <div class="input-mode-toggle">
+        <div class="toggle-btn active" id="btnModeNorm" onclick="setFlaskInputMode('normality')">By Normality & Pipetted Vol</div>
+        <div class="toggle-btn" id="btnModeWeight" onclick="setFlaskInputMode('weight')">By Mass (g) & Vol</div>
+        <div class="toggle-btn" id="btnModeUnknown" onclick="setFlaskInputMode('unknown')">❓ Don't Know / Unknown</div>
+      </div>
+
+      <div id="containerFlaskNorm">
+        <div class="form-group">
+          <label for="flaskNormality">Known / Target Normality (N):</label>
+          <input type="number" id="flaskNormality" value="0.1000" step="0.0001">
+        </div>
+      </div>
+
+      <div id="containerFlaskWeight" style="display: none;">
+        <div class="grid-2 form-group">
+          <div>
+            <label for="flaskMass">Mass Weighed (g):</label>
+            <input type="number" id="flaskMass" value="0.6303" step="0.0001">
+          </div>
+          <div>
+            <label for="flaskVolMade">Total Vol Made Up In (mL):</label>
+            <input type="number" id="flaskVolMade" value="100" step="1">
+          </div>
+        </div>
+      </div>
+
+      <div id="containerFlaskUnknown" class="unknown-note" style="display: none;">
+        ℹ️ <strong>Unknown Sample Concentration:</strong> Visual simulation is paused. Perform your lab experiment and enter your burette readings manually into Section 4 to calculate exact concentration, purity, or solubility.
+      </div>
+
+      <div class="form-group">
+        <label for="pipettedVol">Volume Pipetted into Conical Flask (V1 in mL):</label>
+        <input type="number" id="pipettedVol" value="10.0" step="0.1">
+      </div>
+    </div>
+
+    <!-- 3. INTERACTIVE SIMULATOR PANEL -->
+    <div class="section-title">3. Interactive Titration Simulator</div>
+    <div class="sim-container" id="simContainer">
+      <div class="sim-freeze-banner" id="simFreezeBanner">
+        🔒 SIMULATOR FROZEN: Cannot simulate visual endpoint without a known concentration. Please enter your experimental lab burette readings manually into Section 4 below.
+      </div>
+
+      <div class="sim-viewport">
+        <svg width="200" height="250" viewBox="0 0 200 250">
+          <!-- Stand -->
+          <rect x="20" y="235" width="160" height="8" fill="#64748b" rx="2"/>
+          <rect x="40" y="20" width="6" height="215" fill="#94a3b8"/>
+          <rect x="40" y="70" width="55" height="6" fill="#64748b"/>
+          <rect x="40" y="160" width="55" height="6" fill="#64748b"/>
+
+          <!-- Burette Body -->
+          <rect x="90" y="20" width="14" height="130" fill="none" stroke="#334155" stroke-width="2"/>
+          <!-- Burette Liquid -->
+          <rect id="simBuretteLiquid" x="91" y="21" width="12" height="128" fill="#60a5fa" opacity="0.85"/>
+          <!-- Stopcock -->
+          <circle cx="97" cy="153" r="4" fill="#1e293b"/>
+          <line x1="97" y1="157" x2="97" y2="170" stroke="#334155" stroke-width="2"/>
+
+          <!-- Dripping Animation Line -->
+          <line id="simDrop" x1="97" y1="170" x2="97" y2="195" stroke="#60a5fa" stroke-width="2" stroke-dasharray="3,3" opacity="0"/>
+
+          <!-- Flask Body -->
+          <polygon points="97,190 70,230 124,230" fill="none" stroke="#334155" stroke-width="2" stroke-linejoin="round"/>
+          <rect x="92" y="180" width="10" height="12" fill="none" stroke="#334155" stroke-width="2"/>
+          <!-- Flask Solution -->
+          <polygon id="simFlaskLiquid" points="97,205 73,228 121,228" fill="#e2e8f0" opacity="0.8"/>
+        </svg>
+      </div>
+
+      <div class="sim-controls">
+        <button type="button" class="sim-btn" id="btnSimAdd1" onclick="addTitrant(1.0)">+1.0 mL</button>
+        <button type="button" class="sim-btn" id="btnSimAdd01" onclick="addTitrant(0.1)">+0.1 mL (Drop)</button>
+        <button type="button" class="sim-btn reset" id="btnSimReset" onclick="resetSim()">Reset Liquid</button>
+      </div>
+      <div class="sim-readout">Burette Dispensed Volume: <span id="simDispensed">0.00</span> mL</div>
+    </div>
+
+    <!-- 4. TITRATION READINGS TABLE -->
+    <button type="button" class="collapsible-btn" id="toggleTableBtn" onclick="toggleTable()">
+      <span>📋 Feed Burette Readings (Click to Expand)</span>
+    </button>
+    
+    <div class="content-table" id="tableContainer">
+      <table id="readingTable">
+        <thead>
+          <tr>
+            <th>Trial</th>
+            <th>Initial Reading (mL)</th>
+            <th>Final Reading (mL)</th>
+            <th>Titer (V2 mL)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><input type="number" class="b-init" value="0.00" step="0.05" oninput="updateTiter(this)"></td>
+            <td><input type="number" class="b-final" value="10.00" step="0.05" oninput="updateTiter(this)"></td>
+            <td class="titer-val">10.00</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><input type="number" class="b-init" value="0.00" step="0.05" oninput="updateTiter(this)"></td>
+            <td><input type="number" class="b-final" value="9.95" step="0.05" oninput="updateTiter(this)"></td>
+            <td class="titer-val">9.95</td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="btn-row" onclick="addRow()">+ Add Trial Row</button>
+
+      <div class="form-group" style="margin-top: 15px;">
+        <label>Calculation Basis for Titration Reading (V2):</label>
+        <div class="radio-group">
+          <label class="radio-label"><input type="radio" name="calcMethod" value="mean" checked> Mean Reading (Average)</label>
+          <label class="radio-label"><input type="radio" name="calcMethod" value="concordant"> Concordant Reading (Identical Repeated Value)</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. DYNAMIC TARGET SELECTION -->
+    <div class="section-title" style="margin-top: 20px;">5. Choose Target Calculation</div>
+    <div class="btn-action-grid">
+      <button class="btn-action" onclick="calculate('std_burette')">Find Normality of Burette Titrant</button>
+      <button class="btn-action" onclick="calculate('norm_flask')">Find Normality of Flask Titrand</button>
+      <button class="btn-action" onclick="calculate('assay')">Calculate Assay / Purity (% w/v)</button>
+      <button class="btn-action" onclick="calculate('solubility')">Calculate Solubility (g/100 mL & g/L)</button>
+    </div>
+
+  </div>
+
+  <!-- RESULTS DISPLAY -->
+  <div class="card results-card" id="resultsBox">
+    <h3>Calculated Results</h3>
+    
+    <div class="form-group">
+      <label id="lblTiterType">Selected Burette Reading (Titer Volume - V2):</label>
+      <div class="res-val" id="outMeanTiter">0.00 mL</div>
+    </div>
+
+    <div class="form-group" id="resNormBuretteContainer">
+      <label id="lblNormBurette">Exact Normality of Burette Titrant:</label>
+      <div class="res-val" id="outNormBurette">0.0000 N</div>
+    </div>
+
+    <div class="form-group" id="resNormFlaskContainer">
+      <label id="lblNormFlask">Exact Normality of Flask Titrand:</label>
+      <div class="res-val" id="outNormFlask">0.0000 N</div>
+    </div>
+
+    <div class="form-group" id="resAssayContainer" style="display: none;">
+      <label>Percentage Purity / Assay:</label>
+      <div class="res-val" id="outAssay">0.0000 % w/v</div>
+    </div>
+
+    <div class="form-group" id="resSolubilityContainer" style="display: none;">
+      <label>Solubility Concentration:</label>
+      <div class="res-val" id="outSolubility">0.0000 g / 100 mL</div>
+    </div>
+
+    <div class="factor-box" id="factorSentenceBox"></div>
+    <div class="sync-status" id="syncStatus"></div>
+  </div>
+
+</div>
+
+<script>
+ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzkaI7_sznvCCu7bOIsZb2ZiXZ68pKxNGTX3QN71CA6_htPSX2bi7HgMWoJiJB_0nBX/exec";
+
+  let flaskInputMode = 'normality';
+  let simVol = 0.0;
+
+  const buretteDb = {
+    naoh: { name: "Sodium Hydroxide (NaOH)", mw: 40.00, eq: 40.00, state: "Solid pellets / Aqueous solution", structure: "Na+ OH-", type: "Primary Base Titrant", mp: "318 °C", bp: "1388 °C", solubility: "1090 g/L (at 20 °C in H2O)", color: "#60a5fa" },
+    hcl: { name: "Hydrochloric Acid (HCl)", mw: 36.46, eq: 36.46, state: "Clear fuming liquid solution", structure: "H+ Cl-", type: "Primary Acid Titrant", mp: "-30 °C (37% soln)", bp: "108.5 °C (20.2% constant boiling azeotrope)", solubility: "Miscible in all proportions with H2O", color: "#93c5fd" },
+    kmno4: { name: "Potassium Permanganate (KMnO4)", mw: 158.03, eq: 31.61, state: "Dark purple solution", structure: "K+ [MnO4]-", type: "Oxidizing Titrant", mp: "240 °C (decomposes)", bp: "Decomposes before boiling", solubility: "63.8 g/L (at 20 °C in H2O)", color: "#7e22ce" },
+    na2s2o3: { name: "Sodium Thiosulphate (Na2S2O3·5H2O)", mw: 248.18, eq: 248.18, state: "Clear aqueous solution", structure: "2 Na+ [S2O3]2- · 5H2O", type: "Redox Titrant", mp: "48.3 °C", bp: "Decomposes at 100 °C", solubility: "701 g/L (at 20 °C in H2O)", color: "#cbd5e1" },
+    i2: { name: "Iodine Solution (I2)", mw: 253.81, eq: 126.90, state: "Deep brown solution in KI", structure: "I3- (Triiodide complex)", type: "Iodimetric Titrant", mp: "113.7 °C (pure I2)", bp: "184.3 °C (pure I2)", solubility: "0.33 g/L in pure H2O; highly soluble in aqueous KI", color: "#b45309" },
+    hclo4: { name: "Perchloric Acid (HClO4)", mw: 100.46, eq: 100.46, state: "Clear liquid in Glacial Acetic Acid", structure: "H+ [ClO4]-", type: "Nonaqueous Titrant", mp: "-18 °C (70% soln) / -112 °C (anhydrous)", bp: "203 °C (70% azeotrope) / 75 °C (anhydrous, decomposes)", solubility: "Miscible in H2O & glacial acetic acid", color: "#e2e8f0" },
+    ceric: { name: "Ceric Ammonium Sulphate", mw: 632.55, eq: 632.55, state: "Yellow-orange solution", structure: "(NH4)4Ce(SO4)4 · 2H2O", type: "Cerimetric Titrant", mp: "130 °C (decomposes)", bp: "Decomposes", solubility: "Soluble in dilute H2SO4 solutions", color: "#f59e0b" },
+    edta: { name: "Disodium EDTA", mw: 372.24, eq: 372.24, state: "Clear aqueous solution", structure: "Na2H2EDTA · 2H2O", type: "Complexometric Titrant", mp: "252 °C (decomposes)", bp: "Decomposes", solubility: "108 g/L (at 20 °C in H2O)", color: "#e2e8f0" }
+  };
+
+  const flaskDb = {
+    oxalic: { name: "Oxalic Acid Dihydrate", formula: "C2H2O4·2H2O", mw: 126.07, eq: 63.03, state: "Crystalline solid (White)", structure: "HOOC-COOH · 2H2O", mp: "101.5 °C", bp: "157 °C (sublimes)", solubility: "90 – 100 g/L (at 20 °C in H2O)", reaction: "C2H2O4 + 2 NaOH → Na2C2O4 + 2 H2O" },
+    khp: { name: "Potassium Hydrogen Phthalate (KHP)", formula: "C8H5KO4", mw: 204.22, eq: 204.22, state: "Crystalline powder (White)", structure: "C6H4(COOK)(COOH)", mp: "295 °C (decomposes)", bp: "Decomposes", solubility: "80 g/L (at 20 °C in H2O)", reaction: "C8H5KO4 + NaOH → C8H4KNaO4 + H2O" },
+    na2co3: { name: "Sodium Carbonate", formula: "Na2CO3", mw: 105.99, eq: 52.99, state: "Fine powder (White)", structure: "Na+ [O-C(=O)-O]- Na+", mp: "851 °C", bp: "1600 °C (decomposes)", solubility: "215 g/L (at 20 °C in H2O)", reaction: "Na2CO3 + 2 HCl → 2 NaCl + CO2 + H2O" },
+    benzoic: { name: "Benzoic Acid", formula: "C7H6O2", mw: 122.12, eq: 122.12, state: "Monoclinic crystalline flakes", structure: "C6H5-COOH", mp: "122.3 °C", bp: "249.2 °C", solubility: "2.9 g/L (at 20 °C) / 3.4 g/L (at 25 °C in H2O)", reaction: "C6H5COOH + NaOH → C6H5COONa + H2O" },
+    salicylic: { name: "Salicylic Acid", formula: "C7H6O3", mw: 138.12, eq: 138.12, state: "Needle-like crystals", structure: "2-(HO)-C6H4-COOH", mp: "158.6 °C", bp: "211 °C (at 20 mmHg)", solubility: "2.24 g/L (at 25 °C in H2O)", reaction: "C6H4(OH)COOH + NaOH → C6H4(OH)COONa + H2O" },
+    aspirin: { name: "Acetylsalicylic Acid (Aspirin)", formula: "C9H8O4", mw: 180.16, eq: 180.16, state: "Crystalline powder", structure: "2-(CH3COO)-C6H4-COOH", mp: "135 °C", bp: "140 °C (decomposes)", solubility: "3.3 g/L (at 20 °C in H2O)", reaction: "C9H8O4 + NaOH → C9H7O4Na + H2O" },
+    nahco3: { name: "Sodium Bicarbonate", formula: "NaHCO3", mw: 84.01, eq: 84.01, state: "Crystalline powder", structure: "Na+ [HO-C(=O)-O]-", mp: "50 °C (decomposes)", bp: "Decomposes", solubility: "96 g/L (at 20 °C in H2O)", reaction: "NaHCO3 + HCl → NaCl + CO2 + H2O" },
+    nh4cl: { name: "Ammonium Chloride", formula: "NH4Cl", mw: 53.49, eq: 53.49, state: "Crystalline solid", structure: "[NH4]+ Cl-", mp: "338 °C (sublimes)", bp: "520 °C", solubility: "372 g/L (at 20 °C in H2O)", reaction: "4 NH4Cl + 6 HCHO → (CH2)6N4 + 4 HCl + 6 H2O ; HCl + NaOH → NaCl + H2O" },
+    acetic: { name: "Acetic Acid", formula: "CH3COOH", mw: 60.05, eq: 60.05, state: "Clear liquid", structure: "CH3-COOH", mp: "16.6 °C", bp: "117.9 °C", solubility: "Miscible in all proportions with H2O", reaction: "CH3COOH + NaOH → CH3COONa + H2O" },
+    h2o2: { name: "Hydrogen Peroxide", formula: "H2O2", mw: 34.015, eq: 17.008, state: "Clear liquid", structure: "H-O-O-H", mp: "-0.43 °C", bp: "150.2 °C", solubility: "Miscible in all proportions with H2O", reaction: "5 H2O2 + 2 KMnO4 + 3 H2SO4 → 2 MnSO4 + K2SO4 + 5 O2 + 8 H2O" },
+    feso4: { name: "Ferrous Sulphate Heptahydrate", formula: "FeSO4·7H2O", mw: 278.01, eq: 278.01, state: "Blue-green crystals", structure: "[Fe]2+ [SO4]2- · 7H2O", mp: "64 °C (loses hydration water)", bp: "Decomposes > 300 °C", solubility: "295 g/L (at 20 °C in H2O)", reaction: "10 FeSO4 + 2 KMnO4 + 8 H2SO4 → 5 Fe2(SO4)3 + 2 MnSO4 + K2SO4 + 8 H2O" },
+    na_benzoate: { name: "Sodium Benzoate", formula: "C7H5NaO2", mw: 144.11, eq: 144.11, state: "Crystalline powder", structure: "C6H5-COO- Na+", mp: "> 300 °C", bp: "410 °C", solubility: "629 g/L (at 20 °C in H2O)", reaction: "C6H5COONa + HClO4 → C6H5COOH + NaClO4" },
+    boric: { name: "Boric Acid", formula: "H3BO3", mw: 61.83, eq: 61.83, state: "Crystalline powder", structure: "B(OH)3", mp: "170.9 °C", bp: "Decomposes above 170.9 °C to metaboric acid", solubility: "47.2 g/L (at 20 °C in H2O)", reaction: "H3BO3 + Glycerol + NaOH → Sodium Glyceroborate + H2O" }
+  };
+
+  function updateBuretteInfo() {
+    const key = document.getElementById('buretteChem').value;
+    const data = buretteDb[key];
+    document.getElementById('buretteInfoCard').innerHTML = `
+      <div><strong>Reagent:</strong> ${data.name}</div>
+      <div><strong>Type:</strong> ${data.type}</div>
+      <div><strong>Molecular Wt:</strong> ${data.mw} g/mol | <strong>Equivalent Wt:</strong> ${data.eq} g/eq</div>
+      <div><strong>Melting Point (m.p.):</strong> ${data.mp} | <strong>Boiling Point (b.p.):</strong> ${data.bp}</div>
+      <div><strong>Aqueous Solubility:</strong> ${data.solubility}</div>
+      <div><strong>Physical State:</strong> ${data.state}</div>
+      <div><strong>Structure:</strong> <code>${data.structure}</code></div>
+    `;
+  }
+
+  function updateFlaskInfo() {
+    const key = document.getElementById('flaskChem').value;
+    const data = flaskDb[key];
+    document.getElementById('flaskInfoCard').innerHTML = `
+      <div><strong>Chemical:</strong> ${data.name} (${data.formula})</div>
+      <div><strong>Molecular Wt:</strong> ${data.mw} g/mol | <strong>Equivalent Wt:</strong> ${data.eq} g/eq</div>
+      <div><strong>Melting Point (m.p.):</strong> ${data.mp} | <strong>Boiling Point (b.p.):</strong> ${data.bp}</div>
+      <div><strong>Aqueous Solubility:</strong> ${data.solubility}</div>
+      <div><strong>Physical State:</strong> ${data.state}</div>
+      <div><strong>Structure:</strong> <code>${data.structure}</code></div>
+      <div><strong>Reaction Equation:</strong> <code>${data.reaction}</code></div>
+    `;
+  }
+
+  function toggleInfo(cardId) {
+    const card = document.getElementById(cardId);
+    card.style.display = (card.style.display === 'block') ? 'none' : 'block';
+  }
+
+  /* SIMULATOR FUNCTIONS */
+  function updateSimColors() {
+    const bKey = document.getElementById('buretteChem').value;
+    const bColor = buretteDb[bKey].color;
+    document.getElementById('simBuretteLiquid').setAttribute('fill', bColor);
+    document.getElementById('simDrop').setAttribute('stroke', bColor);
+  }
+
+  function addTitrant(amt) {
+    if (flaskInputMode === 'unknown') return;
+
+    simVol += amt;
+    if (simVol > 25.0) simVol = 25.0;
+
+    document.getElementById('simDispensed').innerText = simVol.toFixed(2);
+
+    const liquidElem = document.getElementById('simBuretteLiquid');
+    const newHeight = Math.max(0, 128 - (simVol * 5.12));
+    const newY = 21 + (128 - newHeight);
+    liquidElem.setAttribute('height', newHeight);
+    liquidElem.setAttribute('y', newY);
+
+    const drop = document.getElementById('simDrop');
+    drop.style.opacity = '1';
+    setTimeout(() => { drop.style.opacity = '0'; }, 200);
+
+    const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
+    const N2 = parseFloat(document.getElementById('buretteNormality').value) || 0.1;
+    let N1 = 0.1;
+
+    if (flaskInputMode === 'normality') {
+      N1 = parseFloat(document.getElementById('flaskNormality').value) || 0.1;
+    } else if (flaskInputMode === 'weight') {
+      const mass = parseFloat(document.getElementById('flaskMass').value) || 0.6303;
+      const volMade = parseFloat(document.getElementById('flaskVolMade').value) || 100;
+      const flaskKey = document.getElementById('flaskChem').value;
+      const eqWt = flaskDb[flaskKey].eq;
+      N1 = (mass * 1000) / (eqWt * volMade);
+    }
+
+    const eqVolume = (N1 * V1) / N2;
+
+    const flaskLiq = document.getElementById('simFlaskLiquid');
+    const bKey = document.getElementById('buretteChem').value;
+
+    if (simVol >= (eqVolume * 0.98)) {
+      if (bKey === 'naoh') flaskLiq.setAttribute('fill', '#ec4899');
+      else if (bKey === 'kmno4') flaskLiq.setAttribute('fill', '#f472b6');
+      else if (bKey === 'i2') flaskLiq.setAttribute('fill', '#1e3a8a');
+      else flaskLiq.setAttribute('fill', '#fde047');
+    } else {
+      flaskLiq.setAttribute('fill', '#e2e8f0');
+    }
+
+    const firstFinal = document.querySelector('.b-final');
+    if (firstFinal) {
+      firstFinal.value = simVol.toFixed(2);
+      updateTiter(firstFinal);
+    }
+  }
+
+  function resetSim() {
+    simVol = 0.0;
+    document.getElementById('simDispensed').innerText = "0.00";
+    const liquidElem = document.getElementById('simBuretteLiquid');
+    liquidElem.setAttribute('height', '128');
+    liquidElem.setAttribute('y', '21');
+    document.getElementById('simFlaskLiquid').setAttribute('fill', '#e2e8f0');
+  }
+
+  function setFlaskInputMode(mode) {
+    flaskInputMode = mode;
+    document.getElementById('btnModeNorm').className = 'toggle-btn' + (mode === 'normality' ? ' active' : '');
+    document.getElementById('btnModeWeight').className = 'toggle-btn' + (mode === 'weight' ? ' active' : '');
+    document.getElementById('btnModeUnknown').className = 'toggle-btn' + (mode === 'unknown' ? ' active' : '');
+
+    document.getElementById('containerFlaskNorm').style.display = (mode === 'normality') ? 'block' : 'none';
+    document.getElementById('containerFlaskWeight').style.display = (mode === 'weight') ? 'block' : 'none';
+    document.getElementById('containerFlaskUnknown').style.display = (mode === 'unknown') ? 'block' : 'none';
+
+    const simContainer = document.getElementById('simContainer');
+    const simFreezeBanner = document.getElementById('simFreezeBanner');
+    const btnAdd1 = document.getElementById('btnSimAdd1');
+    const btnAdd01 = document.getElementById('btnSimAdd01');
+    const btnReset = document.getElementById('btnSimReset');
+
+    if (mode === 'unknown') {
+      simContainer.classList.add('disabled-sim');
+      simFreezeBanner.style.display = 'block';
+      btnAdd1.disabled = true;
+      btnAdd01.disabled = true;
+      btnReset.disabled = true;
+    } else {
+      simContainer.classList.remove('disabled-sim');
+      simFreezeBanner.style.display = 'none';
+      btnAdd1.disabled = false;
+      btnAdd01.disabled = false;
+      btnReset.disabled = false;
+    }
+  }
+
+  function toggleTable() {
+    const btn = document.getElementById('toggleTableBtn');
+    const container = document.getElementById('tableContainer');
+    btn.classList.toggle('active');
+    container.style.maxHeight = container.style.maxHeight ? null : container.scrollHeight + "px";
+  }
+
+  function updateTiter(inputElem) {
+    const row = inputElem.closest('tr');
+    const initVal = parseFloat(row.querySelector('.b-init').value) || 0;
+    const finalVal = parseFloat(row.querySelector('.b-final').value) || 0;
+    const diff = Math.max(0, finalVal - initVal);
+    row.querySelector('.titer-val').innerText = diff.toFixed(2);
+  }
+
+  function addRow() {
+    const tbody = document.querySelector('#readingTable tbody');
+    const rowCount = tbody.rows.length + 1;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${rowCount}</td>
+      <td><input type="number" class="b-init" value="0.00" step="0.05" oninput="updateTiter(this)"></td>
+      <td><input type="number" class="b-final" value="0.00" step="0.05" oninput="updateTiter(this)"></td>
+      <td class="titer-val">0.00</td>
+    `;
+    tbody.appendChild(tr);
+    const container = document.getElementById('tableContainer');
+    container.style.maxHeight = container.scrollHeight + "px";
+  }
+
+  function getCalculatedTiter() {
+    const inits = document.querySelectorAll('.b-init');
+    const finals = document.querySelectorAll('.b-final');
+    const titers = [];
+
+    for (let i = 0; i < inits.length; i++) {
+      const vInit = parseFloat(inits[i].value) || 0;
+      const vFinal = parseFloat(finals[i].value) || 0;
+      const diff = Math.max(0, vFinal - vInit);
+      if (diff > 0) titers.push(parseFloat(diff.toFixed(2)));
+    }
+
+    if (titers.length === 0) return null;
+
+    const selectedMethod = document.querySelector('input[name="calcMethod"]:checked').value;
+
+    if (selectedMethod === 'mean') {
+      const sum = titers.reduce((a, b) => a + b, 0);
+      return { value: sum / titers.length, type: 'Mean Titer Volume (V2)' };
+    } else {
+      const freq = {};
+      let maxFreq = 0;
+      let concordantVal = titers[0];
+
+      titers.forEach(val => {
+        freq[val] = (freq[val] || 0) + 1;
+        if (freq[val] > maxFreq) {
+          maxFreq = freq[val];
+          concordantVal = val;
+        }
+      });
+
+      if (maxFreq < 2 && titers.length > 1) {
+        alert('Notice: No identical concordant readings found. Using the first valid reading (' + concordantVal + ' mL).');
+      }
+
+      return { value: concordantVal, type: 'Concordant Titer Volume (V2)' };
+    }
+  }
+
+  function sendDataToSheet(payload) {
+    const syncStatus = document.getElementById('syncStatus');
+    syncStatus.style.color = '#0369a1';
+    syncStatus.innerText = "⌛ Transmitting data to Google Sheets...";
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      syncStatus.style.color = "#059669";
+      syncStatus.innerText = "✓ Data recorded in Google Sheet.";
+    })
+    .catch(err => {
+      syncStatus.style.color = "#dc2626";
+      syncStatus.innerText = "❌ Sync failed: " + err.message;
+    });
+  }
+
+  function calculate(actionType) {
+    const titerData = getCalculatedTiter();
+    if (!titerData) {
+      alert('Please enter at least one valid set of burette readings.');
+      return;
+    }
+
+    const V2 = titerData.value;
+    const V1 = parseFloat(document.getElementById('pipettedVol').value) || 0;
+
+    if (V1 <= 0) {
+      alert('Please enter a valid pipetted volume in the conical flask (V1).');
+      return;
+    }
+
+    const flaskKey = document.getElementById('flaskChem').value;
+    const flaskData = flaskDb[flaskKey];
+    const flaskEqWt = flaskData.eq;
+
+    const buretteKey = document.getElementById('buretteChem').value;
+    const buretteName = buretteDb[buretteKey].name;
+
+    const factorGrams = (flaskEqWt / 1000).toFixed(5);
+    const factorSentence = `📌 Volumetric Factor Standard: 1 mL of 1 N ${buretteName} ≡ ${factorGrams} g of ${flaskData.name}`;
+
+    let flaskNormality = 0;
+    if (flaskInputMode === 'normality') {
+      flaskNormality = parseFloat(document.getElementById('flaskNormality').value) || 0;
+    } else if (flaskInputMode === 'weight') {
+      const mass = parseFloat(document.getElementById('flaskMass').value) || 0;
+      const volMade = parseFloat(document.getElementById('flaskVolMade').value) || 1;
+      flaskNormality = (mass * 1000) / (flaskEqWt * volMade);
+    }
+
+    const buretteNormalityInput = parseFloat(document.getElementById('buretteNormality').value) || 0;
+
+    const resBox = document.getElementById('resultsBox');
+    const resNormBuretteContainer = document.getElementById('resNormBuretteContainer');
+    const resNormFlaskContainer = document.getElementById('resNormFlaskContainer');
+    const resAssayContainer = document.getElementById('resAssayContainer');
+    const resSolubilityContainer = document.getElementById('resSolubilityContainer');
+
+    document.getElementById('lblTiterType').innerText = `${titerData.type}:`;
+    document.getElementById('outMeanTiter').innerText = V2.toFixed(2) + ' mL';
+    document.getElementById('factorSentenceBox').innerText = factorSentence;
+
+    let payload = {
+      timestamp: new Date().toISOString(),
+      actionType: actionType,
+      buretteReagent: buretteName,
+      flaskSample: flaskData.name,
+      pipettedVol_V1: V1,
+      titerVol_V2: V2,
+      calculatedBuretteNormality: "N/A",
+      calculatedFlaskNormality: "N/A",
+      assayPurity: "N/A",
+      solubility: "N/A"
+    };
+
+    if (actionType === 'std_burette') {
+      if (flaskInputMode === 'unknown' || flaskNormality <= 0) {
+        alert('Cannot standardize the burette titrant when the conical flask chemical is set to "Unknown". Please specify a known Normality or Mass for the flask titrand.');
+        return;
+      }
+      const calculatedBuretteNormality = (flaskNormality * V1) / V2;
+      document.getElementById('outNormBurette').innerText = calculatedBuretteNormality.toFixed(4) + ' N';
+
+      payload.calculatedBuretteNormality = calculatedBuretteNormality.toFixed(4);
+
+      resNormBuretteContainer.style.display = 'block';
+      resNormFlaskContainer.style.display = 'none';
+      resAssayContainer.style.display = 'none';
+      resSolubilityContainer.style.display = 'none';
+
+    } else if (actionType === 'norm_flask') {
+      if (buretteNormalityInput <= 0) {
+        alert('Please specify a valid normality for the burette titrant.');
+        return;
+      }
+      const calculatedFlaskNormality = (buretteNormalityInput * V2) / V1;
+      document.getElementById('outNormFlask').innerText = calculatedFlaskNormality.toFixed(4) + ' N';
+
+      payload.calculatedFlaskNormality = calculatedFlaskNormality.toFixed(4);
+
+      resNormBuretteContainer.style.display = 'none';
+      resNormFlaskContainer.style.display = 'block';
+      resAssayContainer.style.display = 'none';
+      resSolubilityContainer.style.display = 'none';
+
+    } else if (actionType === 'assay') {
+      if (buretteNormalityInput <= 0) {
+        alert('Please specify a valid normality for the burette titrant.');
+        return;
+      }
+      const calculatedFlaskNormality = (buretteNormalityInput * V2) / V1;
+      const gramsPerLitre = calculatedFlaskNormality * flaskEqWt;
+      const purityPercent = gramsPerLitre / 10;
+
+      document.getElementById('outNormFlask').innerText = calculatedFlaskNormality.toFixed(4) + ' N';
+      document.getElementById('outAssay').innerText = purityPercent.toFixed(2) + ' % w/v';
+
+      payload.calculatedFlaskNormality = calculatedFlaskNormality.toFixed(4);
+      payload.assayPurity = purityPercent.toFixed(2) + ' % w/v';
+
+      resNormBuretteContainer.style.display = 'none';
+      resNormFlaskContainer.style.display = 'block';
+      resAssayContainer.style.display = 'block';
+      resSolubilityContainer.style.display = 'none';
+
+    } else if (actionType === 'solubility') {
+      if (buretteNormalityInput <= 0) {
+        alert('Please specify a valid normality for the burette titrant.');
+        return;
+      }
+      const calculatedFlaskNormality = (buretteNormalityInput * V2) / V1;
+      const gramsPerLitre = calculatedFlaskNormality * flaskEqWt;
+      const gramsPer100mL = gramsPerLitre / 10;
+
+      document.getElementById('outNormFlask').innerText = calculatedFlaskNormality.toFixed(4) + ' N';
+      document.getElementById('outSolubility').innerText = `${gramsPer100mL.toFixed(4)} g / 100 mL (${gramsPerLitre.toFixed(2)} g/L)`;
+
+      payload.calculatedFlaskNormality = calculatedFlaskNormality.toFixed(4);
+      payload.solubility = `${gramsPer100mL.toFixed(4)} g / 100 mL`;
+
+      resNormBuretteContainer.style.display = 'none';
+      resNormFlaskContainer.style.display = 'block';
+      resAssayContainer.style.display = 'none';
+      resSolubilityContainer.style.display = 'block';
+    }
+
+    resBox.style.display = 'block';
+    sendDataToSheet(payload);
+  }
+
+  window.onload = function() {
+    updateBuretteInfo();
+    updateFlaskInfo();
+    updateSimColors();
+  };
+</script>
+
+</body>
+</html>
