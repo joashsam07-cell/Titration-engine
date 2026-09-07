@@ -584,7 +584,7 @@
     <div class="btn-action-grid">
       <button class="btn-action" onclick="calculate('std_burette')">Find Normality of Burette Titrant</button>
       <button class="btn-action" onclick="calculate('norm_flask')">Find Normality of Flask Titrand</button>
-      <button class="btn-action" onclick="calculate('assay')">Calculate Assay / Purity (% w/v or % w/w)</button>
+      <button class="btn-action" onclick="calculate('assay')">Calculate Assay / Purity (% w/v)</button>
       <button class="btn-action" onclick="calculate('solubility')">Calculate Solubility (g/100 mL & g/L)</button>
     </div>
 
@@ -611,7 +611,7 @@
 
     <div class="form-group" id="resAssayContainer" style="display: none;">
       <label>Percentage Purity / Assay:</label>
-      <div class="res-val" id="outAssay">0.00 %</div>
+      <div class="res-val" id="outAssay">0.0000 % w/v</div>
     </div>
 
     <div class="form-group" id="resSolubilityContainer" style="display: none;">
@@ -626,80 +626,89 @@
 </div>
 
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzkaI7_sznvCCu7bOIsZb2ZiXZ68pKxNGTX3QN71CA6_htPSX2bi7HgMWoJiJB_0nBX/exec";
+ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzkaI7_sznvCCu7bOIsZb2ZiXZ68pKxNGTX3QN71CA6_htPSX2bi7HgMWoJiJB_0nBX/exec";
 
   let flaskInputMode = 'normality';
   let simVol = 0.0;
 
   const buretteDb = {
-    naoh: { name: "Sodium Hydroxide (NaOH)", mw: 40.00, eq: 40.00, state: "Solid pellets / Aqueous solution", structure: "Na+ OH-", type: "Primary Base Titrant", mp: "318 °C", bp: "1388 °C", solubility: "1090 g/L (at 20 °C in H2O)", color: "#60a5fa", indicator: "Phenolphthalein (Colourless to Pink)" },
-    hcl: { name: "Hydrochloric Acid (HCl)", mw: 36.46, eq: 36.46, state: "Clear fuming liquid solution", structure: "H+ Cl-", type: "Primary Acid Titrant", mp: "-30 °C (37% soln)", bp: "108.5 °C (20.2% constant boiling azeotrope)", solubility: "Miscible in all proportions with H2O", color: "#93c5fd", indicator: "Methyl Orange (Red to Yellow) or Phenolphthalein" },
-    hno3: { name: "Nitric Acid (HNO3)", mw: 63.01, eq: 63.01, state: "Clear aqueous acid solution", structure: "H+ [NO3]-", type: "Acid Titrant", mp: "-42 °C", bp: "83 °C", solubility: "Miscible in all proportions with H2O", color: "#93c5fd", indicator: "Phenolphthalein or Methyl Orange" },
-    h2so4: { name: "Sulphuric Acid (H2SO4)", mw: 98.08, eq: 49.04, state: "Clear viscous liquid solution", structure: "2 H+ [SO4]2-", type: "Diprotic Acid Titrant", mp: "10.31 °C", bp: "337 °C", solubility: "Miscible in all proportions with H2O", color: "#93c5fd", indicator: "Phenolphthalein or Methyl Orange" },
-    kmno4: { name: "Potassium Permanganate (KMnO4)", mw: 158.03, eq: 31.61, state: "Dark purple solution", structure: "K+ [MnO4]-", type: "Oxidizing Titrant", mp: "240 °C (decomposes)", bp: "Decomposes before boiling", solubility: "63.8 g/L (at 20 °C in H2O)", color: "#7e22ce", indicator: "Self-indicator (Permanent pale pink)" },
-    na2s2o3: { name: "Sodium Thiosulphate (Na2S2O3·5H2O)", mw: 248.18, eq: 248.18, state: "Clear aqueous solution", structure: "2 Na+ [S2O3]2- · 5H2O", type: "Redox Titrant", mp: "48.3 °C", bp: "Decomposes at 100 °C", solubility: "701 g/L (at 20 °C in H2O)", color: "#cbd5e1", indicator: "Starch Solution (Blue-black to Colourless)" },
-    i2: { name: "Iodine Solution (I2)", mw: 253.81, eq: 126.90, state: "Deep brown solution in KI", structure: "I3- (Triiodide complex)", type: "Iodimetric Titrant", mp: "113.7 °C (pure I2)", bp: "184.3 °C (pure I2)", solubility: "0.33 g/L in pure H2O; highly soluble in aqueous KI", color: "#b45309", indicator: "Starch Solution (Colourless to Dark Blue)" },
-    hclo4: { name: "Perchloric Acid (HClO4)", mw: 100.46, eq: 100.46, state: "Clear liquid in Glacial Acetic Acid", structure: "H+ [ClO4]-", type: "Nonaqueous Titrant", mp: "-18 °C (70% soln) / -112 °C (anhydrous)", bp: "203 °C (70% azeotrope) / 75 °C (anhydrous, decomposes)", solubility: "Miscible in H2O & glacial acetic acid", color: "#e2e8f0", indicator: "Crystal Violet or Alpha-naphtholbenzein" },
-    ceric: { name: "Ceric Ammonium Sulphate", mw: 632.55, eq: 632.55, state: "Yellow-orange solution", structure: "(NH4)4Ce(SO4)4 · 2H2O", type: "Cerimetric Titrant", mp: "130 °C (decomposes)", bp: "Decomposes", solubility: "Soluble in dilute H2SO4 solutions", color: "#f59e0b", indicator: "Ferroin (Orange-red to Pale Blue)" },
-    edta: { name: "Disodium EDTA", mw: 372.24, eq: 372.24, state: "Clear aqueous solution", structure: "Na2H2EDTA · 2H2O", type: "Complexometric Titrant", mp: "252 °C (decomposes)", bp: "Decomposes", solubility: "108 g/L (at 20 °C in H2O)", color: "#e2e8f0", indicator: "Eriochrome Black T (EBT) or Murexide" }
+    naoh: { name: "Sodium Hydroxide (NaOH)", mw: 40.00, eq: 40.00, state: "Solid pellets / Aqueous solution", structure: "Na+ OH-", type: "Primary Base Titrant", mp: "318 °C", bp: "1388 °C", solubility: "1090 g/L (at 20 °C in H2O)", color: "#60a5fa", indicator: "Phenolphthalein (Colourless to Permanent Pale Pink)" },
+    hcl: { name: "Hydrochloric Acid (HCl)", mw: 36.46, eq: 36.46, state: "Clear fuming liquid solution", structure: "H+ Cl-", type: "Primary Acid Titrant", mp: "-30 °C (37% soln)", bp: "108.5 °C (20.2% constant boiling azeotrope)", solubility: "Miscible in all proportions with H2O", color: "#93c5fd", indicator: "Methyl Orange (Yellow to Faint Reddish-Orange)" },
+    hno3: { name: "Nitric Acid (HNO3)", mw: 63.01, eq: 63.01, state: "Clear aqueous acid solution", structure: "H+ [NO3]-", type: "Acid Titrant", mp: "-42 °C", bp: "83 °C", solubility: "Miscible in all proportions with H2O", color: "#93c5fd", indicator: "Methyl Orange or Phenolphthalein" },
+    h2so4: { name: "Sulphuric Acid (H2SO4)", mw: 98.08, eq: 49.04, state: "Clear viscous liquid solution", structure: "2 H+ [SO4]2-", type: "Diprotic Acid Titrant", mp: "10.31 °C", bp: "337 °C", solubility: "Miscible in all proportions with H2O", color: "#93c5fd", indicator: "Methyl Orange or Phenolphthalein" },
+    kmno4: { name: "Potassium Permanganate (KMnO4)", mw: 158.03, eq: 31.61, state: "Dark purple solution", structure: "K+ [MnO4]-", type: "Oxidizing Titrant", mp: "240 °C (decomposes)", bp: "Decomposes before boiling", solubility: "63.8 g/L (at 20 °C in H2O)", color: "#7e22ce", indicator: "Self-indicator (Colourless to Faint Pink Tint)" },
+    na2s2o3: { name: "Sodium Thiosulphate (Na2S2O3·5H2O)", mw: 248.18, eq: 248.18, state: "Clear aqueous solution", structure: "2 Na+ [S2O3]2- · 5H2O", type: "Redox Titrant", mp: "48.3 °C", bp: "Decomposes at 100 °C", solubility: "701 g/L (at 20 °C in H2O)", color: "#cbd5e1", indicator: "Starch Mucilage (Dark Blue-Black to Completely Colourless)" },
+    i2: { name: "Iodine Solution (I2)", mw: 253.81, eq: 126.90, state: "Deep brown solution in KI", structure: "I3- (Triiodide complex)", type: "Iodimetric Titrant", mp: "113.7 °C (pure I2)", bp: "184.3 °C (pure I2)", solubility: "0.33 g/L in pure H2O; highly soluble in aqueous KI", color: "#b45309", indicator: "Starch Mucilage (Colourless/Straw-Yellow to Dark Blue-Black)" },
+    hclo4: { name: "Perchloric Acid (HClO4)", mw: 100.46, eq: 100.46, state: "Clear liquid in Glacial Acetic Acid", structure: "H+ [ClO4]-", type: "Nonaqueous Titrant", mp: "-18 °C (70% soln) / -112 °C (anhydrous)", bp: "203 °C (70% azeotrope) / 75 °C (anhydrous, decomposes)", solubility: "Miscible in H2O & glacial acetic acid", color: "#e2e8f0", indicator: "Crystal Violet (Violet to Yellowish-Green / Emerald Green)" },
+    ceric: { name: "Ceric Ammonium Sulphate", mw: 632.55, eq: 632.55, state: "Yellow-orange solution", structure: "(NH4)4Ce(SO4)4 · 2H2O", type: "Cerimetric Titrant", mp: "130 °C (decomposes)", bp: "Decomposes", solubility: "Soluble in dilute H2SO4 solutions", color: "#f59e0b", indicator: "Ferroin (Intense Red to Pale Blue)" },
+    edta: { name: "Disodium EDTA", mw: 372.24, eq: 372.24, state: "Clear aqueous solution", structure: "Na2H2EDTA · 2H2O", type: "Complexometric Titrant", mp: "252 °C (decomposes)", bp: "Decomposes", solubility: "108 g/L (at 20 °C in H2O)", color: "#e2e8f0", indicator: "Mordant Black II / EBT (Wine-Red to Clean Distinct Blue)" }
   };
 
   const flaskDb = {
-    oxalic: { name: "Oxalic Acid Dihydrate", formula: "C2H2O4·2H2O", mw: 126.07, eq: 63.03, state: "Crystalline solid (White)", structure: "HOOC-COOH · 2H2O", mp: "101.5 °C", bp: "157 °C (sublimes)", solubility: "90 – 100 g/L (at 20 °C in H2O)", reaction: "C2H2O4 + 2 NaOH → Na2C2O4 + 2 H2O", indicator: "Phenolphthalein (Colourless to Faint Pink)" },
-    khp: { name: "Potassium Hydrogen Phthalate (KHP)", formula: "C8H5KO4", mw: 204.22, eq: 204.22, state: "Crystalline powder (White)", structure: "C6H4(COOK)(COOH)", mp: "295 °C (decomposes)", bp: "Decomposes", solubility: "80 g/L (at 20 °C in H2O)", reaction: "C8H5KO4 + NaOH → C8H4KNaO4 + H2O", indicator: "Phenolphthalein (Colourless to Pink)" },
-    na2co3: { name: "Sodium Carbonate", formula: "Na2CO3", mw: 105.99, eq: 52.99, state: "Fine powder (White)", structure: "Na+ [O-C(=O)-O]- Na+", mp: "851 °C", bp: "1600 °C (decomposes)", solubility: "215 g/L (at 20 °C in H2O)", reaction: "Na2CO3 + 2 HCl → 2 NaCl + CO2 + H2O", indicator: "Methyl Orange (Yellow to Pink/Red)" },
-    benzoic: { name: "Benzoic Acid", formula: "C7H6O2", mw: 122.12, eq: 122.12, state: "Monoclinic crystalline flakes", structure: "C6H5-COOH", mp: "122.3 °C", bp: "249.2 °C", solubility: "2.9 g/L (at 20 °C) / 3.4 g/L (at 25 °C in H2O)", reaction: "C6H5COOH + NaOH → C6H5COONa + H2O", indicator: "Phenolphthalein" },
-    salicylic: { name: "Salicylic Acid", formula: "C7H6O3", mw: 138.12, eq: 138.12, state: "Needle-like crystals", structure: "2-(HO)-C6H4-COOH", mp: "158.6 °C", bp: "211 °C (at 20 mmHg)", solubility: "2.24 g/L (at 25 °C in H2O)", reaction: "C6H4(OH)COOH + NaOH → C6H4(OH)COONa + H2O", indicator: "Phenolphthalein" },
-    aspirin: { name: "Acetylsalicylic Acid (Aspirin)", formula: "C9H8O4", mw: 180.16, eq: 180.16, state: "Crystalline powder", structure: "2-(CH3COO)-C6H4-COOH", mp: "135 °C", bp: "140 °C (decomposes)", solubility: "3.3 g/L (at 20 °C in H2O)", reaction: "C9H8O4 + NaOH → C9H7O4Na + H2O", indicator: "Phenolphthalein" },
-    nahco3: { name: "Sodium Bicarbonate", formula: "NaHCO3", mw: 84.01, eq: 84.01, state: "Crystalline powder", structure: "Na+ [HO-C(=O)-O]-", mp: "50 °C (decomposes)", bp: "Decomposes", solubility: "96 g/L (at 20 °C in H2O)", reaction: "NaHCO3 + HCl → NaCl + CO2 + H2O", indicator: "Methyl Orange" },
-    nh4cl: { name: "Ammonium Chloride", formula: "NH4Cl", mw: 53.49, eq: 53.49, state: "Crystalline solid", structure: "[NH4]+ Cl-", mp: "338 °C (sublimes)", bp: "520 °C", solubility: "372 g/L (at 20 °C in H2O)", reaction: "4 NH4Cl + 6 HCHO → (CH2)6N4 + 4 HCl + 6 H2O ; HCl + NaOH → NaCl + H2O", indicator: "Phenolphthalein" },
-    acetic: { name: "Acetic Acid", formula: "CH3COOH", mw: 60.05, eq: 60.05, state: "Clear liquid", structure: "CH3-COOH", mp: "16.6 °C", bp: "117.9 °C", solubility: "Miscible in all proportions with H2O", reaction: "CH3COOH + NaOH → CH3COONa + H2O", indicator: "Phenolphthalein" },
-    h2o2: { name: "Hydrogen Peroxide", formula: "H2O2", mw: 34.015, eq: 17.008, state: "Clear liquid", structure: "H-O-O-H", mp: "-0.43 °C", bp: "150.2 °C", solubility: "Miscible in all proportions with H2O", reaction: "5 H2O2 + 2 KMnO4 + 3 H2SO4 → 2 MnSO4 + K2SO4 + 5 O2 + 8 H2O", indicator: "Self-indicator (KMnO4)" },
-    feso4: { name: "Ferrous Sulphate Heptahydrate", formula: "FeSO4·7H2O", mw: 278.01, eq: 278.01, state: "Blue-green crystals", structure: "[Fe]2+ [SO4]2- · 7H2O", mp: "64 °C (loses hydration water)", bp: "Decomposes > 300 °C", solubility: "295 g/L (at 20 °C in H2O)", reaction: "10 FeSO4 + 2 KMnO4 + 8 H2SO4 → 5 Fe2(SO4)3 + 2 MnSO4 + K2SO4 + 8 H2O", indicator: "Self-indicator (KMnO4)" },
-    na_benzoate: { name: "Sodium Benzoate", formula: "C7H5NaO2", mw: 144.11, eq: 144.11, state: "Crystalline powder", structure: "C6H5-COO- Na+", mp: "> 300 °C", bp: "410 °C", solubility: "629 g/L (at 20 °C in H2O)", reaction: "C6H5COONa + HClO4 → C6H5COOH + NaClO4", indicator: "Crystal Violet" },
-    boric: { name: "Boric Acid", formula: "H3BO3", mw: 61.83, eq: 61.83, state: "Crystalline powder", structure: "B(OH)3", mp: "170.9 °C", bp: "Decomposes above 170.9 °C to metaboric acid", solubility: "47.2 g/L (at 20 °C in H2O)", reaction: "H3BO3 + Glycerol + NaOH → Sodium Glyceroborate + H2O", indicator: "Phenolphthalein" },
-    naoh_flask: { name: "Sodium Hydroxide Solution", formula: "NaOH", mw: 40.00, eq: 40.00, state: "Aqueous solution", structure: "Na+ OH-", mp: "318 °C", bp: "1388 °C", solubility: "1090 g/L", reaction: "NaOH + HCl → NaCl + H2O", indicator: "Phenolphthalein (Pink to Colourless)" },
-    znso4: { name: "Zinc Sulphate Heptahydrate", formula: "ZnSO4·7H2O", mw: 287.54, eq: 287.54, state: "Crystalline solid", structure: "[Zn(H2O)6]2+ [SO4]2- · H2O", mp: "100 °C", bp: "740 °C", solubility: "960 g/L", reaction: "ZnSO4 + Na2H2EDTA → Na2[ZnEDTA] + H2SO4", indicator: "Eriochrome Black T (EBT)" }
+    oxalic: { name: "Oxalic Acid Dihydrate", formula: "C2H2O4·2H2O", mw: 126.07, eq: 63.03, state: "Crystalline solid (White)", structure: "HOOC-COOH · 2H2O", mp: "101.5 °C", bp: "157 °C (sublimes)", solubility: "90 – 100 g/L (at 20 °C in H2O)", reaction: "C2H2O4 + 2 NaOH → Na2C2O4 + 2 H2O", indicator: "Phenolphthalein (Colourless to Permanent Pale Pink) / Self-indicator (KMnO4)" },
+    khp: { name: "Potassium Hydrogen Phthalate (KHP)", formula: "C8H5KO4", mw: 204.22, eq: 204.22, state: "Crystalline powder (White)", structure: "C6H4(COOK)(COOH)", mp: "295 °C (decomposes)", bp: "Decomposes", solubility: "80 g/L (at 20 °C in H2O)", reaction: "C8H5KO4 + NaOH → C8H4KNaO4 + H2O", indicator: "Phenolphthalein (Colourless to Light Pink)" },
+    na2co3: { name: "Sodium Carbonate", formula: "Na2CO3", mw: 105.99, eq: 52.99, state: "Fine powder (White)", structure: "Na+ [O-C(=O)-O]- Na+", mp: "851 °C", bp: "1600 °C (decomposes)", solubility: "215 g/L (at 20 °C in H2O)", reaction: "Na2CO3 + 2 HCl → 2 NaCl + CO2 + H2O", indicator: "Methyl Orange (Yellow to Faint Reddish-Orange)" },
+    benzoic: { name: "Benzoic Acid", formula: "C7H6O2", mw: 122.12, eq: 122.12, state: "Monoclinic crystalline flakes", structure: "C6H5-COOH", mp: "122.3 °C", bp: "249.2 °C", solubility: "2.9 g/L (at 20 °C) / 3.4 g/L (at 25 °C in H2O)", reaction: "C6H5COOH + NaOH → C6H5COONa + H2O", indicator: "Phenolphthalein (Colourless to Pink)" },
+    salicylic: { name: "Salicylic Acid", formula: "C7H6O3", mw: 138.12, eq: 138.12, state: "Needle-like crystals", structure: "2-(HO)-C6H4-COOH", mp: "158.6 °C", bp: "211 °C (at 20 mmHg)", solubility: "2.24 g/L (at 25 °C in H2O)", reaction: "C6H4(OH)COOH + NaOH → C6H4(OH)COONa + H2O", indicator: "Phenolphthalein (Colourless to Pink) / Crystal Violet in Nonaqueous (Violet to Emerald Green)" },
+    aspirin: { name: "Acetylsalicylic Acid (Aspirin)", formula: "C9H8O4", mw: 180.16, eq: 180.16, state: "Crystalline powder", structure: "2-(CH3COO)-C6H4-COOH", mp: "135 °C", bp: "140 °C (decomposes)", solubility: "3.3 g/L (at 20 °C in H2O)", reaction: "C9H8O4 + NaOH → C9H7O4Na + H2O", indicator: "Phenolphthalein (Colourless to Pink Tint)" },
+    nahco3: { name: "Sodium Bicarbonate", formula: "NaHCO3", mw: 84.01, eq: 84.01, state: "Crystalline powder", structure: "Na+ [HO-C(=O)-O]-", mp: "50 °C (decomposes)", bp: "Decomposes", solubility: "96 g/L (at 20 °C in H2O)", reaction: "NaHCO3 + HCl → NaCl + CO2 + H2O", indicator: "Methyl Orange (Yellow to Pinkish-Orange)" },
+    nh4cl: { name: "Ammonium Chloride", formula: "NH4Cl", mw: 53.49, eq: 53.49, state: "Crystalline solid", structure: "[NH4]+ Cl-", mp: "338 °C (sublimes)", bp: "520 °C", solubility: "372 g/L (at 20 °C in H2O)", reaction: "4 NH4Cl + 6 HCHO → (CH2)6N4 + 4 HCl + 6 H2O ; HCl + NaOH → NaCl + H2O", indicator: "Phenolphthalein - Formol Titration (Colourless to Pale Pink)" },
+    acetic: { name: "Acetic Acid", formula: "CH3COOH", mw: 60.05, eq: 60.05, state: "Clear liquid", structure: "CH3-COOH", mp: "16.6 °C", bp: "117.9 °C", solubility: "Miscible in all proportions with H2O", reaction: "CH3COOH + NaOH → CH3COONa + H2O", indicator: "Phenolphthalein (Colourless to Light Pink)" },
+    h2o2: { name: "Hydrogen Peroxide", formula: "H2O2", mw: 34.015, eq: 17.008, state: "Clear liquid", structure: "H-O-O-H", mp: "-0.43 °C", bp: "150.2 °C", solubility: "Miscible in all proportions with H2O", reaction: "5 H2O2 + 2 KMnO4 + 3 H2SO4 → 2 MnSO4 + K2SO4 + 5 O2 + 8 H2O", indicator: "Self-indicator in H2SO4 (Colourless to Persistent Pale Pink)" },
+    feso4: { name: "Ferrous Sulphate Heptahydrate", formula: "FeSO4·7H2O", mw: 278.01, eq: 278.01, state: "Blue-green crystals", structure: "[Fe]2+ [SO4]2- · 7H2O", mp: "64 °C (loses hydration water)", bp: "Decomposes > 300 °C", solubility: "295 g/L (at 20 °C in H2O)", reaction: "10 FeSO4 + 2 KMnO4 + 8 H2SO4 → 5 Fe2(SO4)3 + 2 MnSO4 + K2SO4 + 8 H2O", indicator: "Self-indicator (Very Pale Green to Pink Flash) / Ferroin (Intense Red to Pale Blue)" },
+    na_benzoate: { name: "Sodium Benzoate", formula: "C7H5NaO2", mw: 144.11, eq: 144.11, state: "Crystalline powder", structure: "C6H5-COO- Na+", mp: "> 300 °C", bp: "410 °C", solubility: "629 g/L (at 20 °C in H2O)", reaction: "C6H5COONa + HClO4 → C6H5COOH + NaClO4", indicator: "Methyl Orange in Ether-Water Biphasic System (Yellow to Orange-Pink) / Crystal Violet (Violet to Yellowish-Green)" },
+    boric: { name: "Boric Acid", formula: "H3BO3", mw: 61.83, eq: 61.83, state: "Crystalline powder", structure: "B(OH)3", mp: "170.9 °C", bp: "Decomposes above 170.9 °C to metaboric acid", solubility: "47.2 g/L (at 20 °C in H2O)", reaction: "H3BO3 + Glycerol + NaOH → Sodium Glyceroborate + H2O", indicator: "Phenolphthalein + Glycerol (Colourless to Distinct Pink)" },
+    naoh_flask: { name: "Sodium Hydroxide Solution", formula: "NaOH", mw: 40.00, eq: 40.00, state: "Aqueous solution", structure: "Na+ OH-", mp: "318 °C", bp: "1388 °C", solubility: "1090 g/L", reaction: "NaOH + HCl → NaCl + H2O", indicator: "Phenolphthalein (Pink to Colourless) / Methyl Red (Yellow to Red)" },
+    znso4: { name: "Zinc Sulphate Heptahydrate", formula: "ZnSO4·7H2O", mw: 287.54, eq: 287.54, state: "Crystalline solid", structure: "[Zn(H2O)6]2+ [SO4]2- · H2O", mp: "100 °C", bp: "740 °C", solubility: "960 g/L", reaction: "ZnSO4 + Na2H2EDTA → Na2[ZnEDTA] + H2SO4", indicator: "Mordant Black II / Eriochrome Black T / EBT at pH 10 Buffer (Wine-Red to Clean Distinct Blue)" }
   };
 
-  /* Unified Titration Pair Configuration Map: [Initial Color, Endpoint Color], Indicator Text */
+  /* Comprehensive Titration Pair Configuration Map: [Initial Color, Endpoint Color], Indicator Text */
   const pairConfigMap = {
-    // NaOH in Burette (Alkaline titrant)
-    'naoh_oxalic': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Faint Pink)' },
-    'naoh_khp': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Pink)' },
+    // 1. Acid-Base Titrations: NaOH in Burette
+    'naoh_oxalic': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Phenolphthalein (Colourless to Permanent Pale Pink)' },
+    'naoh_khp': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Phenolphthalein (Colourless to Light Pink)' },
     'naoh_benzoic': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Pink)' },
     'naoh_salicylic': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Pink)' },
-    'naoh_aspirin': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Pink)' },
-    'naoh_acetic': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Pink)' },
-    'naoh_nh4cl': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Pink)' },
-    'naoh_boric': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Pink)' },
+    'naoh_aspirin': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Phenolphthalein (Colourless to Pink Tint)' },
+    'naoh_acetic': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Phenolphthalein (Colourless to Light Pink)' },
+    'naoh_boric': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein + Glycerol (Colourless to Distinct Pink)' },
+    'naoh_nh4cl': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Phenolphthalein - Formol Titration (Colourless to Pale Pink)' },
 
-    // Acid in Burette, Base in Flask
-    'hcl_na2co3': { colors: ['#facc15', '#ef4444'], indicator: 'Methyl Orange (Yellow to Red/Pink)' },
-    'hcl_nahco3': { colors: ['#facc15', '#ef4444'], indicator: 'Methyl Orange (Yellow to Red/Pink)' },
-    'hcl_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless)' },
-    'hno3_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless)' },
-    'h2so4_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless)' },
-    'hno3_na2co3': { colors: ['#facc15', '#ef4444'], indicator: 'Methyl Orange (Yellow to Red/Pink)' },
-    'h2so4_na2co3': { colors: ['#facc15', '#ef4444'], indicator: 'Methyl Orange (Yellow to Red/Pink)' },
+    // 1. Acid-Base Titrations: HCl, HNO3, H2SO4 in Burette
+    'hcl_na2co3': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange (Yellow to Faint Reddish-Orange)' },
+    'hno3_na2co3': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange (Yellow to Faint Reddish-Orange)' },
+    'h2so4_na2co3': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange (Yellow to Faint Reddish-Orange)' },
 
-    // Redox: Permanganate
-    'kmno4_feso4': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Self-indicator (Colourless to Permanent Pale Pink)' },
-    'kmno4_h2o2': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Self-indicator (Colourless to Permanent Pale Pink)' },
-    'kmno4_oxalic': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Self-indicator (Colourless to Permanent Pale Pink)' },
+    'hcl_nahco3': { colors: ['#facc15', '#fb923c'], indicator: 'Methyl Orange (Yellow to Pinkish-Orange)' },
+    'hno3_nahco3': { colors: ['#facc15', '#fb923c'], indicator: 'Methyl Orange (Yellow to Pinkish-Orange)' },
+    'h2so4_nahco3': { colors: ['#facc15', '#fb923c'], indicator: 'Methyl Orange (Yellow to Pinkish-Orange)' },
 
-    // Redox: Thiosulphate / Iodine
-    'na2s2o3_i2': { colors: ['#1e3a8a', '#e2e8f0'], indicator: 'Starch Indicator (Dark Blue to Colourless)' },
-    'i2_na2s2o3': { colors: ['#e2e8f0', '#1e3a8a'], indicator: 'Starch Indicator (Colourless to Dark Blue)' },
+    'hcl_na_benzoate': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange in Ether-Water Biphasic System (Yellow to Orange-Pink)' },
+    'hno3_na_benzoate': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange in Ether-Water Biphasic System (Yellow to Orange-Pink)' },
+    'h2so4_na_benzoate': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange in Ether-Water Biphasic System (Yellow to Orange-Pink)' },
 
-    // Nonaqueous
-    'hclo4_na_benzoate': { colors: ['#7c3aed', '#10b981'], indicator: 'Crystal Violet (Violet to Emerald Green)' },
+    'hcl_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless) / Methyl Red (Yellow to Red)' },
+    'hno3_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless) / Methyl Red (Yellow to Red)' },
+    'h2so4_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless) / Methyl Red (Yellow to Red)' },
 
-    // Cerimetry
-    'ceric_feso4': { colors: ['#f97316', '#38bdf8'], indicator: 'Ferroin (Orange-Red to Pale Blue)' },
+    // 2. Redox Titrations: Potassium Permanganate (KMnO4)
+    'kmno4_oxalic': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Self-indicator at ~60°C (Colourless to Permanent Faint Pink Tint)' },
+    'kmno4_h2o2': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Self-indicator in Acidic Medium (Colourless to Persistent Pale Pink)' },
+    'kmno4_feso4': { colors: ['#dcfce7', '#f472b6'], indicator: 'Self-indicator in Acidic Medium (Very Pale Green to Lasting Pink Flash)' },
 
-    // Complexometry
-    'edta_znso4': { colors: ['#9f1239', '#38bdf8'], indicator: 'Eriochrome Black T / EBT (Wine Red to Sky Blue)' }
+    // 2. Redox Titrations: Sodium Thiosulphate (Na2S2O3) & Iodine (I2)
+    'na2s2o3_i2': { colors: ['#1e1b4b', '#e2e8f0'], indicator: 'Starch Mucilage Indicator (Dark Blue-Black to Completely Colourless)' },
+    'i2_na2s2o3': { colors: ['#fef08a', '#1e1b4b'], indicator: 'Starch Mucilage Indicator (Straw-Yellow/Colourless to Dark Blue-Black)' },
+
+    // 2. Redox Titrations: Ceric Ammonium Sulphate
+    'ceric_feso4': { colors: ['#dc2626', '#38bdf8'], indicator: 'Ferroin Indicator (Intense Red to Pale Blue)' },
+
+    // 3. Nonaqueous Titrations: Perchloric Acid (HClO4 in Glacial Acetic Acid)
+    'hclo4_na_benzoate': { colors: ['#6b21a8', '#84cc16'], indicator: 'Crystal Violet (Violet through Blue-Green to Yellowish-Green)' },
+    'hclo4_salicylic': { colors: ['#6b21a8', '#10b981'], indicator: 'Crystal Violet (Violet to Emerald Green)' },
+
+    // 4. Complexometric Titrations: Disodium EDTA
+    'edta_znso4': { colors: ['#881337', '#2563eb'], indicator: 'Mordant Black II / EBT at pH 10 Buffer (Wine-Red to Clean Distinct Blue)' }
   };
 
   function getPairConfig(bKey, fKey) {
@@ -925,7 +934,6 @@
 
   function sendDataToSheet(payload) {
     const syncStatus = document.getElementById('syncStatus');
-    if (!syncStatus) return;
     syncStatus.style.color = '#0369a1';
     syncStatus.innerText = "⌛ Transmitting data to Google Sheets...";
 
@@ -933,7 +941,7 @@
       method: "POST",
       mode: "no-cors",
       headers: {
-        "Content-Type": "text/plain;charset=utf-8"
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(payload)
     })
@@ -1044,31 +1052,14 @@
         return;
       }
       const calculatedFlaskNormality = (buretteNormalityInput * V2) / V1;
+      const gramsPerLitre = calculatedFlaskNormality * flaskEqWt;
+      const purityPercent = gramsPerLitre / 10;
+
       document.getElementById('outNormFlask').innerText = calculatedFlaskNormality.toFixed(4) + ' N';
-
-      let purityPercent = 0;
-      let purityLabel = "% w/v";
-
-      if (flaskInputMode === 'weight') {
-        const flaskMass = parseFloat(document.getElementById('flaskMass').value) || 0;
-        const flaskVolMade = parseFloat(document.getElementById('flaskVolMade').value) || 1;
-        if (flaskMass > 0 && flaskVolMade > 0) {
-          const pureGramsInAliquot = (V2 * buretteNormalityInput * flaskEqWt) / 1000;
-          const totalPureGrams = pureGramsInAliquot * (flaskVolMade / V1);
-          purityPercent = (totalPureGrams / flaskMass) * 100;
-          purityLabel = "% w/w (Purity)";
-        } else {
-          purityPercent = (calculatedFlaskNormality * flaskEqWt) / 10;
-        }
-      } else {
-        const gramsPerLitre = calculatedFlaskNormality * flaskEqWt;
-        purityPercent = gramsPerLitre / 10;
-      }
-
-      document.getElementById('outAssay').innerText = purityPercent.toFixed(2) + ' ' + purityLabel;
+      document.getElementById('outAssay').innerText = purityPercent.toFixed(2) + ' % w/v';
 
       payload.calculatedFlaskNormality = calculatedFlaskNormality.toFixed(4);
-      payload.assayPurity = purityPercent.toFixed(2) + ' ' + purityLabel;
+      payload.assayPurity = purityPercent.toFixed(2) + ' % w/v';
 
       resNormBuretteContainer.style.display = 'none';
       resNormFlaskContainer.style.display = 'block';
