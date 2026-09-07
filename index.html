@@ -9,7 +9,7 @@
   <title>Universal Dynamic Titration Calculator | Joash Sam</title>
   <meta name="author" content="Joash Sam">
   <meta name="description" content="Advanced Universal Dynamic Titration Calculator created by Joash Sam. Includes real-time simulation, stoichiometry calculations, molarity, normality, assay purity, and solubility tools for chemistry and pharmacy applications.">
-  <meta name="keywords" content="Joash Sam, titration calculator, MHTCET 99.08, NEET 97.5, universal titration engine, pharmacy calculations, chemistry calculator">
+  <meta name="keywords" content="Joash Sam, titration calculator, MHTCET 99.08, NEET 97.5, universal titration engine, pharmacy calculations, chemistry calculator, MVP College of Pharmacy Nashik">
   
   <!-- Open Graph / Social Sharing Tags -->
   <meta property="og:type" content="website">
@@ -662,6 +662,55 @@
     znso4: { name: "Zinc Sulphate Heptahydrate", formula: "ZnSO4·7H2O", mw: 287.54, eq: 287.54, state: "Crystalline solid", structure: "[Zn(H2O)6]2+ [SO4]2- · H2O", mp: "100 °C", bp: "740 °C", solubility: "960 g/L", reaction: "ZnSO4 + Na2H2EDTA → Na2[ZnEDTA] + H2SO4", indicator: "Eriochrome Black T (EBT)" }
   };
 
+  /* Unified Titration Pair Configuration Map: [Initial Color, Endpoint Color], Indicator Text */
+  const pairConfigMap = {
+    // NaOH in Burette (Alkaline titrant)
+    'naoh_oxalic': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Faint Pink)' },
+    'naoh_khp': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Pink)' },
+    'naoh_benzoic': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Pink)' },
+    'naoh_salicylic': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Pink)' },
+    'naoh_aspirin': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Pink)' },
+    'naoh_acetic': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Pink)' },
+    'naoh_nh4cl': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Pink)' },
+    'naoh_boric': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Pink)' },
+
+    // Acid in Burette, Base in Flask
+    'hcl_na2co3': { colors: ['#facc15', '#ef4444'], indicator: 'Methyl Orange (Yellow to Red/Pink)' },
+    'hcl_nahco3': { colors: ['#facc15', '#ef4444'], indicator: 'Methyl Orange (Yellow to Red/Pink)' },
+    'hcl_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless)' },
+    'hno3_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless)' },
+    'h2so4_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless)' },
+    'hno3_na2co3': { colors: ['#facc15', '#ef4444'], indicator: 'Methyl Orange (Yellow to Red/Pink)' },
+    'h2so4_na2co3': { colors: ['#facc15', '#ef4444'], indicator: 'Methyl Orange (Yellow to Red/Pink)' },
+
+    // Redox: Permanganate
+    'kmno4_feso4': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Self-indicator (Colourless to Permanent Pale Pink)' },
+    'kmno4_h2o2': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Self-indicator (Colourless to Permanent Pale Pink)' },
+    'kmno4_oxalic': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Self-indicator (Colourless to Permanent Pale Pink)' },
+
+    // Redox: Thiosulphate / Iodine
+    'na2s2o3_i2': { colors: ['#1e3a8a', '#e2e8f0'], indicator: 'Starch Indicator (Dark Blue to Colourless)' },
+    'i2_na2s2o3': { colors: ['#e2e8f0', '#1e3a8a'], indicator: 'Starch Indicator (Colourless to Dark Blue)' },
+
+    // Nonaqueous
+    'hclo4_na_benzoate': { colors: ['#7c3aed', '#10b981'], indicator: 'Crystal Violet (Violet to Emerald Green)' },
+
+    // Cerimetry
+    'ceric_feso4': { colors: ['#f97316', '#38bdf8'], indicator: 'Ferroin (Orange-Red to Pale Blue)' },
+
+    // Complexometry
+    'edta_znso4': { colors: ['#9f1239', '#38bdf8'], indicator: 'Eriochrome Black T / EBT (Wine Red to Sky Blue)' }
+  };
+
+  function getPairConfig(bKey, fKey) {
+    const pairKey = `${bKey}_${fKey}`;
+    if (pairConfigMap[pairKey]) {
+      return pairConfigMap[pairKey];
+    }
+    const defaultIndicator = flaskDb[fKey]?.indicator || buretteDb[bKey]?.indicator || 'Visual Endpoint';
+    return { colors: ['#e2e8f0', '#fde047'], indicator: defaultIndicator };
+  }
+
   function updateBuretteInfo() {
     const key = document.getElementById('buretteChem').value;
     const data = buretteDb[key];
@@ -700,9 +749,16 @@
   /* SIMULATOR FUNCTIONS */
   function updateSimColors() {
     const bKey = document.getElementById('buretteChem').value;
+    const fKey = document.getElementById('flaskChem').value;
     const bColor = buretteDb[bKey].color;
+
     document.getElementById('simBuretteLiquid').setAttribute('fill', bColor);
     document.getElementById('simDrop').setAttribute('stroke', bColor);
+
+    const config = getPairConfig(bKey, fKey);
+    if (simVol === 0.0) {
+      document.getElementById('simFlaskLiquid').setAttribute('fill', config.colors[0]);
+    }
   }
 
   function addTitrant(amt) {
@@ -741,15 +797,13 @@
 
     const flaskLiq = document.getElementById('simFlaskLiquid');
     const bKey = document.getElementById('buretteChem').value;
+    const fKey = document.getElementById('flaskChem').value;
+    const config = getPairConfig(bKey, fKey);
 
     if (simVol >= (eqVolume * 0.98)) {
-      if (bKey === 'naoh' || bKey === 'hno3' || bKey === 'h2so4') flaskLiq.setAttribute('fill', '#ec4899'); // Phenolphthalein pink
-      else if (bKey === 'kmno4') flaskLiq.setAttribute('fill', '#f472b6');
-      else if (bKey === 'i2' || bKey === 'na2s2o3') flaskLiq.setAttribute('fill', '#1e3a8a');
-      else if (bKey === 'edta') flaskLiq.setAttribute('fill', '#38bdf8'); // EBT blue endpoint
-      else flaskLiq.setAttribute('fill', '#fde047');
+      flaskLiq.setAttribute('fill', config.colors[1]); // Endpoint color
     } else {
-      flaskLiq.setAttribute('fill', '#e2e8f0');
+      flaskLiq.setAttribute('fill', config.colors[0]); // Initial color
     }
 
     const firstFinal = document.querySelector('.b-final');
@@ -765,7 +819,7 @@
     const liquidElem = document.getElementById('simBuretteLiquid');
     liquidElem.setAttribute('height', '128');
     liquidElem.setAttribute('y', '21');
-    document.getElementById('simFlaskLiquid').setAttribute('fill', '#e2e8f0');
+    updateSimColors();
   }
 
   function setFlaskInputMode(mode) {
@@ -914,8 +968,10 @@
     const buretteKey = document.getElementById('buretteChem').value;
     const buretteName = buretteDb[buretteKey].name;
 
+    const pairConfig = getPairConfig(buretteKey, flaskKey);
+
     const factorGrams = (flaskEqWt / 1000).toFixed(5);
-    const factorSentence = `📌 Volumetric Factor Standard: 1 mL of 1 N ${buretteName} ≡ ${factorGrams} g of ${flaskData.name} | Indicator: ${flaskData.indicator || buretteDb[buretteKey].indicator}`;
+    const factorSentence = `📌 Volumetric Factor Standard: 1 mL of 1 N ${buretteName} ≡ ${factorGrams} g of ${flaskData.name} | Indicator: ${pairConfig.indicator}`;
 
     let flaskNormality = 0;
     if (flaskInputMode === 'normality') {
