@@ -451,6 +451,8 @@
           <option value="boric">Boric Acid</option>
           <option value="naoh_flask">Sodium Hydroxide Solution (Standardisation)</option>
           <option value="znso4">Zinc Sulphate Heptahydrate (Complexometric)</option>
+          <option value="i2_flask">Iodine Solution (I2)</option>
+          <option value="as2o3">Arsenic Trioxide (As2O3)</option>
         </select>
         <button type="button" class="bulb-btn" onclick="toggleInfo('flaskInfoCard')" title="View Chemical Information">💡</button>
       </div>
@@ -659,7 +661,9 @@
     na_benzoate: { name: "Sodium Benzoate", formula: "C7H5NaO2", mw: 144.11, eq: 144.11, state: "Crystalline powder", structure: "C6H5-COO- Na+", mp: "> 300 °C", bp: "410 °C", solubility: "629 g/L (at 20 °C in H2O)", reaction: "C6H5COONa + HClO4 → C6H5COOH + NaClO4", indicator: "Methyl Orange in Ether-Water Biphasic System (Yellow to Orange-Pink) / Crystal Violet (Violet to Yellowish-Green)" },
     boric: { name: "Boric Acid", formula: "H3BO3", mw: 61.83, eq: 61.83, state: "Crystalline powder", structure: "B(OH)3", mp: "170.9 °C", bp: "Decomposes above 170.9 °C to metaboric acid", solubility: "47.2 g/L (at 20 °C in H2O)", reaction: "H3BO3 + Glycerol + NaOH → Sodium Glyceroborate + H2O", indicator: "Phenolphthalein + Glycerol (Colourless to Distinct Pink)" },
     naoh_flask: { name: "Sodium Hydroxide Solution", formula: "NaOH", mw: 40.00, eq: 40.00, state: "Aqueous solution", structure: "Na+ OH-", mp: "318 °C", bp: "1388 °C", solubility: "1090 g/L", reaction: "NaOH + HCl → NaCl + H2O", indicator: "Phenolphthalein (Pink to Colourless) / Methyl Red (Yellow to Red)" },
-    znso4: { name: "Zinc Sulphate Heptahydrate", formula: "ZnSO4·7H2O", mw: 287.54, eq: 287.54, state: "Crystalline solid", structure: "[Zn(H2O)6]2+ [SO4]2- · H2O", mp: "100 °C", bp: "740 °C", solubility: "960 g/L", reaction: "ZnSO4 + Na2H2EDTA → Na2[ZnEDTA] + H2SO4", indicator: "Mordant Black II / Eriochrome Black T / EBT at pH 10 Buffer (Wine-Red to Clean Distinct Blue)" }
+    znso4: { name: "Zinc Sulphate Heptahydrate", formula: "ZnSO4·7H2O", mw: 287.54, eq: 287.54, state: "Crystalline solid", structure: "[Zn(H2O)6]2+ [SO4]2- · H2O", mp: "100 °C", bp: "740 °C", solubility: "960 g/L", reaction: "ZnSO4 + Na2H2EDTA → Na2[ZnEDTA] + H2SO4", indicator: "Mordant Black II / Eriochrome Black T / EBT at pH 10 Buffer (Wine-Red to Clean Distinct Blue)" },
+    i2_flask: { name: "Iodine Solution", formula: "I2", mw: 253.81, eq: 126.90, state: "Deep brown solution in KI", structure: "I3- (Triiodide complex)", mp: "113.7 °C (pure I2)", bp: "184.3 °C (pure I2)", solubility: "Highly soluble in aqueous KI solution", reaction: "I2 + 2 Na2S2O3 → 2 NaI + Na2S4O6", indicator: "Starch Mucilage (Dark Blue-Black to Completely Colourless)" },
+    as2o3: { name: "Arsenic Trioxide", formula: "As2O3", mw: 197.84, eq: 49.46, state: "Fine powder (White)", structure: "As2O3 / H3AsO3 in solution", mp: "312 °C", bp: "465 °C", solubility: "20 g/L (at 25 °C in H2O, soluble in NaHCO3/NaOH)", reaction: "As2O3 + 2 I2 + 2 H2O → As2O5 + 4 HI", indicator: "Starch Mucilage (Colourless/Straw-Yellow to Dark Blue-Black)" }
   };
 
   /* Comprehensive Titration Pair Configuration Map: [Initial Color, Endpoint Color], Indicator Text */
@@ -696,9 +700,11 @@
     'kmno4_h2o2': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Self-indicator in Acidic Medium (Colourless to Persistent Pale Pink)' },
     'kmno4_feso4': { colors: ['#dcfce7', '#f472b6'], indicator: 'Self-indicator in Acidic Medium (Very Pale Green to Lasting Pink Flash)' },
 
-    // 2. Redox Titrations: Sodium Thiosulphate (Na2S2O3) & Iodine (I2)
+    // 2. Redox Titrations: Sodium Thiosulphate (Na2S2O3) & Iodine (I2) & Arsenic Trioxide (As2O3)
     'na2s2o3_i2': { colors: ['#1e1b4b', '#e2e8f0'], indicator: 'Starch Mucilage Indicator (Dark Blue-Black to Completely Colourless)' },
+    'na2s2o3_i2_flask': { colors: ['#1e1b4b', '#e2e8f0'], indicator: 'Starch Mucilage Indicator (Dark Blue-Black to Completely Colourless)' },
     'i2_na2s2o3': { colors: ['#fef08a', '#1e1b4b'], indicator: 'Starch Mucilage Indicator (Straw-Yellow/Colourless to Dark Blue-Black)' },
+    'i2_as2o3': { colors: ['#e2e8f0', '#1e1b4b'], indicator: 'Starch Mucilage Indicator (Colourless/Straw-Yellow to Dark Blue-Black)' },
 
     // 2. Redox Titrations: Ceric Ammonium Sulphate
     'ceric_feso4': { colors: ['#dc2626', '#38bdf8'], indicator: 'Ferroin Indicator (Intense Red to Pale Blue)' },
