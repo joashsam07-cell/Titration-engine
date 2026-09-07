@@ -395,29 +395,29 @@
     
     <!-- 1. BURETTE SETUP -->
     <div class="section-title">1. In Burette (Titrant)</div>
-    <div class="grid-2 form-group">
-      <div>
-        <label for="buretteChem">Select Reagent:</label>
-        <div class="input-with-bulb">
-          <select id="buretteChem" onchange="updateBuretteInfo(); updateSimColors();">
-            <option value="naoh">Sodium Hydroxide (NaOH)</option>
-            <option value="hcl">Hydrochloric Acid (HCl)</option>
-            <option value="kmno4">Potassium Permanganate (KMnO4)</option>
-            <option value="na2s2o3">Sodium Thiosulphate (Na2S2O3)</option>
-            <option value="i2">Iodine Solution (I2)</option>
-            <option value="hclo4">Perchloric Acid (HClO4)</option>
-            <option value="ceric">Ceric Ammonium Sulphate</option>
-            <option value="edta">Disodium EDTA</option>
-          </select>
-          <button type="button" class="bulb-btn" onclick="toggleInfo('buretteInfoCard')" title="View Chemical Information">💡</button>
-        </div>
+    
+    <div class="form-group">
+      <label for="buretteChem">Select Reagent:</label>
+      <div class="input-with-bulb">
+        <select id="buretteChem" onchange="updateBuretteInfo(); updateSimColors();">
+          <option value="naoh">Sodium Hydroxide (NaOH)</option>
+          <option value="hcl">Hydrochloric Acid (HCl)</option>
+          <option value="kmno4">Potassium Permanganate (KMnO4)</option>
+          <option value="na2s2o3">Sodium Thiosulphate (Na2S2O3)</option>
+          <option value="i2">Iodine Solution (I2)</option>
+          <option value="hclo4">Perchloric Acid (HClO4)</option>
+          <option value="ceric">Ceric Ammonium Sulphate</option>
+          <option value="edta">Disodium EDTA</option>
+        </select>
+        <button type="button" class="bulb-btn" onclick="toggleInfo('buretteInfoCard')" title="View Chemical Information">💡</button>
       </div>
-      <div>
-        <label>Working Concentration Status:</label>
-        <div class="radio-group">
-          <label class="radio-label"><input type="radio" name="buretteStatus" value="estimated" checked> Estimated (~N)</label>
-          <label class="radio-label"><input type="radio" name="buretteStatus" value="standardized"> Standardized (Exact N)</label>
-        </div>
+    </div>
+
+    <div class="form-group">
+      <label>Working Concentration Status:</label>
+      <div class="radio-group">
+        <label class="radio-label"><input type="radio" name="buretteStatus" value="estimated" checked> Estimated (~N)</label>
+        <label class="radio-label"><input type="radio" name="buretteStatus" value="standardized"> Standardized (Exact N)</label>
       </div>
     </div>
 
