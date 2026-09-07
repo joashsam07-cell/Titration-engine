@@ -30,7 +30,7 @@ An advanced, interactive web-based analytical chemistry engine and titration sim
 
 ## 🚀 Getting Started & Usage
 
-1. **Open the Application:** Simply download or open `abcdef_6.html` in any modern web browser (Google Chrome, Mozilla Firefox, Microsoft Edge, Safari).
+1. **Open the Application:*
 2. **Configure Burette:** Select your titrant reagent from the dropdown and check its physicochemical properties using the info button (💡).
 3. **Configure Flask:** Choose your sample chemical and select your input mode (Normality, Mass, or Unknown).
 4. **Run Simulation or Input Readings:** 
