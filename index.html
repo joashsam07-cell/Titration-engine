@@ -255,6 +255,12 @@
     .sim-btn:hover {
       background: #1d4ed8;
     }
+    .sim-btn.refill {
+      background: #10b981;
+    }
+    .sim-btn.refill:hover {
+      background: #059669;
+    }
     .sim-btn.reset {
       background: #ef4444;
     }
@@ -550,6 +556,7 @@
       <div class="sim-controls">
         <button type="button" class="sim-btn" id="btnSimAdd1" onclick="addTitrant(1.0)">+1.0 mL</button>
         <button type="button" class="sim-btn" id="btnSimAdd01" onclick="addTitrant(0.1)">+0.1 mL (Drop)</button>
+        <button type="button" class="sim-btn refill" id="btnSimRefill" onclick="refillBurette()">Refill & Continue</button>
         <button type="button" class="sim-btn reset" id="btnSimReset" onclick="resetSim()">Reset Liquid</button>
       </div>
       <div class="sim-readout">Burette Dispensed Volume: <span id="simDispensed">0.00</span> mL</div>
@@ -657,6 +664,7 @@
 
   let flaskInputMode = 'normality';
   let simVol = 0.0;
+  let dispensedSinceRefill = 0.0; // Tracks volume within the current 25mL batch
 
   const buretteDb = {
     naoh: { name: "Sodium Hydroxide (NaOH)", mw: 40.00, eq: 40.00, state: "Solid pellets / Aqueous solution", structure: "Na+ OH-", type: "Primary Base Titrant", mp: "318 °C", bp: "1388 °C", solubility: "1090 g/L (at 20 °C in H2O)", color: "#60a5fa", indicator: "Phenolphthalein (Colourless to Permanent Pale Pink)" },
@@ -804,13 +812,18 @@
   function addTitrant(amt) {
     if (flaskInputMode === 'unknown') return;
 
+    if (dispensedSinceRefill + amt > 25.0) {
+      alert("Not enough titrant left in the burette for this drop. Please click 'Refill & Continue' to top it up.");
+      return;
+    }
+
     simVol += amt;
-    if (simVol > 25.0) simVol = 25.0;
+    dispensedSinceRefill += amt;
 
     document.getElementById('simDispensed').innerText = simVol.toFixed(2);
 
     const liquidElem = document.getElementById('simBuretteLiquid');
-    const newHeight = Math.max(0, 128 - (simVol * 5.12));
+    const newHeight = Math.max(0, 128 - (dispensedSinceRefill * 5.12));
     const newY = 21 + (128 - newHeight);
     liquidElem.setAttribute('height', newHeight);
     liquidElem.setAttribute('y', newY);
@@ -852,9 +865,17 @@
       updateTiter(firstFinal);
     }
   }
+  
+  function refillBurette() {
+    dispensedSinceRefill = 0.0;
+    const liquidElem = document.getElementById('simBuretteLiquid');
+    liquidElem.setAttribute('height', '128');
+    liquidElem.setAttribute('y', '21');
+  }
 
   function resetSim() {
     simVol = 0.0;
+    dispensedSinceRefill = 0.0;
     document.getElementById('simDispensed').innerText = "0.00";
     const liquidElem = document.getElementById('simBuretteLiquid');
     liquidElem.setAttribute('height', '128');
@@ -876,6 +897,7 @@
     const simFreezeBanner = document.getElementById('simFreezeBanner');
     const btnAdd1 = document.getElementById('btnSimAdd1');
     const btnAdd01 = document.getElementById('btnSimAdd01');
+    const btnRefill = document.getElementById('btnSimRefill');
     const btnReset = document.getElementById('btnSimReset');
 
     if (mode === 'unknown') {
@@ -883,12 +905,14 @@
       simFreezeBanner.style.display = 'block';
       btnAdd1.disabled = true;
       btnAdd01.disabled = true;
+      btnRefill.disabled = true;
       btnReset.disabled = true;
     } else {
       simContainer.classList.remove('disabled-sim');
       simFreezeBanner.style.display = 'none';
       btnAdd1.disabled = false;
       btnAdd01.disabled = false;
+      btnRefill.disabled = false;
       btnReset.disabled = false;
     }
   }
