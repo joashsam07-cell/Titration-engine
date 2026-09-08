@@ -502,13 +502,13 @@
     <div class="form-group">
       <label>Specify Sample Amount Method:</label>
       <div class="input-mode-toggle">
-        <div class="toggle-btn active" id="btnModeNorm" onclick="setFlaskInputMode('normality')">By Normality & Pipetted Vol</div>
+        <div class="toggle-btn active" id="btnModeNormality" onclick="setFlaskInputMode('normality')">By Normality & Pipetted Vol</div>
         <div class="toggle-btn" id="btnModeWeight" onclick="setFlaskInputMode('weight')">By Mass (g) & Vol</div>
         <div class="toggle-btn" id="btnModeUnknown" onclick="setFlaskInputMode('unknown')">❓ Don't Know / Unknown</div>
         <div class="toggle-btn" id="btnModeGame" onclick="setFlaskInputMode('game')">🎮 Random Game</div>
       </div>
 
-      <div id="containerFlaskNorm">
+      <div id="containerFlaskNormality">
         <div class="form-group">
           <label for="flaskNormality">Known / Target Normality (N):</label>
           <input type="number" id="flaskNormality" value="0.1000" step="0.0001">
@@ -597,7 +597,7 @@
 
     <!-- 4. TITRATION READINGS TABLE -->
     <button type="button" class="collapsible-btn" id="toggleTableBtn" onclick="toggleTable()">
-      <span>📋 Feed Burette Readings (Click to Expand)</span>
+      <span>4. 📋 Feed Burette Readings (Click to Expand)</span>
     </button>
     
     <div class="content-table" id="tableContainer">
@@ -929,12 +929,10 @@
   function setFlaskInputMode(mode) {
     flaskInputMode = mode;
     
-    document.getElementById('btnModeNorm').className = 'toggle-btn' + (mode === 'normality' ? ' active' : '');
-    document.getElementById('btnModeWeight').className = 'toggle-btn' + (mode === 'weight' ? ' active' : '');
-    document.getElementById('btnModeUnknown').className = 'toggle-btn' + (mode === 'unknown' ? ' active' : '');
-    document.getElementById('btnModeGame').className = 'toggle-btn' + (mode === 'game' ? ' active' : '');
+    document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('btnMode' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
 
-    document.getElementById('containerFlaskNorm').style.display = (mode === 'normality') ? 'block' : 'none';
+    document.getElementById('containerFlaskNormality').style.display = (mode === 'normality') ? 'block' : 'none';
     document.getElementById('containerFlaskWeight').style.display = (mode === 'weight') ? 'block' : 'none';
     document.getElementById('containerFlaskUnknown').style.display = (mode === 'unknown') ? 'block' : 'none';
     document.getElementById('containerFlaskGame').style.display = (mode === 'game') ? 'block' : 'none';
@@ -976,15 +974,17 @@
     const trueV2 = (trueN1 * V1) / N2;
     const userN1 = (N2 * userV2) / V1;
     
-    const errorPercent = Math.abs((userN1 - trueN1) / trueN1) * 100;
+    // Check absolute volume difference rather than raw percentage to account for 0.1 mL drop limit
+    const volDiff = Math.abs(userV2 - trueV2);
     let feedback = "";
     
-    if (errorPercent <= 1.0) {
-      feedback = `🎯 <strong>Excellent!</strong> Your reading is extremely accurate.`;
-    } else if (errorPercent <= 5.0) {
-      feedback = `✅ <strong>Good job.</strong> Your reading is close.`;
+    // Using 0.101 to safely handle floating point math (e.g. 0.800000001 - 0.7)
+    if (volDiff <= 0.101) {
+      feedback = `🎯 <strong style="color: #059669;">Excellent!</strong> Your reading is perfectly within the 1-drop (±0.1 mL) precision.`;
+    } else if (volDiff <= 0.501) {
+      feedback = `✅ <strong style="color: #d97706;">Good job.</strong> Your reading is close, but slightly off.`;
     } else {
-      feedback = `❌ <strong>Needs practice.</strong> You overshot or undershot the endpoint.`;
+      feedback = `❌ <strong style="color: #dc2626;">Needs practice.</strong> You overshot or undershot the endpoint significantly.`;
     }
     
     document.getElementById('gameResultDisplay').innerHTML = `
