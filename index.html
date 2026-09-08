@@ -381,6 +381,23 @@
       margin-top: 10px;
       font-weight: 600;
     }
+    .footer-disclaimer {
+      font-size: 0.75rem;
+      color: #64748b;
+      text-align: center;
+      margin-top: 25px;
+      padding-top: 15px;
+      border-top: 1px solid #cbd5e1;
+      line-height: 1.5;
+    }
+    .footer-disclaimer a {
+      color: var(--secondary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .footer-disclaimer a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -584,8 +601,8 @@
     <!-- 5. DYNAMIC TARGET SELECTION -->
     <div class="section-title" style="margin-top: 20px;">5. Choose Target Calculation</div>
     <div class="btn-action-grid">
-      <button class="btn-action" onclick="calculate('std_burette')">Find Normality of Burette Titrant</button>
-      <button class="btn-action" onclick="calculate('norm_flask')">Find Normality of Flask Titrand</button>
+      <button class="btn-action" onclick="calculate('std_burette')">Find Normality & Molarity of Burette Titrant</button>
+      <button class="btn-action" onclick="calculate('norm_flask')">Find Normality & Molarity of Flask Titrand</button>
       <button class="btn-action" onclick="calculate('assay')">Calculate Assay / Purity (% w/v)</button>
       <button class="btn-action" onclick="calculate('solubility')">Calculate Solubility (g/100 mL & g/L)</button>
     </div>
@@ -602,13 +619,15 @@
     </div>
 
     <div class="form-group" id="resNormBuretteContainer">
-      <label id="lblNormBurette">Exact Normality of Burette Titrant:</label>
+      <label id="lblNormBurette">Exact Concentration of Burette Titrant:</label>
       <div class="res-val" id="outNormBurette">0.0000 N</div>
+      <div class="res-val" id="outMolBurette" style="font-size: 0.95rem; color: #047857; margin-top: 4px;">0.0000 M</div>
     </div>
 
     <div class="form-group" id="resNormFlaskContainer">
-      <label id="lblNormFlask">Exact Normality of Flask Titrand:</label>
+      <label id="lblNormFlask">Exact Concentration of Flask Titrand:</label>
       <div class="res-val" id="outNormFlask">0.0000 N</div>
+      <div class="res-val" id="outMolFlask" style="font-size: 0.95rem; color: #047857; margin-top: 4px;">0.0000 M</div>
     </div>
 
     <div class="form-group" id="resAssayContainer" style="display: none;">
@@ -623,6 +642,13 @@
 
     <div class="factor-box" id="factorSentenceBox"></div>
     <div class="sync-status" id="syncStatus"></div>
+  </div>
+
+  <!-- FOOTER DISCLAIMER & LINK -->
+  <div class="footer-disclaimer">
+    <p>Disclaimer: This calculator has been created for the purpose of assistance and is not substitute to actual experimental results.</p>
+    <p>Entered data is collected anonymously for improvement and development.</p>
+    <p><a href="https://joashsam07-cell.github.io/fitness-calculator/" target="_blank">Click here to view Fitness calculator by the same creator</a></p>
   </div>
 
 </div>
@@ -979,9 +1005,15 @@
     const flaskKey = document.getElementById('flaskChem').value;
     const flaskData = flaskDb[flaskKey];
     const flaskEqWt = flaskData.eq;
+    const flaskMw = flaskData.mw;
+    const flaskNFactor = flaskMw / flaskEqWt;
 
     const buretteKey = document.getElementById('buretteChem').value;
-    const buretteName = buretteDb[buretteKey].name;
+    const buretteData = buretteDb[buretteKey];
+    const buretteName = buretteData.name;
+    const buretteMw = buretteData.mw;
+    const buretteEqWt = buretteData.eq;
+    const buretteNFactor = buretteMw / buretteEqWt;
 
     const pairConfig = getPairConfig(buretteKey, flaskKey);
 
@@ -1017,7 +1049,9 @@
       pipettedVol_V1: V1,
       titerVol_V2: V2,
       calculatedBuretteNormality: "N/A",
+      calculatedBuretteMolarity: "N/A",
       calculatedFlaskNormality: "N/A",
+      calculatedFlaskMolarity: "N/A",
       assayPurity: "N/A",
       solubility: "N/A"
     };
@@ -1028,9 +1062,13 @@
         return;
       }
       const calculatedBuretteNormality = (flaskNormality * V1) / V2;
+      const calculatedBuretteMolarity = calculatedBuretteNormality / buretteNFactor;
+
       document.getElementById('outNormBurette').innerText = calculatedBuretteNormality.toFixed(4) + ' N';
+      document.getElementById('outMolBurette').innerText = calculatedBuretteMolarity.toFixed(4) + ' M';
 
       payload.calculatedBuretteNormality = calculatedBuretteNormality.toFixed(4);
+      payload.calculatedBuretteMolarity = calculatedBuretteMolarity.toFixed(4);
 
       resNormBuretteContainer.style.display = 'block';
       resNormFlaskContainer.style.display = 'none';
@@ -1043,9 +1081,13 @@
         return;
       }
       const calculatedFlaskNormality = (buretteNormalityInput * V2) / V1;
+      const calculatedFlaskMolarity = calculatedFlaskNormality / flaskNFactor;
+
       document.getElementById('outNormFlask').innerText = calculatedFlaskNormality.toFixed(4) + ' N';
+      document.getElementById('outMolFlask').innerText = calculatedFlaskMolarity.toFixed(4) + ' M';
 
       payload.calculatedFlaskNormality = calculatedFlaskNormality.toFixed(4);
+      payload.calculatedFlaskMolarity = calculatedFlaskMolarity.toFixed(4);
 
       resNormBuretteContainer.style.display = 'none';
       resNormFlaskContainer.style.display = 'block';
@@ -1058,13 +1100,16 @@
         return;
       }
       const calculatedFlaskNormality = (buretteNormalityInput * V2) / V1;
+      const calculatedFlaskMolarity = calculatedFlaskNormality / flaskNFactor;
       const gramsPerLitre = calculatedFlaskNormality * flaskEqWt;
       const purityPercent = gramsPerLitre / 10;
 
       document.getElementById('outNormFlask').innerText = calculatedFlaskNormality.toFixed(4) + ' N';
+      document.getElementById('outMolFlask').innerText = calculatedFlaskMolarity.toFixed(4) + ' M';
       document.getElementById('outAssay').innerText = purityPercent.toFixed(2) + ' % w/v';
 
       payload.calculatedFlaskNormality = calculatedFlaskNormality.toFixed(4);
+      payload.calculatedFlaskMolarity = calculatedFlaskMolarity.toFixed(4);
       payload.assayPurity = purityPercent.toFixed(2) + ' % w/v';
 
       resNormBuretteContainer.style.display = 'none';
@@ -1078,13 +1123,16 @@
         return;
       }
       const calculatedFlaskNormality = (buretteNormalityInput * V2) / V1;
+      const calculatedFlaskMolarity = calculatedFlaskNormality / flaskNFactor;
       const gramsPerLitre = calculatedFlaskNormality * flaskEqWt;
       const gramsPer100mL = gramsPerLitre / 10;
 
       document.getElementById('outNormFlask').innerText = calculatedFlaskNormality.toFixed(4) + ' N';
+      document.getElementById('outMolFlask').innerText = calculatedFlaskMolarity.toFixed(4) + ' M';
       document.getElementById('outSolubility').innerText = `${gramsPer100mL.toFixed(4)} g / 100 mL (${gramsPerLitre.toFixed(2)} g/L)`;
 
       payload.calculatedFlaskNormality = calculatedFlaskNormality.toFixed(4);
+      payload.calculatedFlaskMolarity = calculatedFlaskMolarity.toFixed(4);
       payload.solubility = `${gramsPer100mL.toFixed(4)} g / 100 mL`;
 
       resNormBuretteContainer.style.display = 'none';
