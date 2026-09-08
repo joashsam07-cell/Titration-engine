@@ -163,13 +163,15 @@
     .radio-label input {
       width: auto;
     }
+    
     .input-mode-toggle {
       display: flex;
       gap: 8px;
       margin-bottom: 12px;
+      flex-wrap: wrap;
     }
     .toggle-btn {
-      flex: 1;
+      flex: 1 1 calc(25% - 8px);
       padding: 10px 6px;
       border: 1px solid var(--border);
       background: #e2e8f0;
@@ -185,15 +187,24 @@
       color: white;
       border-color: var(--secondary);
     }
-    .unknown-note {
-      background-color: #fef3c7;
-      border: 1px solid #fde68a;
-      color: #92400e;
+    
+    .unknown-note, .game-note {
       padding: 10px 12px;
       border-radius: 6px;
       font-size: 0.88rem;
       margin-bottom: 12px;
     }
+    .unknown-note {
+      background-color: #fef3c7;
+      border: 1px solid #fde68a;
+      color: #92400e;
+    }
+    .game-note {
+      background-color: #e0e7ff;
+      border: 1px solid #c7d2fe;
+      color: #3730a3;
+    }
+    
     .chem-info-card {
       display: none;
       background-color: #f8fafc;
@@ -277,11 +288,9 @@
       color: var(--primary);
       margin-top: 6px;
     }
-    .sim-freeze-banner {
+    
+    .sim-freeze-banner, .sim-invalid-banner {
       display: none;
-      background: #fee2e2;
-      border: 1px solid #fca5a5;
-      color: #991b1b;
       padding: 8px 12px;
       border-radius: 6px;
       font-size: 0.82rem;
@@ -289,6 +298,16 @@
       margin-bottom: 12px;
       text-align: center;
       width: 90%;
+    }
+    .sim-freeze-banner {
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+      color: #991b1b;
+    }
+    .sim-invalid-banner {
+      background: #fef2f2;
+      border: 1px solid #ef4444;
+      color: #b91c1c;
     }
 
     .collapsible-btn {
@@ -389,7 +408,6 @@
       font-weight: 600;
     }
     
-    /* New styles for precise molarity/moles readout */
     .ext-detail {
       font-size: 0.9rem;
       color: #475569;
@@ -420,7 +438,7 @@
     <div class="form-group">
       <label for="buretteChem">Select Reagent:</label>
       <div class="input-with-bulb">
-        <select id="buretteChem" onchange="updateBuretteInfo(); updateSimColors();">
+        <select id="buretteChem" onchange="updateBuretteInfo(); checkValidity(); updateSimColors();">
           <option value="naoh">Sodium Hydroxide (NaOH)</option>
           <option value="hcl">Hydrochloric Acid (HCl)</option>
           <option value="hno3">Nitric Acid (HNO3) - Standardisation</option>
@@ -456,7 +474,7 @@
     <div class="form-group">
       <label for="flaskChem">Select Chemical / Sample:</label>
       <div class="input-with-bulb">
-        <select id="flaskChem" onchange="updateFlaskInfo(); updateSimColors();">
+        <select id="flaskChem" onchange="updateFlaskInfo(); checkValidity(); updateSimColors();">
           <option value="oxalic">Oxalic Acid Dihydrate</option>
           <option value="khp">Potassium Hydrogen Phthalate (KHP)</option>
           <option value="na2co3">Sodium Carbonate (Na2CO3)</option>
@@ -484,14 +502,15 @@
     <div class="form-group">
       <label>Specify Sample Amount Method:</label>
       <div class="input-mode-toggle">
-        <div class="toggle-btn active" id="btnModeNorm" onclick="setFlaskInputMode('normality')">By Normality & Pipetted Vol</div>
-        <div class="toggle-btn" id="btnModeWeight" onclick="setFlaskInputMode('weight')">By Mass (g) & Vol</div>
-        <div class="toggle-btn" id="btnModeUnknown" onclick="setFlaskInputMode('unknown')">❓ Don't Know / Unknown</div>
+        <div class="toggle-btn active" id="btnModeExperiment" onclick="setFlaskInputMode('experiment')">🧪 Free Experiment</div>
+        <div class="toggle-btn" id="btnModeWeight" onclick="setFlaskInputMode('weight')">⚖️ By Mass (g)</div>
+        <div class="toggle-btn" id="btnModeGame" onclick="setFlaskInputMode('game')">🎮 Random Game</div>
+        <div class="toggle-btn" id="btnModeUnknown" onclick="setFlaskInputMode('unknown')">❓ Lab / Unknown</div>
       </div>
 
-      <div id="containerFlaskNorm">
+      <div id="containerFlaskExperiment">
         <div class="form-group">
-          <label for="flaskNormality">Known / Target Normality (N):</label>
+          <label for="flaskNormality">Known / Custom Normality (N):</label>
           <input type="number" id="flaskNormality" value="0.1000" step="0.0001">
         </div>
       </div>
@@ -512,6 +531,10 @@
       <div id="containerFlaskUnknown" class="unknown-note" style="display: none;">
         ℹ️ <strong>Unknown Sample Concentration:</strong> Visual simulation is paused. Perform your lab experiment and enter your burette readings manually into Section 4 to calculate exact concentration, purity, or solubility.
       </div>
+      
+      <div id="containerFlaskGame" class="game-note" style="display: none;">
+        🎮 <strong>Game Mode Active:</strong> A secret, random concentration has been generated for the flask. Use the simulator to drop titrant and carefully find the endpoint visual color change!
+      </div>
 
       <div class="form-group">
         <label for="pipettedVol">Volume Pipetted into Conical Flask (V1 in mL):</label>
@@ -524,6 +547,10 @@
     <div class="sim-container" id="simContainer">
       <div class="sim-freeze-banner" id="simFreezeBanner">
         🔒 SIMULATOR FROZEN: Cannot simulate visual endpoint without a known concentration. Please enter your experimental lab burette readings manually into Section 4 below.
+      </div>
+      
+      <div class="sim-invalid-banner" id="simInvalidBanner">
+        ❌ INVALID TITRATION: This specific Titrant-Titrand combination is chemically incompatible or lacks a defined endpoint in this engine.
       </div>
 
       <div class="sim-viewport">
@@ -662,9 +689,11 @@
 <script>
  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzkaI7_sznvCCu7bOIsZb2ZiXZ68pKxNGTX3QN71CA6_htPSX2bi7HgMWoJiJB_0nBX/exec";
 
-  let flaskInputMode = 'normality';
+  let flaskInputMode = 'experiment';
   let simVol = 0.0;
-  let dispensedSinceRefill = 0.0; // Tracks volume within the current 25mL batch
+  let dispensedSinceRefill = 0.0;
+  let gameSecretNormality = 0.1;
+  let isTitrationValid = true;
 
   const buretteDb = {
     naoh: { name: "Sodium Hydroxide (NaOH)", mw: 40.00, eq: 40.00, state: "Solid pellets / Aqueous solution", structure: "Na+ OH-", type: "Primary Base Titrant", mp: "318 °C", bp: "1388 °C", solubility: "1090 g/L (at 20 °C in H2O)", color: "#60a5fa", indicator: "Phenolphthalein (Colourless to Permanent Pale Pink)" },
@@ -699,9 +728,8 @@
     as2o3: { name: "Arsenic Trioxide", formula: "As2O3", mw: 197.84, eq: 49.46, state: "Fine powder (White)", structure: "As2O3 / H3AsO3 in solution", mp: "312 °C", bp: "465 °C", solubility: "20 g/L (at 25 °C in H2O, soluble in NaHCO3/NaOH)", reaction: "As2O3 + 2 I2 + 2 H2O → As2O5 + 4 HI", indicator: "Starch Mucilage (Colourless/Straw-Yellow to Dark Blue-Black)" }
   };
 
-  /* Comprehensive Titration Pair Configuration Map: [Initial Color, Endpoint Color], Indicator Text */
+  /* Comprehensive Titration Pair Configuration Map */
   const pairConfigMap = {
-    // 1. Acid-Base Titrations: NaOH in Burette
     'naoh_oxalic': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Phenolphthalein (Colourless to Permanent Pale Pink)' },
     'naoh_khp': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Phenolphthalein (Colourless to Light Pink)' },
     'naoh_benzoic': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Pink)' },
@@ -710,44 +738,29 @@
     'naoh_acetic': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Phenolphthalein (Colourless to Light Pink)' },
     'naoh_boric': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein + Glycerol (Colourless to Distinct Pink)' },
     'naoh_nh4cl': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Phenolphthalein - Formol Titration (Colourless to Pale Pink)' },
-
-    // 1. Acid-Base Titrations: HCl, HNO3, H2SO4 in Burette
     'hcl_na2co3': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange (Yellow to Faint Reddish-Orange)' },
     'hno3_na2co3': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange (Yellow to Faint Reddish-Orange)' },
     'h2so4_na2co3': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange (Yellow to Faint Reddish-Orange)' },
-
     'hcl_nahco3': { colors: ['#facc15', '#fb923c'], indicator: 'Methyl Orange (Yellow to Pinkish-Orange)' },
     'hno3_nahco3': { colors: ['#facc15', '#fb923c'], indicator: 'Methyl Orange (Yellow to Pinkish-Orange)' },
     'h2so4_nahco3': { colors: ['#facc15', '#fb923c'], indicator: 'Methyl Orange (Yellow to Pinkish-Orange)' },
-
-    'hcl_na_benzoate': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange in Ether-Water Biphasic System (Yellow to Orange-Pink)' },
-    'hno3_na_benzoate': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange in Ether-Water Biphasic System (Yellow to Orange-Pink)' },
-    'h2so4_na_benzoate': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange in Ether-Water Biphasic System (Yellow to Orange-Pink)' },
-
-    'hcl_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless) / Methyl Red (Yellow to Red)' },
-    'hno3_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless) / Methyl Red (Yellow to Red)' },
-    'h2so4_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless) / Methyl Red (Yellow to Red)' },
-
-    // 2. Redox Titrations: Potassium Permanganate (KMnO4)
-    'kmno4_oxalic': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Self-indicator at ~60°C (Colourless to Permanent Faint Pink Tint)' },
-    'kmno4_h2o2': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Self-indicator in Acidic Medium (Colourless to Persistent Pale Pink)' },
-    'kmno4_feso4': { colors: ['#dcfce7', '#f472b6'], indicator: 'Self-indicator in Acidic Medium (Very Pale Green to Lasting Pink Flash)' },
-
-    // 2. Redox Titrations: Sodium Thiosulphate (Na2S2O3) & Iodine (I2) & Arsenic Trioxide (As2O3)
-    'na2s2o3_i2': { colors: ['#1e1b4b', '#e2e8f0'], indicator: 'Starch Mucilage Indicator (Dark Blue-Black to Completely Colourless)' },
-    'na2s2o3_i2_flask': { colors: ['#1e1b4b', '#e2e8f0'], indicator: 'Starch Mucilage Indicator (Dark Blue-Black to Completely Colourless)' },
-    'i2_na2s2o3': { colors: ['#fef08a', '#1e1b4b'], indicator: 'Starch Mucilage Indicator (Straw-Yellow/Colourless to Dark Blue-Black)' },
-    'i2_as2o3': { colors: ['#e2e8f0', '#1e1b4b'], indicator: 'Starch Mucilage Indicator (Colourless/Straw-Yellow to Dark Blue-Black)' },
-
-    // 2. Redox Titrations: Ceric Ammonium Sulphate
+    'hcl_na_benzoate': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange in Ether-Water Biphasic System' },
+    'hno3_na_benzoate': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange in Ether-Water Biphasic System' },
+    'h2so4_na_benzoate': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange in Ether-Water Biphasic System' },
+    'hcl_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless)' },
+    'hno3_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless)' },
+    'h2so4_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless)' },
+    'kmno4_oxalic': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Self-indicator at ~60°C (Colourless to Faint Pink)' },
+    'kmno4_h2o2': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Self-indicator (Colourless to Persistent Pale Pink)' },
+    'kmno4_feso4': { colors: ['#dcfce7', '#f472b6'], indicator: 'Self-indicator (Very Pale Green to Lasting Pink)' },
+    'na2s2o3_i2': { colors: ['#1e1b4b', '#e2e8f0'], indicator: 'Starch Mucilage (Dark Blue-Black to Colourless)' },
+    'na2s2o3_i2_flask': { colors: ['#1e1b4b', '#e2e8f0'], indicator: 'Starch Mucilage (Dark Blue-Black to Colourless)' },
+    'i2_na2s2o3': { colors: ['#fef08a', '#1e1b4b'], indicator: 'Starch Mucilage (Colourless to Dark Blue-Black)' },
+    'i2_as2o3': { colors: ['#e2e8f0', '#1e1b4b'], indicator: 'Starch Mucilage (Colourless to Dark Blue-Black)' },
     'ceric_feso4': { colors: ['#dc2626', '#38bdf8'], indicator: 'Ferroin Indicator (Intense Red to Pale Blue)' },
-
-    // 3. Nonaqueous Titrations: Perchloric Acid (HClO4 in Glacial Acetic Acid)
-    'hclo4_na_benzoate': { colors: ['#6b21a8', '#84cc16'], indicator: 'Crystal Violet (Violet through Blue-Green to Yellowish-Green)' },
+    'hclo4_na_benzoate': { colors: ['#6b21a8', '#84cc16'], indicator: 'Crystal Violet (Violet to Yellowish-Green)' },
     'hclo4_salicylic': { colors: ['#6b21a8', '#10b981'], indicator: 'Crystal Violet (Violet to Emerald Green)' },
-
-    // 4. Complexometric Titrations: Disodium EDTA
-    'edta_znso4': { colors: ['#881337', '#2563eb'], indicator: 'Mordant Black II / EBT at pH 10 Buffer (Wine-Red to Clean Distinct Blue)' }
+    'edta_znso4': { colors: ['#881337', '#2563eb'], indicator: 'Mordant Black II / EBT (Wine-Red to Blue)' }
   };
 
   function getPairConfig(bKey, fKey) {
@@ -755,8 +768,31 @@
     if (pairConfigMap[pairKey]) {
       return pairConfigMap[pairKey];
     }
-    const defaultIndicator = flaskDb[fKey]?.indicator || buretteDb[bKey]?.indicator || 'Visual Endpoint';
-    return { colors: ['#e2e8f0', '#fde047'], indicator: defaultIndicator };
+    return null; // Return null if pair is strictly incompatible
+  }
+  
+  function checkValidity() {
+    const bKey = document.getElementById('buretteChem').value;
+    const fKey = document.getElementById('flaskChem').value;
+    const config = getPairConfig(bKey, fKey);
+    
+    const banner = document.getElementById('simInvalidBanner');
+    const simContainer = document.getElementById('simContainer');
+    const btns = document.querySelectorAll('.sim-controls button:not(.reset)');
+
+    if (!config) {
+      isTitrationValid = false;
+      banner.style.display = 'block';
+      simContainer.classList.add('disabled-sim');
+      btns.forEach(b => b.disabled = true);
+    } else {
+      isTitrationValid = true;
+      banner.style.display = 'none';
+      if(flaskInputMode !== 'unknown') {
+        simContainer.classList.remove('disabled-sim');
+        btns.forEach(b => b.disabled = false);
+      }
+    }
   }
 
   function updateBuretteInfo() {
@@ -796,6 +832,7 @@
 
   /* SIMULATOR FUNCTIONS */
   function updateSimColors() {
+    if(!isTitrationValid) return;
     const bKey = document.getElementById('buretteChem').value;
     const fKey = document.getElementById('flaskChem').value;
     const bColor = buretteDb[bKey].color;
@@ -804,16 +841,16 @@
     document.getElementById('simDrop').setAttribute('stroke', bColor);
 
     const config = getPairConfig(bKey, fKey);
-    if (simVol === 0.0) {
+    if (simVol === 0.0 && config) {
       document.getElementById('simFlaskLiquid').setAttribute('fill', config.colors[0]);
     }
   }
 
   function addTitrant(amt) {
-    if (flaskInputMode === 'unknown') return;
-
+    if (flaskInputMode === 'unknown' || !isTitrationValid) return;
+    
     if (dispensedSinceRefill + amt > 25.0) {
-      alert("Not enough titrant left in the burette for this drop. Please click 'Refill & Continue' to top it up.");
+      alert("Not enough titrant left in the physical burette for this drop. Please click 'Refill & Continue' to top it up.");
       return;
     }
 
@@ -836,7 +873,7 @@
     const N2 = parseFloat(document.getElementById('buretteNormality').value) || 0.1;
     let N1 = 0.1;
 
-    if (flaskInputMode === 'normality') {
+    if (flaskInputMode === 'experiment') {
       N1 = parseFloat(document.getElementById('flaskNormality').value) || 0.1;
     } else if (flaskInputMode === 'weight') {
       const mass = parseFloat(document.getElementById('flaskMass').value) || 0.6303;
@@ -844,6 +881,8 @@
       const flaskKey = document.getElementById('flaskChem').value;
       const eqWt = flaskDb[flaskKey].eq;
       N1 = (mass * 1000) / (eqWt * volMade);
+    } else if (flaskInputMode === 'game') {
+      N1 = gameSecretNormality;
     }
 
     const eqVolume = (N1 * V1) / N2;
@@ -877,43 +916,39 @@
     simVol = 0.0;
     dispensedSinceRefill = 0.0;
     document.getElementById('simDispensed').innerText = "0.00";
-    const liquidElem = document.getElementById('simBuretteLiquid');
-    liquidElem.setAttribute('height', '128');
-    liquidElem.setAttribute('y', '21');
+    refillBurette();
     updateSimColors();
   }
 
   function setFlaskInputMode(mode) {
     flaskInputMode = mode;
-    document.getElementById('btnModeNorm').className = 'toggle-btn' + (mode === 'normality' ? ' active' : '');
-    document.getElementById('btnModeWeight').className = 'toggle-btn' + (mode === 'weight' ? ' active' : '');
-    document.getElementById('btnModeUnknown').className = 'toggle-btn' + (mode === 'unknown' ? ' active' : '');
+    
+    document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('btnMode' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
 
-    document.getElementById('containerFlaskNorm').style.display = (mode === 'normality') ? 'block' : 'none';
+    document.getElementById('containerFlaskExperiment').style.display = (mode === 'experiment') ? 'block' : 'none';
     document.getElementById('containerFlaskWeight').style.display = (mode === 'weight') ? 'block' : 'none';
     document.getElementById('containerFlaskUnknown').style.display = (mode === 'unknown') ? 'block' : 'none';
+    document.getElementById('containerFlaskGame').style.display = (mode === 'game') ? 'block' : 'none';
+    
+    if (mode === 'game') {
+        gameSecretNormality = (Math.random() * (0.50 - 0.01) + 0.01).toFixed(4); 
+        resetSim(); 
+    }
 
-    const simContainer = document.getElementById('simContainer');
     const simFreezeBanner = document.getElementById('simFreezeBanner');
-    const btnAdd1 = document.getElementById('btnSimAdd1');
-    const btnAdd01 = document.getElementById('btnSimAdd01');
-    const btnRefill = document.getElementById('btnSimRefill');
-    const btnReset = document.getElementById('btnSimReset');
+    const btns = document.querySelectorAll('.sim-controls button:not(.reset)');
+    
+    checkValidity();
 
     if (mode === 'unknown') {
-      simContainer.classList.add('disabled-sim');
       simFreezeBanner.style.display = 'block';
-      btnAdd1.disabled = true;
-      btnAdd01.disabled = true;
-      btnRefill.disabled = true;
-      btnReset.disabled = true;
+      btns.forEach(b => b.disabled = true);
     } else {
-      simContainer.classList.remove('disabled-sim');
       simFreezeBanner.style.display = 'none';
-      btnAdd1.disabled = false;
-      btnAdd01.disabled = false;
-      btnRefill.disabled = false;
-      btnReset.disabled = false;
+      if(isTitrationValid) {
+         btns.forEach(b => b.disabled = false);
+      }
     }
   }
 
@@ -1038,17 +1073,20 @@
     const buretteNFactor = buretteMw / buretteEqWt;
 
     const pairConfig = getPairConfig(buretteKey, flaskKey);
+    const indicatorText = pairConfig ? pairConfig.indicator : 'Invalid Titration';
 
     const factorGrams = (flaskEqWt / 1000).toFixed(5);
-    const factorSentence = `📌 Volumetric Factor Standard: 1 mL of 1 N ${buretteName} ≡ ${factorGrams} g of ${flaskData.name} | Indicator: ${pairConfig.indicator}`;
+    const factorSentence = `📌 Volumetric Factor Standard: 1 mL of 1 N ${buretteName} ≡ ${factorGrams} g of ${flaskData.name} | Indicator: ${indicatorText}`;
 
     let flaskNormality = 0;
-    if (flaskInputMode === 'normality') {
+    if (flaskInputMode === 'experiment') {
       flaskNormality = parseFloat(document.getElementById('flaskNormality').value) || 0;
     } else if (flaskInputMode === 'weight') {
       const mass = parseFloat(document.getElementById('flaskMass').value) || 0;
       const volMade = parseFloat(document.getElementById('flaskVolMade').value) || 1;
       flaskNormality = (mass * 1000) / (flaskEqWt * volMade);
+    } else if (flaskInputMode === 'game') {
+      flaskNormality = gameSecretNormality;
     }
 
     const buretteNormalityInput = parseFloat(document.getElementById('buretteNormality').value) || 0;
@@ -1077,8 +1115,8 @@
     };
 
     if (actionType === 'std_burette') {
-      if (flaskInputMode === 'unknown' || flaskNormality <= 0) {
-        alert('Cannot standardize the burette titrant when the conical flask chemical is set to "Unknown". Please specify a known Normality or Mass for the flask titrand.');
+      if (flaskInputMode === 'unknown' || flaskInputMode === 'game' || flaskNormality <= 0) {
+        alert('Cannot standardize the burette titrant when the flask concentration is unknown or randomized. Please switch to Free Experiment or By Mass mode.');
         return;
       }
       
@@ -1180,6 +1218,7 @@
   }
 
   window.onload = function() {
+    checkValidity();
     updateBuretteInfo();
     updateFlaskInfo();
     updateSimColors();
