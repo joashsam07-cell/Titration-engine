@@ -502,15 +502,15 @@
     <div class="form-group">
       <label>Specify Sample Amount Method:</label>
       <div class="input-mode-toggle">
-        <div class="toggle-btn active" id="btnModeExperiment" onclick="setFlaskInputMode('experiment')">🧪 Free Experiment</div>
-        <div class="toggle-btn" id="btnModeWeight" onclick="setFlaskInputMode('weight')">⚖️ By Mass (g)</div>
+        <div class="toggle-btn active" id="btnModeNorm" onclick="setFlaskInputMode('normality')">By Normality & Pipetted Vol</div>
+        <div class="toggle-btn" id="btnModeWeight" onclick="setFlaskInputMode('weight')">By Mass (g) & Vol</div>
+        <div class="toggle-btn" id="btnModeUnknown" onclick="setFlaskInputMode('unknown')">❓ Don't Know / Unknown</div>
         <div class="toggle-btn" id="btnModeGame" onclick="setFlaskInputMode('game')">🎮 Random Game</div>
-        <div class="toggle-btn" id="btnModeUnknown" onclick="setFlaskInputMode('unknown')">❓ Lab / Unknown</div>
       </div>
 
-      <div id="containerFlaskExperiment">
+      <div id="containerFlaskNorm">
         <div class="form-group">
-          <label for="flaskNormality">Known / Custom Normality (N):</label>
+          <label for="flaskNormality">Known / Target Normality (N):</label>
           <input type="number" id="flaskNormality" value="0.1000" step="0.0001">
         </div>
       </div>
@@ -529,11 +529,17 @@
       </div>
 
       <div id="containerFlaskUnknown" class="unknown-note" style="display: none;">
-        ℹ️ <strong>Unknown Sample Concentration:</strong> Visual simulation is paused. Perform your lab experiment and enter your burette readings manually into Section 4 to calculate exact concentration, purity, or solubility.
+        ℹ️ <strong>Unknown Sample Concentration:</strong> Visual simulation is paused. Perform your physical lab experiment and enter your burette readings manually into Section 4 to calculate exact concentration, purity, or solubility.
       </div>
       
       <div id="containerFlaskGame" class="game-note" style="display: none;">
-        🎮 <strong>Game Mode Active:</strong> A secret, random concentration has been generated for the flask. Use the simulator to drop titrant and carefully find the endpoint visual color change!
+        🎮 <strong>Game Mode Active:</strong> A secret, random concentration has been generated for the flask. Use the simulator to drop titrant and carefully find the endpoint visual color change!<br><br>
+        <div style="margin-top: 10px; background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #c7d2fe;">
+          <label for="gameUserReading" style="display: inline-block; margin-right: 10px; color: #334155;">Your Titration Reading (mL):</label>
+          <input type="number" id="gameUserReading" step="0.05" style="width: 100px; display: inline-block; padding: 6px;">
+          <button class="btn-action" style="padding: 6px 12px; font-size: 0.85rem; margin-left: 10px; width: auto;" onclick="checkGameResult()">Check Result</button>
+          <div id="gameResultDisplay" style="margin-top: 10px; font-size: 0.95rem; color: #334155;"></div>
+        </div>
       </div>
 
       <div class="form-group">
@@ -689,7 +695,7 @@
 <script>
  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzkaI7_sznvCCu7bOIsZb2ZiXZ68pKxNGTX3QN71CA6_htPSX2bi7HgMWoJiJB_0nBX/exec";
 
-  let flaskInputMode = 'experiment';
+  let flaskInputMode = 'normality';
   let simVol = 0.0;
   let dispensedSinceRefill = 0.0;
   let gameSecretNormality = 0.1;
@@ -873,7 +879,7 @@
     const N2 = parseFloat(document.getElementById('buretteNormality').value) || 0.1;
     let N1 = 0.1;
 
-    if (flaskInputMode === 'experiment') {
+    if (flaskInputMode === 'normality') {
       N1 = parseFloat(document.getElementById('flaskNormality').value) || 0.1;
     } else if (flaskInputMode === 'weight') {
       const mass = parseFloat(document.getElementById('flaskMass').value) || 0.6303;
@@ -923,16 +929,20 @@
   function setFlaskInputMode(mode) {
     flaskInputMode = mode;
     
-    document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById('btnMode' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
+    document.getElementById('btnModeNorm').className = 'toggle-btn' + (mode === 'normality' ? ' active' : '');
+    document.getElementById('btnModeWeight').className = 'toggle-btn' + (mode === 'weight' ? ' active' : '');
+    document.getElementById('btnModeUnknown').className = 'toggle-btn' + (mode === 'unknown' ? ' active' : '');
+    document.getElementById('btnModeGame').className = 'toggle-btn' + (mode === 'game' ? ' active' : '');
 
-    document.getElementById('containerFlaskExperiment').style.display = (mode === 'experiment') ? 'block' : 'none';
+    document.getElementById('containerFlaskNorm').style.display = (mode === 'normality') ? 'block' : 'none';
     document.getElementById('containerFlaskWeight').style.display = (mode === 'weight') ? 'block' : 'none';
     document.getElementById('containerFlaskUnknown').style.display = (mode === 'unknown') ? 'block' : 'none';
     document.getElementById('containerFlaskGame').style.display = (mode === 'game') ? 'block' : 'none';
     
     if (mode === 'game') {
         gameSecretNormality = (Math.random() * (0.50 - 0.01) + 0.01).toFixed(4); 
+        document.getElementById('gameResultDisplay').innerHTML = '';
+        document.getElementById('gameUserReading').value = '';
         resetSim(); 
     }
 
@@ -950,6 +960,39 @@
          btns.forEach(b => b.disabled = false);
       }
     }
+  }
+
+  function checkGameResult() {
+    const userV2 = parseFloat(document.getElementById('gameUserReading').value) || 0;
+    if (userV2 <= 0) {
+      alert('Please enter your observed burette reading first.');
+      return;
+    }
+    
+    const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
+    const N2 = parseFloat(document.getElementById('buretteNormality').value) || 0.1;
+    const trueN1 = parseFloat(gameSecretNormality);
+    
+    const trueV2 = (trueN1 * V1) / N2;
+    const userN1 = (N2 * userV2) / V1;
+    
+    const errorPercent = Math.abs((userN1 - trueN1) / trueN1) * 100;
+    let feedback = "";
+    
+    if (errorPercent <= 1.0) {
+      feedback = `🎯 <strong>Excellent!</strong> Your reading is extremely accurate.`;
+    } else if (errorPercent <= 5.0) {
+      feedback = `✅ <strong>Good job.</strong> Your reading is close.`;
+    } else {
+      feedback = `❌ <strong>Needs practice.</strong> You overshot or undershot the endpoint.`;
+    }
+    
+    document.getElementById('gameResultDisplay').innerHTML = `
+      ${feedback}<br>
+      <strong>Your Calculated Flask Normality:</strong> ${userN1.toFixed(4)} N<br>
+      <strong>Actual Secret Normality:</strong> ${trueN1.toFixed(4)} N<br>
+      <strong>Expected Exact Reading:</strong> ${trueV2.toFixed(2)} mL
+    `;
   }
 
   function toggleTable() {
@@ -1079,7 +1122,7 @@
     const factorSentence = `📌 Volumetric Factor Standard: 1 mL of 1 N ${buretteName} ≡ ${factorGrams} g of ${flaskData.name} | Indicator: ${indicatorText}`;
 
     let flaskNormality = 0;
-    if (flaskInputMode === 'experiment') {
+    if (flaskInputMode === 'normality') {
       flaskNormality = parseFloat(document.getElementById('flaskNormality').value) || 0;
     } else if (flaskInputMode === 'weight') {
       const mass = parseFloat(document.getElementById('flaskMass').value) || 0;
