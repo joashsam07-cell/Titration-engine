@@ -38,7 +38,7 @@
     "author": {
       "@type": "Person",
       "name": "Joash Sam",
-      "alumniOf": {
+      "StudentOf": {
         "@type": "Organization",
         "name": "MVP Samaj's College of Pharmacy, Nashik"
       },
@@ -426,329 +426,382 @@
 
 <div class="container">
   
-  <!-- TITRATION ENGINE CARD -->
+  <!-- MAIN HEADER -->
   <div class="card">
-    <div class="header-box">
-      <h2>🧪 Universal Titration Engine</h2>
+    <div class="header-box" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
+      <h2>Universal Dynamic Titration Calculator</h2>
       <span class="author-tag">by Joash Sam</span>
     </div>
-    
-    <!-- 1. BURETTE SETUP -->
-    <div class="section-title">1. In Burette (Titrant)</div>
-    
-    <div class="form-group">
-      <label for="buretteChem">Select Reagent:</label>
-      <div class="input-with-bulb">
-        <select id="buretteChem" onchange="updateBuretteInfo(); checkValidity(); updateSimColors();">
-          <option value="naoh">Sodium Hydroxide (NaOH)</option>
-          <option value="hcl">Hydrochloric Acid (HCl)</option>
-          <option value="hno3">Nitric Acid (HNO3) - Standardisation</option>
-          <option value="h2so4">Sulphuric Acid (H2SO4) - Standardisation</option>
-          <option value="kmno4">Potassium Permanganate (KMnO4)</option>
-          <option value="na2s2o3">Sodium Thiosulphate (Na2S2O3)</option>
-          <option value="i2">Iodine Solution (I2)</option>
-          <option value="hclo4">Perchloric Acid (HClO4)</option>
-          <option value="ceric">Ceric Ammonium Sulphate</option>
-          <option value="edta">Disodium EDTA</option>
-        </select>
-        <button type="button" class="bulb-btn" onclick="toggleInfo('buretteInfoCard')" title="View Chemical Information">💡</button>
-      </div>
+  </div>
+
+  <!-- MAIN NAVIGATION TAB TOGGLE -->
+  <div class="card" style="padding: 10px 24px;">
+    <div class="input-mode-toggle" style="margin-bottom: 0;">
+      <div class="toggle-btn active" id="tabTitration" onclick="switchAppMode('titration')" style="font-size: 1rem; padding: 12px;">🧪 Titration Engine</div>
+      <div class="toggle-btn" id="tabReagent" onclick="switchAppMode('reagent')" style="font-size: 1rem; padding: 12px;">⚖️ Reagent Maker</div>
     </div>
+  </div>
 
-    <div class="form-group">
-      <label>Working Concentration Status:</label>
-      <div class="radio-group">
-        <label class="radio-label"><input type="radio" name="buretteStatus" value="estimated" checked> Estimated (~N)</label>
-        <label class="radio-label"><input type="radio" name="buretteStatus" value="standardized"> Standardized (Exact N)</label>
-      </div>
-    </div>
-
-    <div class="chem-info-card" id="buretteInfoCard"></div>
-
-    <div class="form-group">
-      <label for="buretteNormality">Burette Normality (N):</label>
-      <input type="number" id="buretteNormality" value="0.1000" step="0.0001" placeholder="e.g. 0.1000">
-    </div>
-
-    <!-- 2. CONICAL FLASK SETUP -->
-    <div class="section-title">2. In Conical Flask (Titrand)</div>
-    <div class="form-group">
-      <label for="flaskChem">Select Chemical / Sample:</label>
-      <div class="input-with-bulb">
-        <select id="flaskChem" onchange="updateFlaskInfo(); checkValidity(); updateSimColors();">
-          <option value="oxalic">Oxalic Acid Dihydrate</option>
-          <option value="khp">Potassium Hydrogen Phthalate (KHP)</option>
-          <option value="na2co3">Sodium Carbonate (Na2CO3)</option>
-          <option value="benzoic">Benzoic Acid</option>
-          <option value="salicylic">Salicylic Acid</option>
-          <option value="aspirin">Acetylsalicylic Acid (Aspirin)</option>
-          <option value="nahco3">Sodium Bicarbonate (NaHCO3)</option>
-          <option value="nh4cl">Ammonium Chloride (NH4Cl)</option>
-          <option value="acetic">Acetic Acid</option>
-          <option value="h2o2">Hydrogen Peroxide (H2O2)</option>
-          <option value="feso4">Ferrous Sulphate (FeSO4)</option>
-          <option value="na_benzoate">Sodium Benzoate</option>
-          <option value="boric">Boric Acid</option>
-          <option value="naoh_flask">Sodium Hydroxide Solution (Standardisation)</option>
-          <option value="znso4">Zinc Sulphate Heptahydrate (Complexometric)</option>
-          <option value="i2_flask">Iodine Solution (I2)</option>
-          <option value="as2o3">Arsenic Trioxide (As2O3)</option>
-        </select>
-        <button type="button" class="bulb-btn" onclick="toggleInfo('flaskInfoCard')" title="View Chemical Information">💡</button>
-      </div>
-    </div>
-
-    <div class="chem-info-card" id="flaskInfoCard"></div>
-
-    <div class="form-group">
-      <label>Specify Sample Amount Method:</label>
-      <div class="input-mode-toggle">
-        <div class="toggle-btn active" id="btnModeNormality" onclick="setFlaskInputMode('normality')">By Normality & Pipetted Vol</div>
-        <div class="toggle-btn" id="btnModeWeight" onclick="setFlaskInputMode('weight')">By Mass (g) & Vol</div>
-        <div class="toggle-btn" id="btnModeUnknown" onclick="setFlaskInputMode('unknown')">❓ Don't Know / Unknown</div>
-        <div class="toggle-btn" id="btnModeGame" onclick="setFlaskInputMode('game')">🎮 Random Game</div>
-      </div>
-
-      <div id="containerFlaskNormality">
-        <div class="form-group">
-          <label for="flaskNormality">Known / Target Normality (N):</label>
-          <input type="number" id="flaskNormality" value="0.1000" step="0.0001">
-        </div>
-      </div>
-
-      <div id="containerFlaskWeight" style="display: none;">
-        <div class="grid-2 form-group">
-          <div>
-            <label for="flaskMass">Mass Weighed (g):</label>
-            <input type="number" id="flaskMass" value="0.6303" step="0.0001">
-          </div>
-          <div>
-            <label for="flaskVolMade">Total Vol Made Up In (mL):</label>
-            <input type="number" id="flaskVolMade" value="100" step="1">
-          </div>
-        </div>
-      </div>
-
-      <div id="containerFlaskUnknown" class="unknown-note" style="display: none;">
-        ℹ️ <strong>Unknown Sample Concentration:</strong> Visual simulation is paused. Perform your physical lab experiment and enter your burette readings manually into Section 4 to calculate exact concentration, purity, or solubility.
-      </div>
+  <!-- APP 1: TITRATION ENGINE -->
+  <div id="titrationApp">
+    <div class="card">
       
-      <div id="containerFlaskGame" class="game-note" style="display: none;">
-        🎮 <strong>Game Mode Active:</strong> A secret, random concentration has been generated for the flask. Use the simulator to drop titrant and carefully find the endpoint visual color change!<br><br>
-        <div style="margin-top: 10px; background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #c7d2fe;">
-          <label for="gameUserReading" style="display: inline-block; margin-right: 10px; color: #334155;">Your Titration Reading (mL):</label>
-          <input type="number" id="gameUserReading" step="0.05" style="width: 100px; display: inline-block; padding: 6px;">
-          <button class="btn-action" style="padding: 6px 12px; font-size: 0.85rem; margin-left: 10px; width: auto;" onclick="checkGameResult()">Check Result</button>
-          <div id="gameResultDisplay" style="margin-top: 10px; font-size: 0.95rem; color: #334155;"></div>
+      <!-- 1. BURETTE SETUP -->
+      <div class="section-title">1. In Burette (Titrant)</div>
+      
+      <div class="form-group">
+        <label for="buretteChem">Select Reagent:</label>
+        <div class="input-with-bulb">
+          <select id="buretteChem" onchange="updateBuretteInfo(); checkValidity(); updateSimColors();">
+            <option value="naoh">Sodium Hydroxide (NaOH)</option>
+            <option value="hcl">Hydrochloric Acid (HCl)</option>
+            <option value="hno3">Nitric Acid (HNO3) - Standardisation</option>
+            <option value="h2so4">Sulphuric Acid (H2SO4) - Standardisation</option>
+            <option value="kmno4">Potassium Permanganate (KMnO4)</option>
+            <option value="na2s2o3">Sodium Thiosulphate (Na2S2O3)</option>
+            <option value="i2">Iodine Solution (I2)</option>
+            <option value="hclo4">Perchloric Acid (HClO4)</option>
+            <option value="ceric">Ceric Ammonium Sulphate</option>
+            <option value="edta">Disodium EDTA</option>
+          </select>
+          <button type="button" class="bulb-btn" onclick="toggleInfo('buretteInfoCard')" title="View Chemical Information">💡</button>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="pipettedVol">Volume Pipetted into Conical Flask (V1 in mL):</label>
-        <input type="number" id="pipettedVol" value="10.0" step="0.1">
-      </div>
-    </div>
-
-    <!-- 3. INTERACTIVE SIMULATOR PANEL -->
-    <div class="section-title">3. Interactive Titration Simulator</div>
-    <div class="sim-container" id="simContainer">
-      <div class="sim-freeze-banner" id="simFreezeBanner">
-        🔒 SIMULATOR FROZEN: Cannot simulate visual endpoint without a known concentration. Please enter your experimental lab burette readings manually into Section 4 below.
-      </div>
-      
-      <div class="sim-invalid-banner" id="simInvalidBanner">
-        ❌ INVALID TITRATION: This specific Titrant-Titrand combination is chemically incompatible or lacks a defined endpoint in this engine.
-      </div>
-
-      <div class="sim-viewport">
-        <svg width="200" height="250" viewBox="0 0 200 250">
-          <!-- Stand -->
-          <rect x="20" y="235" width="160" height="8" fill="#64748b" rx="2"/>
-          <rect x="40" y="20" width="6" height="215" fill="#94a3b8"/>
-          <rect x="40" y="70" width="55" height="6" fill="#64748b"/>
-          <rect x="40" y="160" width="55" height="6" fill="#64748b"/>
-
-          <!-- Burette Body -->
-          <rect x="90" y="20" width="14" height="130" fill="none" stroke="#334155" stroke-width="2"/>
-          <!-- Burette Liquid -->
-          <rect id="simBuretteLiquid" x="91" y="21" width="12" height="128" fill="#60a5fa" opacity="0.85"/>
-          <!-- Stopcock -->
-          <circle cx="97" cy="153" r="4" fill="#1e293b"/>
-          <line x1="97" y1="157" x2="97" y2="170" stroke="#334155" stroke-width="2"/>
-
-          <!-- Dripping Animation Line -->
-          <line id="simDrop" x1="97" y1="170" x2="97" y2="195" stroke="#60a5fa" stroke-width="2" stroke-dasharray="3,3" opacity="0"/>
-
-          <!-- Flask Body -->
-          <polygon points="97,190 70,230 124,230" fill="none" stroke="#334155" stroke-width="2" stroke-linejoin="round"/>
-          <rect x="92" y="180" width="10" height="12" fill="none" stroke="#334155" stroke-width="2"/>
-          <!-- Flask Solution -->
-          <polygon id="simFlaskLiquid" points="97,205 73,228 121,228" fill="#e2e8f0" opacity="0.8"/>
-        </svg>
-      </div>
-
-      <div class="sim-controls">
-        <button type="button" class="sim-btn" id="btnSimAdd1" onclick="addTitrant(1.0)">+1.0 mL</button>
-        <button type="button" class="sim-btn" id="btnSimAdd01" onclick="addTitrant(0.1)">+0.1 mL (Drop)</button>
-        <button type="button" class="sim-btn refill" id="btnSimRefill" onclick="refillBurette()">Refill & Continue</button>
-        <button type="button" class="sim-btn reset" id="btnSimReset" onclick="resetSim()">Reset Liquid</button>
-      </div>
-      <div class="sim-readout">Burette Dispensed Volume: <span id="simDispensed">0.00</span> mL</div>
-    </div>
-
-    <!-- 4. TITRATION READINGS TABLE -->
-    <button type="button" class="collapsible-btn" id="toggleTableBtn" onclick="toggleTable()">
-      <span>4. 📋 Feed Burette Readings (Click to Expand)</span>
-    </button>
-    
-    <div class="content-table" id="tableContainer">
-      <table id="readingTable">
-        <thead>
-          <tr>
-            <th>Trial</th>
-            <th>Initial Reading (mL)</th>
-            <th>Final Reading (mL)</th>
-            <th>Titer (V2 mL)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td><input type="number" class="b-init" value="0.00" step="0.05" oninput="updateTiter(this)"></td>
-            <td><input type="number" class="b-final" value="10.00" step="0.05" oninput="updateTiter(this)"></td>
-            <td class="titer-val">10.00</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td><input type="number" class="b-init" value="0.00" step="0.05" oninput="updateTiter(this)"></td>
-            <td><input type="number" class="b-final" value="9.95" step="0.05" oninput="updateTiter(this)"></td>
-            <td class="titer-val">9.95</td>
-          </tr>
-        </tbody>
-      </table>
-      <button class="btn-row" onclick="addRow()">+ Add Trial Row</button>
-
-      <div class="form-group" style="margin-top: 15px;">
-        <label>Calculation Basis for Titration Reading (V2):</label>
+        <label>Working Concentration Status:</label>
         <div class="radio-group">
-          <label class="radio-label"><input type="radio" name="calcMethod" value="mean" checked> Mean Reading (Average)</label>
-          <label class="radio-label"><input type="radio" name="calcMethod" value="concordant"> Concordant Reading (Identical Repeated Value)</label>
+          <label class="radio-label"><input type="radio" name="buretteStatus" value="estimated" checked> Estimated (~N)</label>
+          <label class="radio-label"><input type="radio" name="buretteStatus" value="standardized"> Standardized (Exact N)</label>
         </div>
       </div>
+
+      <div class="chem-info-card" id="buretteInfoCard"></div>
+
+      <div class="form-group">
+        <label for="buretteNormality">Burette Normality (N):</label>
+        <input type="number" id="buretteNormality" value="0.1000" step="0.0001" placeholder="e.g. 0.1000">
+      </div>
+
+      <!-- 2. CONICAL FLASK SETUP -->
+      <div class="section-title">2. In Conical Flask (Titrand)</div>
+      <div class="form-group">
+        <label for="flaskChem">Select Chemical / Sample:</label>
+        <div class="input-with-bulb">
+          <select id="flaskChem" onchange="updateFlaskInfo(); checkValidity(); updateSimColors();">
+            <option value="oxalic">Oxalic Acid Dihydrate</option>
+            <option value="khp">Potassium Hydrogen Phthalate (KHP)</option>
+            <option value="na2co3">Sodium Carbonate (Na2CO3)</option>
+            <option value="benzoic">Benzoic Acid</option>
+            <option value="salicylic">Salicylic Acid</option>
+            <option value="aspirin">Acetylsalicylic Acid (Aspirin)</option>
+            <option value="nahco3">Sodium Bicarbonate (NaHCO3)</option>
+            <option value="nh4cl">Ammonium Chloride (NH4Cl)</option>
+            <option value="acetic">Acetic Acid</option>
+            <option value="h2o2">Hydrogen Peroxide (H2O2)</option>
+            <option value="feso4">Ferrous Sulphate (FeSO4)</option>
+            <option value="na_benzoate">Sodium Benzoate</option>
+            <option value="boric">Boric Acid</option>
+            <option value="naoh_flask">Sodium Hydroxide Solution (Standardisation)</option>
+            <option value="znso4">Zinc Sulphate Heptahydrate (Complexometric)</option>
+            <option value="i2_flask">Iodine Solution (I2)</option>
+            <option value="as2o3">Arsenic Trioxide (As2O3)</option>
+          </select>
+          <button type="button" class="bulb-btn" onclick="toggleInfo('flaskInfoCard')" title="View Chemical Information">💡</button>
+        </div>
+      </div>
+
+      <div class="chem-info-card" id="flaskInfoCard"></div>
+
+      <div class="form-group">
+        <label>Specify Sample Amount Method:</label>
+        <div class="input-mode-toggle">
+          <div class="toggle-btn active" id="btnModeNormality" onclick="setFlaskInputMode('normality')">By Normality & Pipetted Vol</div>
+          <div class="toggle-btn" id="btnModeWeight" onclick="setFlaskInputMode('weight')">By Mass (g) & Vol</div>
+          <div class="toggle-btn" id="btnModeUnknown" onclick="setFlaskInputMode('unknown')">❓ Don't Know / Unknown</div>
+          <div class="toggle-btn" id="btnModeGame" onclick="setFlaskInputMode('game')">🎮 Random Game</div>
+        </div>
+
+        <div id="containerFlaskNormality">
+          <div class="form-group">
+            <label for="flaskNormality">Known / Target Normality (N):</label>
+            <input type="number" id="flaskNormality" value="0.1000" step="0.0001">
+          </div>
+        </div>
+
+        <div id="containerFlaskWeight" style="display: none;">
+          <div class="grid-2 form-group">
+            <div>
+              <label for="flaskMass">Mass Weighed (g):</label>
+              <input type="number" id="flaskMass" value="0.6303" step="0.0001">
+            </div>
+            <div>
+              <label for="flaskVolMade">Total Vol Made Up In (mL):</label>
+              <input type="number" id="flaskVolMade" value="100" step="1">
+            </div>
+          </div>
+        </div>
+
+        <div id="containerFlaskUnknown" class="unknown-note" style="display: none;">
+          ℹ️ <strong>Unknown Sample Concentration:</strong> Visual simulation is paused. Perform your physical lab experiment and enter your burette readings manually into Section 4 to calculate exact concentration, purity, or solubility.
+        </div>
+        
+        <div id="containerFlaskGame" class="game-note" style="display: none;">
+          🎮 <strong>Game Mode Active:</strong> A secret, random concentration has been generated for the flask. Use the simulator to drop titrant and carefully find the endpoint visual color change!<br><br>
+          <div style="margin-top: 10px; background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #c7d2fe;">
+            <label for="gameUserReading" style="display: inline-block; margin-right: 10px; color: #334155;">Your Titration Reading (mL):</label>
+            <input type="number" id="gameUserReading" step="0.05" style="width: 100px; display: inline-block; padding: 6px;">
+            <button class="btn-action" style="padding: 6px 12px; font-size: 0.85rem; margin-left: 10px; width: auto;" onclick="checkGameResult()">Check Result</button>
+            <div id="gameResultDisplay" style="margin-top: 10px; font-size: 0.95rem; color: #334155;"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="pipettedVol">Volume Pipetted into Conical Flask (V1 in mL):</label>
+          <input type="number" id="pipettedVol" value="10.0" step="0.1">
+        </div>
+      </div>
+
+      <!-- 3. INTERACTIVE SIMULATOR PANEL -->
+      <div class="section-title">3. Interactive Titration Simulator</div>
+      <div class="sim-container" id="simContainer">
+        <div class="sim-freeze-banner" id="simFreezeBanner">
+          🔒 SIMULATOR FROZEN: Cannot simulate visual endpoint without a known concentration. Please enter your experimental lab burette readings manually into Section 4 below.
+        </div>
+        
+        <div class="sim-invalid-banner" id="simInvalidBanner">
+          ❌ INVALID TITRATION: This specific Titrant-Titrand combination is chemically incompatible or lacks a defined endpoint in this engine.
+        </div>
+
+        <div class="sim-viewport">
+          <svg width="200" height="250" viewBox="0 0 200 250">
+            <!-- Stand -->
+            <rect x="20" y="235" width="160" height="8" fill="#64748b" rx="2"/>
+            <rect x="40" y="20" width="6" height="215" fill="#94a3b8"/>
+            <rect x="40" y="70" width="55" height="6" fill="#64748b"/>
+            <rect x="40" y="160" width="55" height="6" fill="#64748b"/>
+
+            <!-- Burette Body -->
+            <rect x="90" y="20" width="14" height="130" fill="none" stroke="#334155" stroke-width="2"/>
+            <!-- Burette Liquid -->
+            <rect id="simBuretteLiquid" x="91" y="21" width="12" height="128" fill="#60a5fa" opacity="0.85"/>
+            <!-- Stopcock -->
+            <circle cx="97" cy="153" r="4" fill="#1e293b"/>
+            <line x1="97" y1="157" x2="97" y2="170" stroke="#334155" stroke-width="2"/>
+
+            <!-- Dripping Animation Line -->
+            <line id="simDrop" x1="97" y1="170" x2="97" y2="195" stroke="#60a5fa" stroke-width="2" stroke-dasharray="3,3" opacity="0"/>
+
+            <!-- Flask Body -->
+            <polygon points="97,190 70,230 124,230" fill="none" stroke="#334155" stroke-width="2" stroke-linejoin="round"/>
+            <rect x="92" y="180" width="10" height="12" fill="none" stroke="#334155" stroke-width="2"/>
+            <!-- Flask Solution -->
+            <polygon id="simFlaskLiquid" points="97,205 73,228 121,228" fill="#e2e8f0" opacity="0.8"/>
+          </svg>
+        </div>
+
+        <div class="sim-controls">
+          <button type="button" class="sim-btn" id="btnSimAdd1" onclick="addTitrant(1.0)">+1.0 mL</button>
+          <button type="button" class="sim-btn" id="btnSimAdd01" onclick="addTitrant(0.1)">+0.1 mL (Drop)</button>
+          <button type="button" class="sim-btn refill" id="btnSimRefill" onclick="refillBurette()">Refill & Continue</button>
+          <button type="button" class="sim-btn reset" id="btnSimReset" onclick="resetSim()">Reset Liquid</button>
+        </div>
+        <div class="sim-readout">Burette Dispensed Volume: <span id="simDispensed">0.00</span> mL</div>
+      </div>
+
+      <!-- 4. TITRATION READINGS TABLE -->
+      <button type="button" class="collapsible-btn" id="toggleTableBtn" onclick="toggleTable()">
+        <span>4. 📋 Feed Burette Readings (Click to Expand)</span>
+      </button>
+      
+      <div class="content-table" id="tableContainer">
+        <table id="readingTable">
+          <thead>
+            <tr>
+              <th>Trial</th>
+              <th>Initial Reading (mL)</th>
+              <th>Final Reading (mL)</th>
+              <th>Titer (V2 mL)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td><input type="number" class="b-init" value="0.00" step="0.05" oninput="updateTiter(this)"></td>
+              <td><input type="number" class="b-final" value="10.00" step="0.05" oninput="updateTiter(this)"></td>
+              <td class="titer-val">10.00</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><input type="number" class="b-init" value="0.00" step="0.05" oninput="updateTiter(this)"></td>
+              <td><input type="number" class="b-final" value="9.95" step="0.05" oninput="updateTiter(this)"></td>
+              <td class="titer-val">9.95</td>
+            </tr>
+          </tbody>
+        </table>
+        <button class="btn-row" onclick="addRow()">+ Add Trial Row</button>
+
+        <div class="form-group" style="margin-top: 15px;">
+          <label>Calculation Basis for Titration Reading (V2):</label>
+          <div class="radio-group">
+            <label class="radio-label"><input type="radio" name="calcMethod" value="mean" checked> Mean Reading (Average)</label>
+            <label class="radio-label"><input type="radio" name="calcMethod" value="concordant"> Concordant Reading (Identical Repeated Value)</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. DYNAMIC TARGET SELECTION -->
+      <div class="section-title" style="margin-top: 20px;">5. Choose Target Calculation</div>
+      <div class="btn-action-grid">
+        <button class="btn-action" onclick="calculate('std_burette')">Find Normality of Burette Titrant</button>
+        <button class="btn-action" onclick="calculate('norm_flask')">Find Normality of Flask Titrand</button>
+        <button class="btn-action" onclick="calculate('assay')">Calculate Assay / Purity (% w/v)</button>
+        <button class="btn-action" onclick="calculate('solubility')">Calculate Solubility (g/100 mL & g/L)</button>
+      </div>
+
     </div>
 
-    <!-- 5. DYNAMIC TARGET SELECTION -->
-    <div class="section-title" style="margin-top: 20px;">5. Choose Target Calculation</div>
-    <div class="btn-action-grid">
-      <button class="btn-action" onclick="calculate('std_burette')">Find Normality of Burette Titrant</button>
-      <button class="btn-action" onclick="calculate('norm_flask')">Find Normality of Flask Titrand</button>
-      <button class="btn-action" onclick="calculate('assay')">Calculate Assay / Purity (% w/v)</button>
-      <button class="btn-action" onclick="calculate('solubility')">Calculate Solubility (g/100 mL & g/L)</button>
-    </div>
+    <!-- RESULTS DISPLAY CARD -->
+    <div class="card results-card" id="resultsBox">
+      <h3>Calculated Results</h3>
+      
+      <div class="form-group">
+        <label id="lblTiterType">Selected Burette Reading (Titer Volume - V2):</label>
+        <div class="res-val" id="outMeanTiter">0.00 mL</div>
+      </div>
 
+      <div class="form-group" id="resNormBuretteContainer">
+        <label id="lblNormBurette">Exact Concentration & Entities (Burette Titrant):</label>
+        <div class="res-val" id="outNormBurette">0.0000 N</div>
+        <div class="ext-detail" id="outMolarityBurette"></div>
+        <div class="ext-subdetail" id="outMolesBurette"></div>
+      </div>
+
+      <div class="form-group" id="resNormFlaskContainer">
+        <label id="lblNormFlask">Exact Concentration & Entities (Flask Titrand):</label>
+        <div class="res-val" id="outNormFlask">0.0000 N</div>
+        <div class="ext-detail" id="outMolarityFlask"></div>
+        <div class="ext-subdetail" id="outMolesFlask"></div>
+      </div>
+
+      <div class="form-group" id="resAssayContainer" style="display: none;">
+        <label>Percentage Purity / Assay:</label>
+        <div class="res-val" id="outAssay">0.0000 % w/v</div>
+      </div>
+
+      <div class="form-group" id="resSolubilityContainer" style="display: none;">
+        <label>Solubility Concentration:</label>
+        <div class="res-val" id="outSolubility">0.0000 g / 100 mL</div>
+      </div>
+
+      <div class="factor-box" id="factorSentenceBox"></div>
+      <div class="sync-status" id="syncStatus"></div>
+    </div>
   </div>
 
-  <!-- RESULTS DISPLAY CARD -->
-  <div class="card results-card" id="resultsBox">
-    <h3>Calculated Results</h3>
-    
-    <div class="form-group">
-      <label id="lblTiterType">Selected Burette Reading (Titer Volume - V2):</label>
-      <div class="res-val" id="outMeanTiter">0.00 mL</div>
-    </div>
-
-    <div class="form-group" id="resNormBuretteContainer">
-      <label id="lblNormBurette">Exact Concentration & Entities (Burette Titrant):</label>
-      <div class="res-val" id="outNormBurette">0.0000 N</div>
-      <div class="ext-detail" id="outMolarityBurette"></div>
-      <div class="ext-subdetail" id="outMolesBurette"></div>
-    </div>
-
-    <div class="form-group" id="resNormFlaskContainer">
-      <label id="lblNormFlask">Exact Concentration & Entities (Flask Titrand):</label>
-      <div class="res-val" id="outNormFlask">0.0000 N</div>
-      <div class="ext-detail" id="outMolarityFlask"></div>
-      <div class="ext-subdetail" id="outMolesFlask"></div>
-    </div>
-
-    <div class="form-group" id="resAssayContainer" style="display: none;">
-      <label>Percentage Purity / Assay:</label>
-      <div class="res-val" id="outAssay">0.0000 % w/v</div>
-    </div>
-
-    <div class="form-group" id="resSolubilityContainer" style="display: none;">
-      <label>Solubility Concentration:</label>
-      <div class="res-val" id="outSolubility">0.0000 g / 100 mL</div>
-    </div>
-
-    <div class="factor-box" id="factorSentenceBox"></div>
-    <div class="sync-status" id="syncStatus"></div>
-  </div>
-
-  <!-- REAGENT PREPARATION CALCULATOR CARD -->
-  <div class="card" id="reagentMakerCard">
-    <div class="header-box">
-      <h2>⚖️ Reagent Preparation Calculator</h2>
-    </div>
-    
-    <div class="form-group">
-      <label for="prepChem">Select Chemical to Prepare:</label>
-      <select id="prepChem">
-        <optgroup label="Standard Titrants (Burette)">
-          <option value="b_naoh">Sodium Hydroxide (NaOH)</option>
-          <option value="b_hcl">Hydrochloric Acid (HCl)</option>
-          <option value="b_hno3">Nitric Acid (HNO3)</option>
-          <option value="b_h2so4">Sulphuric Acid (H2SO4)</option>
-          <option value="b_kmno4">Potassium Permanganate (KMnO4)</option>
-          <option value="b_na2s2o3">Sodium Thiosulphate (Na2S2O3)</option>
-          <option value="b_i2">Iodine (I2)</option>
-          <option value="b_hclo4">Perchloric Acid (HClO4)</option>
-          <option value="b_ceric">Ceric Ammonium Sulphate</option>
-          <option value="b_edta">Disodium EDTA</option>
-        </optgroup>
-        <optgroup label="Standard Samples (Flask)">
-          <option value="f_oxalic">Oxalic Acid Dihydrate</option>
-          <option value="f_khp">Potassium Hydrogen Phthalate (KHP)</option>
-          <option value="f_na2co3">Sodium Carbonate (Na2CO3)</option>
-          <option value="f_benzoic">Benzoic Acid</option>
-          <option value="f_salicylic">Salicylic Acid</option>
-          <option value="f_aspirin">Acetylsalicylic Acid (Aspirin)</option>
-          <option value="f_nahco3">Sodium Bicarbonate (NaHCO3)</option>
-          <option value="f_nh4cl">Ammonium Chloride (NH4Cl)</option>
-          <option value="f_acetic">Acetic Acid</option>
-          <option value="f_h2o2">Hydrogen Peroxide (H2O2)</option>
-          <option value="f_feso4">Ferrous Sulphate (FeSO4)</option>
-          <option value="f_na_benzoate">Sodium Benzoate</option>
-          <option value="f_boric">Boric Acid</option>
-          <option value="f_znso4">Zinc Sulphate Heptahydrate</option>
-          <option value="f_as2o3">Arsenic Trioxide (As2O3)</option>
-        </optgroup>
-      </select>
-    </div>
-
-    <div class="grid-2 form-group">
-      <div>
-        <label for="prepConcType">Concentration Type:</label>
-        <select id="prepConcType">
-          <option value="N">Normality (N)</option>
-          <option value="M">Molarity (M)</option>
+  <!-- APP 2: REAGENT PREPARATION CALCULATOR -->
+  <div id="reagentApp" style="display: none;">
+    <div class="card" id="reagentMakerCard">
+      <div class="header-box">
+        <h2>⚖️ Reagent Preparation Calculator</h2>
+      </div>
+      
+      <div class="form-group">
+        <label for="prepChem">Select Chemical to Prepare:</label>
+        <select id="prepChem">
+          <optgroup label="Standard Titrants (Burette)">
+            <option value="b_naoh">Sodium Hydroxide (NaOH)</option>
+            <option value="b_hcl">Hydrochloric Acid (HCl)</option>
+            <option value="b_hno3">Nitric Acid (HNO3)</option>
+            <option value="b_h2so4">Sulphuric Acid (H2SO4)</option>
+            <option value="b_kmno4">Potassium Permanganate (KMnO4)</option>
+            <option value="b_na2s2o3">Sodium Thiosulphate (Na2S2O3)</option>
+            <option value="b_i2">Iodine (I2)</option>
+            <option value="b_hclo4">Perchloric Acid (HClO4)</option>
+            <option value="b_ceric">Ceric Ammonium Sulphate</option>
+            <option value="b_edta">Disodium EDTA</option>
+          </optgroup>
+          <optgroup label="Standard Samples (Flask)">
+            <option value="f_oxalic">Oxalic Acid Dihydrate</option>
+            <option value="f_khp">Potassium Hydrogen Phthalate (KHP)</option>
+            <option value="f_na2co3">Sodium Carbonate (Na2CO3)</option>
+            <option value="f_benzoic">Benzoic Acid</option>
+            <option value="f_salicylic">Salicylic Acid</option>
+            <option value="f_aspirin">Acetylsalicylic Acid (Aspirin)</option>
+            <option value="f_nahco3">Sodium Bicarbonate (NaHCO3)</option>
+            <option value="f_nh4cl">Ammonium Chloride (NH4Cl)</option>
+            <option value="f_acetic">Acetic Acid</option>
+            <option value="f_h2o2">Hydrogen Peroxide (H2O2)</option>
+            <option value="f_feso4">Ferrous Sulphate (FeSO4)</option>
+            <option value="f_na_benzoate">Sodium Benzoate</option>
+            <option value="f_boric">Boric Acid</option>
+            <option value="f_znso4">Zinc Sulphate Heptahydrate</option>
+            <option value="f_as2o3">Arsenic Trioxide (As2O3)</option>
+          </optgroup>
         </select>
       </div>
-      <div>
-        <label for="prepConcValue">Target Concentration:</label>
-        <input type="number" id="prepConcValue" value="0.1" step="0.01">
+
+      <div class="form-group">
+        <label>Source Material Type:</label>
+        <div class="radio-group" style="margin-bottom: 15px;">
+          <label class="radio-label"><input type="radio" name="reagentSourceType" value="solid" checked onchange="toggleReagentMode()"> Solid / Pure Powder (Weighing)</label>
+          <label class="radio-label"><input type="radio" name="reagentSourceType" value="liquid" onchange="toggleReagentMode()"> Liquid Stock Solution (Dilution)</label>
+        </div>
       </div>
-    </div>
 
-    <div class="form-group">
-      <label for="prepVol">Target Final Volume (mL):</label>
-      <input type="number" id="prepVol" value="1000" step="10">
-    </div>
+      <!-- Solid Preparation Mode -->
+      <div id="reagentSolidMode">
+        <div class="grid-2 form-group">
+          <div>
+            <label for="prepConcType">Target Concentration Type:</label>
+            <select id="prepConcType">
+              <option value="N">Normality (N)</option>
+              <option value="M">Molarity (M)</option>
+            </select>
+          </div>
+          <div>
+            <label for="prepConcValue">Target Concentration:</label>
+            <input type="number" id="prepConcValue" value="0.1" step="0.01">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="prepVol">Target Final Volume (mL):</label>
+          <input type="number" id="prepVol" value="1000" step="10">
+        </div>
+      </div>
 
-    <button class="btn-action" style="width: 100%;" onclick="calculatePreparation()">Calculate Recipe</button>
-    
-    <div class="factor-box" id="prepResultBox" style="display: none; margin-top: 15px;">
-       <!-- Preparation results injected here -->
+      <!-- Liquid Stock Preparation Mode -->
+      <div id="reagentLiquidMode" style="display: none;">
+        <div class="grid-2 form-group">
+          <div>
+            <label for="liqStockConc">Concentration of Stock:</label>
+            <input type="number" id="liqStockConc" value="1.0" step="0.01" placeholder="e.g. 1.0">
+          </div>
+          <div>
+            <label for="liqTargetConc">Target Concentration:</label>
+            <input type="number" id="liqTargetConc" value="0.1" step="0.01" placeholder="e.g. 0.1">
+          </div>
+        </div>
+        <div class="grid-2 form-group">
+          <div>
+            <label for="liqConcUnit">Concentration Unit:</label>
+            <select id="liqConcUnit">
+              <option value="N">Normality (N)</option>
+              <option value="M">Molarity (M)</option>
+            </select>
+          </div>
+          <div>
+            <label for="liqTargetVol">Target Final Volume (mL):</label>
+            <input type="number" id="liqTargetVol" value="1000" step="10">
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-action" style="width: 100%;" onclick="calculatePreparation()">Calculate Recipe</button>
+      
+      <div class="factor-box" id="prepResultBox" style="display: none; margin-top: 15px;">
+         <!-- Preparation results injected here -->
+      </div>
     </div>
   </div>
 
@@ -836,6 +889,21 @@
     'hclo4_salicylic': { colors: ['#6b21a8', '#10b981'], indicator: 'Crystal Violet (Violet to Emerald Green)' },
     'edta_znso4': { colors: ['#881337', '#2563eb'], indicator: 'Mordant Black II / EBT (Wine-Red to Blue)' }
   };
+
+  /* APP NAVIGATION */
+  function switchAppMode(mode) {
+    if(mode === 'titration') {
+      document.getElementById('titrationApp').style.display = 'block';
+      document.getElementById('reagentApp').style.display = 'none';
+      document.getElementById('tabTitration').classList.add('active');
+      document.getElementById('tabReagent').classList.remove('active');
+    } else {
+      document.getElementById('titrationApp').style.display = 'none';
+      document.getElementById('reagentApp').style.display = 'block';
+      document.getElementById('tabTitration').classList.remove('active');
+      document.getElementById('tabReagent').classList.add('active');
+    }
+  }
 
   function getPairConfig(bKey, fKey) {
     const pairKey = `${bKey}_${fKey}`;
@@ -1331,40 +1399,76 @@
   }
 
   // --- REAGENT PREPARATION CALCULATOR JS ---
+  function toggleReagentMode() {
+    const type = document.querySelector('input[name="reagentSourceType"]:checked').value;
+    document.getElementById('reagentSolidMode').style.display = (type === 'solid') ? 'block' : 'none';
+    document.getElementById('reagentLiquidMode').style.display = (type === 'liquid') ? 'block' : 'none';
+    document.getElementById('prepResultBox').style.display = 'none';
+  }
+
   function calculatePreparation() {
     const chemVal = document.getElementById('prepChem').value;
-    const concType = document.getElementById('prepConcType').value;
-    const concValue = parseFloat(document.getElementById('prepConcValue').value) || 0;
-    const vol = parseFloat(document.getElementById('prepVol').value) || 0;
-    
-    if (concValue <= 0 || vol <= 0) {
-      alert("Please enter valid positive numbers for concentration and volume.");
-      return;
-    }
-
+    const sourceType = document.querySelector('input[name="reagentSourceType"]:checked').value;
     let db = chemVal.startsWith('b_') ? buretteDb : flaskDb;
     let key = chemVal.substring(2);
     let chemData = db[key];
-
-    let mass = 0;
-    let weightType = "";
-    if (concType === 'N') {
-      mass = (concValue * chemData.eq * vol) / 1000;
-      weightType = `Equivalent Weight (${chemData.eq} g/eq)`;
-    } else {
-      mass = (concValue * chemData.mw * vol) / 1000;
-      weightType = `Molecular Weight (${chemData.mw} g/mol)`;
-    }
-
     const resBox = document.getElementById('prepResultBox');
-    resBox.style.display = 'block';
-    
-    let instructions = `To prepare <strong>${vol} mL</strong> of <strong>${concValue} ${concType}</strong> ${chemData.name}:<br><br>`;
-    instructions += `⚖️ <strong>Weigh exactly: ${mass.toFixed(4)} grams</strong> of pure active compound.<br>`;
-    instructions += `💧 <strong>Solvent:</strong> Dissolve the solute in a small amount of distilled water (or appropriate solvent), then make up the total volume to exactly the ${vol} mL mark in a volumetric flask.<br><br>`;
-    instructions += `<span style="font-size:0.85rem; color:#64748b;">* Calculation based on ${weightType}. Note: For liquid concentrates (like HCl, H2SO4), use specific gravity and purity % to convert this mass into the required stock volume.</span>`;
 
-    resBox.innerHTML = instructions;
+    if (sourceType === 'solid') {
+      const concType = document.getElementById('prepConcType').value;
+      const concValue = parseFloat(document.getElementById('prepConcValue').value) || 0;
+      const vol = parseFloat(document.getElementById('prepVol').value) || 0;
+      
+      if (concValue <= 0 || vol <= 0) {
+        alert("Please enter valid positive numbers for concentration and volume.");
+        return;
+      }
+
+      let mass = 0;
+      let weightType = "";
+      if (concType === 'N') {
+        mass = (concValue * chemData.eq * vol) / 1000;
+        weightType = `Equivalent Weight (${chemData.eq} g/eq)`;
+      } else {
+        mass = (concValue * chemData.mw * vol) / 1000;
+        weightType = `Molecular Weight (${chemData.mw} g/mol)`;
+      }
+      
+      let instructions = `To prepare <strong>${vol} mL</strong> of <strong>${concValue} ${concType}</strong> ${chemData.name}:<br><br>`;
+      instructions += `⚖️ <strong>Weigh exactly: ${mass.toFixed(4)} grams</strong> of pure active compound.<br>`;
+      instructions += `💧 <strong>Solvent:</strong> Dissolve the solute in a small amount of distilled water (or appropriate solvent), then make up the total volume to exactly the ${vol} mL mark in a volumetric flask.<br><br>`;
+      instructions += `<span style="font-size:0.85rem; color:#64748b;">* Calculation based on ${weightType}.</span>`;
+      
+      resBox.innerHTML = instructions;
+      resBox.style.display = 'block';
+
+    } else if (sourceType === 'liquid') {
+      const stockConc = parseFloat(document.getElementById('liqStockConc').value) || 0;
+      const targetConc = parseFloat(document.getElementById('liqTargetConc').value) || 0;
+      const targetVol = parseFloat(document.getElementById('liqTargetVol').value) || 0;
+      const unit = document.getElementById('liqConcUnit').value;
+
+      if (stockConc <= 0 || targetConc <= 0 || targetVol <= 0) {
+        alert("Please enter valid positive numbers for concentrations and volume.");
+        return;
+      }
+
+      if (targetConc > stockConc) {
+         alert("Target concentration cannot be higher than your stock concentration.");
+         return;
+      }
+
+      // Standard Dilution Formula: C1V1 = C2V2 -> V1 = (C2 * V2) / C1
+      const requiredVol = (targetConc * targetVol) / stockConc;
+
+      let instructions = `To prepare <strong>${targetVol} mL</strong> of <strong>${targetConc} ${unit}</strong> ${chemData.name} from a <strong>${stockConc} ${unit}</strong> stock:<br><br>`;
+      instructions += `🧪 <strong>Pipette exactly: ${requiredVol.toFixed(2)} mL</strong> of your stock solution.<br>`;
+      instructions += `💧 <strong>Dilution:</strong> Transfer this into a ${targetVol} mL volumetric flask containing some solvent (<strong>Always add acid to water</strong> if applicable), then make up the volume to exactly the mark.<br><br>`;
+      instructions += `<span style="font-size:0.85rem; color:#64748b;">* Calculated using standard C₁V₁ = C₂V₂ dilution formula.</span>`;
+
+      resBox.innerHTML = instructions;
+      resBox.style.display = 'block';
+    }
   }
 
   window.onload = function() {
