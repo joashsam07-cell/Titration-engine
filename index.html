@@ -420,9 +420,78 @@
       font-weight: normal;
       margin-top: 2px;
     }
+
+    /* SIDEBAR STYLES FOR TITRATION GRAPH */
+    .sidebar-toggle-btn {
+      position: fixed;
+      right: 0;
+      top: 120px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 6px 0 0 6px;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 1000;
+      writing-mode: vertical-lr;
+      transform: rotate(180deg);
+      box-shadow: -2px 2px 8px rgba(0,0,0,0.15);
+    }
+    .sidebar-panel {
+      position: fixed;
+      right: -320px;
+      top: 0;
+      width: 320px;
+      height: 100%;
+      background: white;
+      box-shadow: -4px 0 15px rgba(0,0,0,0.1);
+      z-index: 1001;
+      transition: right 0.3s ease;
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-panel.open {
+      right: 0;
+    }
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+    .sidebar-header h3 {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--primary);
+    }
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #64748b;
+    }
   </style>
 </head>
 <body>
+
+<!-- SIDEBAR TOGGLE & PANEL FOR TITRATION GRAPH -->
+<button class="sidebar-toggle-btn" onclick="toggleSidebar()">📈 Titration Graph</button>
+<div id="titrationSidebar" class="sidebar-panel">
+  <div class="sidebar-header">
+    <h3>Titration Curve & Equivalence Point</h3>
+    <button onclick="toggleSidebar()" class="close-btn">&times;</button>
+  </div>
+  <div class="sidebar-body" style="text-align: center;">
+    <canvas id="titrationChart" width="280" height="260" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px;"></canvas>
+    <div id="graphInfo" style="font-size: 0.85rem; margin-top: 15px; color: #475569; text-align: left; line-height: 1.5;"></div>
+  </div>
+</div>
 
 <div class="container">
   
@@ -846,7 +915,7 @@
     nh4cl: { name: "Ammonium Chloride", formula: "NH4Cl", mw: 53.49, eq: 53.49, state: "Crystalline solid", structure: "[NH4]+ Cl-", mp: "338 °C (sublimes)", bp: "520 °C", solubility: "372 g/L (at 20 °C in H2O)", reaction: "4 NH4Cl + 6 HCHO → (CH2)6N4 + 4 HCl + 6 H2O ; HCl + NaOH → NaCl + H2O", indicator: "Phenolphthalein - Formol Titration (Colourless to Pale Pink)" },
     acetic: { name: "Acetic Acid", formula: "CH3COOH", mw: 60.05, eq: 60.05, state: "Clear liquid", structure: "CH3-COOH", mp: "16.6 °C", bp: "117.9 °C", solubility: "Miscible in all proportions with H2O", reaction: "CH3COOH + NaOH → CH3COONa + H2O", indicator: "Phenolphthalein (Colourless to Light Pink)" },
     h2o2: { name: "Hydrogen Peroxide", formula: "H2O2", mw: 34.015, eq: 17.008, state: "Clear liquid", structure: "H-O-O-H", mp: "-0.43 °C", bp: "150.2 °C", solubility: "Miscible in all proportions with H2O", reaction: "5 H2O2 + 2 KMnO4 + 3 H2SO4 → 2 MnSO4 + K2SO4 + 5 O2 + 8 H2O", indicator: "Self-indicator in H2SO4 (Colourless to Persistent Pale Pink)" },
-    feso4: { name: "Ferrous Sulphate Heptahydrate", formula: "FeSO4·7H2O", mw: 278.01, eq: 278.01, state: "Blue-green crystals", structure: "[Fe]2+ [SO4]2- · 7H2O", mp: "64 °C (loses hydration water)", bp: "Decomposes > 300 °C", solubility: "295 g/L (at 20 °C in H2O)", reaction: "10 FeSO4 + 2 KMnO4 + 8 H2SO4 → 5 Fe2(SO4)3 + 2 MnSO4 + K2SO4 + 8 H2O", indicator: "Self-indicator (Very Pale Green to Pink Flash) / Ferroin (Intense Red to Pale Blue)" },
+    feso4: { name: "Ferrous Sulphate Heptahydrate", formula: "FeSO4·7H2O", mw: 278.01, eq: 278.01, state: "Blue-green crystals", structure: "[Fe]2+ [SO4]2- · 7H2O", mp: "64 °C (loses hydration water)", bp: "Decomposes > 300 °C", solubility: "295 g/L (at 20 °C in H2O)", reaction: "10 FeSO4 + 2 KMnO4 + 8 H2O4 → 5 Fe2(SO4)3 + 2 MnSO4 + K2SO4 + 8 H2O", indicator: "Self-indicator (Very Pale Green to Pink Flash) / Ferroin (Intense Red to Pale Blue)" },
     na_benzoate: { name: "Sodium Benzoate", formula: "C7H5NaO2", mw: 144.11, eq: 144.11, state: "Crystalline powder", structure: "C6H5-COO- Na+", mp: "> 300 °C", bp: "410 °C", solubility: "629 g/L (at 20 °C in H2O)", reaction: "C6H5COONa + HClO4 → C6H5COOH + NaClO4", indicator: "Methyl Orange in Ether-Water Biphasic System (Yellow to Orange-Pink) / Crystal Violet (Violet to Yellowish-Green)" },
     boric: { name: "Boric Acid", formula: "H3BO3", mw: 61.83, eq: 61.83, state: "Crystalline powder", structure: "B(OH)3", mp: "170.9 °C", bp: "Decomposes above 170.9 °C to metaboric acid", solubility: "47.2 g/L (at 20 °C in H2O)", reaction: "H3BO3 + Glycerol + NaOH → Sodium Glyceroborate + H2O", indicator: "Phenolphthalein + Glycerol (Colourless to Distinct Pink)" },
     naoh_flask: { name: "Sodium Hydroxide Solution", formula: "NaOH", mw: 40.00, eq: 40.00, state: "Aqueous solution", structure: "Na+ OH-", mp: "318 °C", bp: "1388 °C", solubility: "1090 g/L", reaction: "NaOH + HCl → NaCl + H2O", indicator: "Phenolphthalein (Pink to Colourless) / Methyl Red (Yellow to Red)" },
@@ -910,7 +979,7 @@
     if (pairConfigMap[pairKey]) {
       return pairConfigMap[pairKey];
     }
-    return null; // Return null if pair is strictly incompatible
+    return null;
   }
   
   function checkValidity() {
@@ -1035,9 +1104,9 @@
     const config = getPairConfig(bKey, fKey);
 
     if (simVol >= (eqVolume * 0.98)) {
-      flaskLiq.setAttribute('fill', config.colors[1]); // Endpoint color
+      flaskLiq.setAttribute('fill', config.colors[1]);
     } else {
-      flaskLiq.setAttribute('fill', config.colors[0]); // Initial color
+      flaskLiq.setAttribute('fill', config.colors[0]);
     }
 
     const firstFinal = document.querySelector('.b-final');
@@ -1112,11 +1181,9 @@
     const trueV2 = (trueN1 * V1) / N2;
     const userN1 = (N2 * userV2) / V1;
     
-    // Check absolute volume difference rather than raw percentage to account for 0.1 mL drop limit
     const volDiff = Math.abs(userV2 - trueV2);
     let feedback = "";
     
-    // Using 0.101 to safely handle floating point math (e.g. 0.800000001 - 0.7)
     if (volDiff <= 0.101) {
       feedback = `🎯 <strong style="color: #059669;">Excellent!</strong> Your reading is perfectly within the 1-drop (±0.1 mL) precision.`;
     } else if (volDiff <= 0.501) {
@@ -1396,6 +1463,9 @@
 
     resBox.style.display = 'block';
     sendDataToSheet(payload);
+    if(document.getElementById('titrationSidebar').classList.contains('open')) {
+      drawTitrationCurve();
+    }
   }
 
   // --- REAGENT PREPARATION CALCULATOR JS ---
@@ -1458,7 +1528,6 @@
          return;
       }
 
-      // Standard Dilution Formula: C1V1 = C2V2 -> V1 = (C2 * V2) / C1
       const requiredVol = (targetConc * targetVol) / stockConc;
 
       let instructions = `To prepare <strong>${targetVol} mL</strong> of <strong>${targetConc} ${unit}</strong> ${chemData.name} from a <strong>${stockConc} ${unit}</strong> stock:<br><br>`;
@@ -1469,6 +1538,155 @@
       resBox.innerHTML = instructions;
       resBox.style.display = 'block';
     }
+  }
+
+  // --- TITRATION GRAPH SIDEBAR JS ---
+  function toggleSidebar() {
+    const sidebar = document.getElementById('titrationSidebar');
+    sidebar.classList.toggle('open');
+    if(sidebar.classList.contains('open')) {
+      drawTitrationCurve();
+    }
+  }
+
+  function drawTitrationCurve() {
+    const canvas = document.getElementById('titrationChart');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const bKey = document.getElementById('buretteChem').value;
+    const fKey = document.getElementById('flaskChem').value;
+    
+    // Determine if Acid-Base vs Redox/Complexometric
+    const isAcidBase = ['naoh', 'hcl', 'hno3', 'h2so4', 'hclo4'].includes(bKey) && !['feso4', 'h2o2'].includes(fKey);
+
+    const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
+    const N2 = parseFloat(document.getElementById('buretteNormality').value) || 0.1;
+    let N1 = 0.1;
+
+    if (flaskInputMode === 'normality') {
+      N1 = parseFloat(document.getElementById('flaskNormality').value) || 0.1;
+    } else if (flaskInputMode === 'weight') {
+      const mass = parseFloat(document.getElementById('flaskMass').value) || 0.6303;
+      const volMade = parseFloat(document.getElementById('flaskVolMade').value) || 100;
+      const flaskKey = document.getElementById('flaskChem').value;
+      const eqWt = flaskDb[flaskKey].eq;
+      N1 = (mass * 1000) / (eqWt * volMade);
+    } else if (flaskInputMode === 'game') {
+      N1 = gameSecretNormality;
+    }
+
+    const eqVol = (N1 * V1) / N2;
+    const maxVol = Math.max(eqVol * 1.5, 20);
+
+    const originX = 42;
+    const originY = 220;
+    const plotWidth = 220;
+    const plotHeight = 180;
+
+    // Draw Axes lines
+    ctx.strokeStyle = '#64748b';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(originX, 20);
+    ctx.lineTo(originX, originY);
+    ctx.lineTo(originX + plotWidth, originY);
+    ctx.stroke();
+
+    // Axis Labels & Title
+    ctx.fillStyle = '#1e3a8a';
+    ctx.font = 'bold 11px sans-serif';
+    if (isAcidBase) {
+      ctx.fillText('pH vs Vol (mL)', 10, 15);
+      ctx.font = '9px sans-serif';
+      ctx.fillStyle = '#475569';
+      // Y-Axis Ticks & Numbers (pH 0 to 14)
+      for (let pH = 0; pH <= 14; pH += 2) {
+        let y = originY - (pH / 14) * plotHeight;
+        ctx.beginPath();
+        ctx.moveTo(originX - 3, y);
+        ctx.lineTo(originX, y);
+        ctx.stroke();
+        ctx.fillText(pH, originX - 22, y + 3);
+      }
+    } else {
+      ctx.fillText('Potential vs Vol (mL)', 10, 15);
+      ctx.font = '9px sans-serif';
+      ctx.fillStyle = '#475569';
+      // Y-Axis Ticks & Numbers (Potential 0 to 1000 mV)
+      for (let mv = 0; mv <= 1000; mv += 200) {
+        let y = originY - (mv / 1000) * plotHeight;
+        ctx.beginPath();
+        ctx.moveTo(originX - 3, y);
+        ctx.lineTo(originX, y);
+        ctx.stroke();
+        ctx.fillText(mv, originX - 30, y + 3);
+      }
+    }
+
+    // X-Axis Ticks & Numbers (Volume)
+    ctx.fillStyle = '#475569';
+    let volStep = maxVol > 40 ? 10 : (maxVol > 20 ? 5 : 2);
+    for (let v = 0; v <= maxVol; v += volStep) {
+      let x = originX + (v / maxVol) * plotWidth;
+      if (x <= originX + plotWidth) {
+        ctx.beginPath();
+        ctx.moveTo(x, originY);
+        ctx.lineTo(x, originY + 3);
+        ctx.stroke();
+        ctx.fillText(v, x - 6, originY + 15);
+      }
+    }
+    ctx.fillText('Vol (mL)', originX + plotWidth - 35, originY + 28);
+
+    // Plot Titration Curve
+    ctx.strokeStyle = '#2563eb';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let px = 0; px <= plotWidth; px++) {
+      let v = (px / plotWidth) * maxVol;
+      let yVal, yCoord;
+
+      if (isAcidBase) {
+        // Sigmoidal pH curve
+        yVal = 1 + 12 / (1 + Math.exp(-0.8 * (v - eqVol)));
+        yCoord = originY - (yVal / 14) * plotHeight;
+      } else {
+        // Sigmoidal Potential curve (mV)
+        yVal = 100 + 800 / (1 + Math.exp(-0.8 * (v - eqVol)));
+        yCoord = originY - (yVal / 1000) * plotHeight;
+      }
+
+      let x = originX + px;
+      if (px === 0) ctx.moveTo(x, yCoord);
+      else ctx.lineTo(x, yCoord);
+    }
+    ctx.stroke();
+
+    // Draw Equivalence Point marker & Line
+    let eqX = originX + (eqVol / maxVol) * plotWidth;
+    let eqYVal = isAcidBase ? 7 : 500;
+    let eqY = isAcidBase ? (originY - (7 / 14) * plotHeight) : (originY - (500 / 1000) * plotHeight);
+    
+    ctx.strokeStyle = '#dc2626';
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(eqX, originY);
+    ctx.lineTo(eqX, eqY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#dc2626';
+    ctx.beginPath();
+    ctx.arc(eqX, eqY, 4.5, 0, 2 * Math.PI);
+    ctx.fill();
+
+    document.getElementById('graphInfo').innerHTML = `
+      <strong>Graph Mode:</strong> ${isAcidBase ? 'Acid-Base (pH vs Vol)' : 'Redox / Potentiometric (Potential vs Vol)'}<br>
+      <strong>Equivalence Volume ($V_{eq}$):</strong> ~${eqVol.toFixed(2)} mL<br>
+      <span style="color:#dc2626; font-weight:bold;">● Inflection / Equivalence Point</span>
+    `;
   }
 
   window.onload = function() {
