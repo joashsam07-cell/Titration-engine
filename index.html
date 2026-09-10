@@ -581,16 +581,27 @@
       <div class="form-group">
         <label>Working Concentration Status:</label>
         <div class="radio-group">
-          <label class="radio-label"><input type="radio" name="buretteStatus" value="estimated" checked> Estimated (~N)</label>
-          <label class="radio-label"><input type="radio" name="buretteStatus" value="standardized"> Standardized (Exact N)</label>
+          <label class="radio-label"><input type="radio" name="buretteStatus" value="estimated" checked> Estimated</label>
+          <label class="radio-label"><input type="radio" name="buretteStatus" value="standardized"> Standardized (Exact)</label>
         </div>
       </div>
 
       <div class="chem-info-card" id="buretteInfoCard"></div>
 
       <div class="form-group">
-        <label for="buretteNormality">Burette Normality (N):</label>
-        <input type="number" id="buretteNormality" value="0.1000" step="0.0001" placeholder="e.g. 0.1000">
+        <label>Burette Concentration Input Mode <span style="font-size:0.78rem; color:#64748b; font-weight:normal;">(Note: Normality is considered ambiguous & outdated by IUPAC)</span>:</label>
+        <div class="input-mode-toggle" style="margin-bottom: 8px;">
+          <div class="toggle-btn active" id="btnBuretteNormality" onclick="setBuretteInputMode('normality')">By Normality (N)</div>
+          <div class="toggle-btn" id="btnBuretteMolarity" onclick="setBuretteInputMode('molarity')">By Molarity (M) [IUPAC Preferred]</div>
+        </div>
+        <div id="containerBuretteNormality">
+          <label for="buretteNormality">Burette Normality (N):</label>
+          <input type="number" id="buretteNormality" value="0.1000" step="0.0001" placeholder="e.g. 0.1000">
+        </div>
+        <div id="containerBuretteMolarity" style="display: none;">
+          <label for="buretteMolarity">Burette Molarity (M):</label>
+          <input type="number" id="buretteMolarity" value="0.1000" step="0.0001" placeholder="e.g. 0.1000">
+        </div>
       </div>
 
       <!-- 2. CONICAL FLASK SETUP -->
@@ -625,21 +636,29 @@
 
       <div class="form-group">
         <label>Specify Sample Amount Method:</label>
-        <div class="input-mode-toggle">
-          <div class="toggle-btn active" id="btnModeNormality" onclick="setFlaskInputMode('normality')">By Normality & Pipetted Vol</div>
-          <div class="toggle-btn" id="btnModeWeight" onclick="setFlaskInputMode('weight')">By Mass (g) & Vol</div>
-          <div class="toggle-btn" id="btnModeUnknown" onclick="setFlaskInputMode('unknown')">❓ Don't Know / Unknown</div>
-          <div class="toggle-btn" id="btnModeGame" onclick="setFlaskInputMode('game')">🎮 Random Game</div>
+        <div class="input-mode-toggle" style="display: flex; flex-wrap: wrap; gap: 6px;">
+          <div class="toggle-btn active" id="btnModeNormality" onclick="setFlaskInputMode('normality')" style="flex: 1 1 calc(33% - 6px);">By Normality</div>
+          <div class="toggle-btn" id="btnModeMolarity" onclick="setFlaskInputMode('molarity')" style="flex: 1 1 calc(33% - 6px);">By Molarity (IUPAC)</div>
+          <div class="toggle-btn" id="btnModeWeight" onclick="setFlaskInputMode('weight')" style="flex: 1 1 calc(33% - 6px);">By Mass (g)</div>
+          <div class="toggle-btn" id="btnModeUnknown" onclick="setFlaskInputMode('unknown')" style="flex: 1 1 calc(50% - 6px);">❓ Unknown</div>
+          <div class="toggle-btn" id="btnModeGame" onclick="setFlaskInputMode('game')" style="flex: 1 1 calc(50% - 6px);">🎮 Game</div>
         </div>
 
-        <div id="containerFlaskNormality">
+        <div id="containerFlaskNormality" style="margin-top: 10px;">
           <div class="form-group">
             <label for="flaskNormality">Known / Target Normality (N):</label>
             <input type="number" id="flaskNormality" value="0.1000" step="0.0001">
           </div>
         </div>
 
-        <div id="containerFlaskWeight" style="display: none;">
+        <div id="containerFlaskMolarity" style="display: none; margin-top: 10px;">
+          <div class="form-group">
+            <label for="flaskMolarity">Known / Target Molarity (M) [IUPAC]:</label>
+            <input type="number" id="flaskMolarity" value="0.1000" step="0.0001">
+          </div>
+        </div>
+
+        <div id="containerFlaskWeight" style="display: none; margin-top: 10px;">
           <div class="grid-2 form-group">
             <div>
               <label for="flaskMass">Mass Weighed (g):</label>
@@ -666,7 +685,7 @@
           </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" style="margin-top: 12px;">
           <label for="pipettedVol">Volume Pipetted into Conical Flask (V1 in mL):</label>
           <input type="number" id="pipettedVol" value="10.0" step="0.1">
         </div>
@@ -886,7 +905,7 @@
             <label for="prepConcType">Target Concentration Type:</label>
             <select id="prepConcType">
               <option value="N">Normality (N)</option>
-              <option value="M">Molarity (M)</option>
+              <option value="M">Molarity (M) [IUPAC]</option>
             </select>
           </div>
           <div>
@@ -917,7 +936,7 @@
             <label for="liqConcUnit">Concentration Unit:</label>
             <select id="liqConcUnit">
               <option value="N">Normality (N)</option>
-              <option value="M">Molarity (M)</option>
+              <option value="M">Molarity (M) [IUPAC]</option>
             </select>
           </div>
           <div>
@@ -947,6 +966,7 @@
  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzkaI7_sznvCCu7bOIsZb2ZiXZ68pKxNGTX3QN71CA6_htPSX2bi7HgMWoJiJB_0nBX/exec";
 
   let flaskInputMode = 'normality';
+  let buretteInputMode = 'normality';
   let simVol = 0.0;
   let dispensedSinceRefill = 0.0;
   let gameSecretNormality = 0.1;
@@ -1033,6 +1053,14 @@
       document.getElementById('tabTitration').classList.remove('active');
       document.getElementById('tabReagent').classList.add('active');
     }
+  }
+
+  function setBuretteInputMode(mode) {
+    buretteInputMode = mode;
+    document.getElementById('btnBuretteNormality').className = 'toggle-btn' + (mode === 'normality' ? ' active' : '');
+    document.getElementById('btnBuretteMolarity').className = 'toggle-btn' + (mode === 'molarity' ? ' active' : '');
+    document.getElementById('containerBuretteNormality').style.display = (mode === 'normality') ? 'block' : 'none';
+    document.getElementById('containerBuretteMolarity').style.display = (mode === 'molarity') ? 'block' : 'none';
   }
 
   function getPairConfig(bKey, fKey) {
@@ -1142,11 +1170,24 @@
     setTimeout(() => { drop.style.opacity = '0'; }, 200);
 
     const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
-    const N2 = parseFloat(document.getElementById('buretteNormality').value) || 0.1;
-    let N1 = 0.1;
+    
+    const bKey = document.getElementById('buretteChem').value;
+    const bEqWt = buretteDb[bKey].eq;
+    const bMw = buretteDb[bKey].mw;
+    const bNFactor = bMw / bEqWt;
+    let N2 = (buretteInputMode === 'molarity') 
+      ? (parseFloat(document.getElementById('buretteMolarity').value) || 0.1) * bNFactor 
+      : (parseFloat(document.getElementById('buretteNormality').value) || 0.1);
 
+    let N1 = 0.1;
     if (flaskInputMode === 'normality') {
       N1 = parseFloat(document.getElementById('flaskNormality').value) || 0.1;
+    } else if (flaskInputMode === 'molarity') {
+      const M1 = parseFloat(document.getElementById('flaskMolarity').value) || 0.1;
+      const flaskKey = document.getElementById('flaskChem').value;
+      const eqWt = flaskDb[flaskKey].eq;
+      const mw = flaskDb[flaskKey].mw;
+      N1 = M1 * (mw / eqWt);
     } else if (flaskInputMode === 'weight') {
       const mass = parseFloat(document.getElementById('flaskMass').value) || 0.6303;
       const volMade = parseFloat(document.getElementById('flaskVolMade').value) || 100;
@@ -1160,7 +1201,6 @@
     const eqVolume = (N1 * V1) / N2;
 
     const flaskLiq = document.getElementById('simFlaskLiquid');
-    const bKey = document.getElementById('buretteChem').value;
     const fKey = document.getElementById('flaskChem').value;
     const config = getPairConfig(bKey, fKey);
 
@@ -1196,11 +1236,13 @@
     flaskInputMode = mode;
     
     document.getElementById('btnModeNormality').className = 'toggle-btn' + (mode === 'normality' ? ' active' : '');
+    document.getElementById('btnModeMolarity').className = 'toggle-btn' + (mode === 'molarity' ? ' active' : '');
     document.getElementById('btnModeWeight').className = 'toggle-btn' + (mode === 'weight' ? ' active' : '');
     document.getElementById('btnModeUnknown').className = 'toggle-btn' + (mode === 'unknown' ? ' active' : '');
     document.getElementById('btnModeGame').className = 'toggle-btn' + (mode === 'game' ? ' active' : '');
 
     document.getElementById('containerFlaskNormality').style.display = (mode === 'normality') ? 'block' : 'none';
+    document.getElementById('containerFlaskMolarity').style.display = (mode === 'molarity') ? 'block' : 'none';
     document.getElementById('containerFlaskWeight').style.display = (mode === 'weight') ? 'block' : 'none';
     document.getElementById('containerFlaskUnknown').style.display = (mode === 'unknown') ? 'block' : 'none';
     document.getElementById('containerFlaskGame').style.display = (mode === 'game') ? 'block' : 'none';
@@ -1236,9 +1278,15 @@
     }
     
     const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
-    const N2 = parseFloat(document.getElementById('buretteNormality').value) || 0.1;
+    const bKey = document.getElementById('buretteChem').value;
+    const bEqWt = buretteDb[bKey].eq;
+    const bMw = buretteDb[bKey].mw;
+    const bNFactor = bMw / bEqWt;
+    const N2 = (buretteInputMode === 'molarity') 
+      ? (parseFloat(document.getElementById('buretteMolarity').value) || 0.1) * bNFactor 
+      : (parseFloat(document.getElementById('buretteNormality').value) || 0.1);
+
     const trueN1 = parseFloat(gameSecretNormality);
-    
     const trueV2 = (trueN1 * V1) / N2;
     const userN1 = (N2 * userV2) / V1;
     
@@ -1398,6 +1446,9 @@
     let flaskNormality = 0;
     if (flaskInputMode === 'normality') {
       flaskNormality = parseFloat(document.getElementById('flaskNormality').value) || 0;
+    } else if (flaskInputMode === 'molarity') {
+      const flaskM = parseFloat(document.getElementById('flaskMolarity').value) || 0;
+      flaskNormality = flaskM * flaskNFactor;
     } else if (flaskInputMode === 'weight') {
       const mass = parseFloat(document.getElementById('flaskMass').value) || 0;
       const volMade = parseFloat(document.getElementById('flaskVolMade').value) || 1;
@@ -1406,7 +1457,9 @@
       flaskNormality = gameSecretNormality;
     }
 
-    const buretteNormalityInput = parseFloat(document.getElementById('buretteNormality').value) || 0;
+    const buretteNormalityInput = (buretteInputMode === 'molarity')
+      ? (parseFloat(document.getElementById('buretteMolarity').value) || 0) * buretteNFactor
+      : (parseFloat(document.getElementById('buretteNormality').value) || 0);
 
     const resBox = document.getElementById('resultsBox');
     const resNormBuretteContainer = document.getElementById('resNormBuretteContainer');
@@ -1423,14 +1476,12 @@
     const reportTableWrapper = document.getElementById('reportTableWrapper');
     reportTableWrapper.innerHTML = '';
     const clonedTable = originalTable.cloneNode(true);
-    // Convert inputs in cloned table to static text cells for clean printing
     clonedTable.querySelectorAll('input').forEach(input => {
       const td = input.closest('td');
       td.innerText = input.value;
     });
     reportTableWrapper.appendChild(clonedTable);
 
-    // Draw graph on PDF Report canvas
     drawTitrationCurveOnCanvas('reportCanvas', 'reportGraphInfo');
 
     let payload = {
@@ -1457,7 +1508,7 @@
       const buretteEquivalents = calculatedBuretteNormality * (V2 / 1000);
       const buretteMoles = calculatedBuretteMolarity * (V2 / 1000);
       
-      document.getElementById('outNormBurette').innerText = calculatedBuretteNormality.toFixed(4) + ' N';
+      document.getElementById('outNormBurette').innerText = calculatedBuretteNormality.toFixed(4) + ' N (' + calculatedBuretteMolarity.toFixed(4) + ' M)';
       document.getElementById('outMolarityBurette').innerText = `Molarity: ${calculatedBuretteMolarity.toFixed(4)} M`;
       document.getElementById('outMolesBurette').innerHTML = `Equivalents Present (Dispensed): ${formatSci(buretteEquivalents)} eq<br>Moles Present (Dispensed): ${formatSci(buretteMoles)} mol`;
 
@@ -1470,7 +1521,7 @@
 
     } else if (actionType === 'norm_flask') {
       if (buretteNormalityInput <= 0) {
-        alert('Please specify a valid normality for the burette titrant.');
+        alert('Please specify a valid concentration for the burette titrant.');
         return;
       }
       
@@ -1480,7 +1531,7 @@
       const flaskMoles = calculatedFlaskMolarity * (V1 / 1000);
       
       document.getElementById('outNormFlask').innerText = calculatedFlaskNormality.toFixed(4) + ' N';
-      document.getElementById('outMolarityFlask').innerText = `Molarity: ${calculatedFlaskMolarity.toFixed(4)} M`;
+      document.getElementById('outMolarityFlask').innerText = `Molarity: ${calculatedFlaskMolarity.toFixed(4)} M [IUPAC Preferred]`;
       document.getElementById('outMolesFlask').innerHTML = `Equivalents Present (in V1): ${formatSci(flaskEquivalents)} eq<br>Moles Present (in V1): ${formatSci(flaskMoles)} mol`;
 
       payload.calculatedFlaskNormality = calculatedFlaskNormality.toFixed(4);
@@ -1492,7 +1543,7 @@
 
     } else if (actionType === 'assay') {
       if (buretteNormalityInput <= 0) {
-        alert('Please specify a valid normality for the burette titrant.');
+        alert('Please specify a valid concentration for the burette titrant.');
         return;
       }
       
@@ -1519,7 +1570,7 @@
 
     } else if (actionType === 'solubility') {
       if (buretteNormalityInput <= 0) {
-        alert('Please specify a valid normality for the burette titrant.');
+        alert('Please specify a valid concentration for the burette titrant.');
         return;
       }
       
@@ -1590,7 +1641,7 @@
         weightType = `Equivalent Weight (${chemData.eq} g/eq)`;
       } else {
         mass = (concValue * chemData.mw * vol) / 1000;
-        weightType = `Molecular Weight (${chemData.mw} g/mol)`;
+        weightType = `Molecular Weight (${chemData.mw} g/mol) [IUPAC]`;
       }
       
       let instructions = `To prepare <strong>${vol} mL</strong> of <strong>${concValue} ${concType}</strong> ${chemData.name}:<br><br>`;
@@ -1655,16 +1706,26 @@
     const isBaseIntoAcid = (bKey === 'naoh');
 
     const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
-    const N2 = parseFloat(document.getElementById('buretteNormality').value) || 0.1;
-    let N1 = 0.1;
+    
+    const bEqWt = buretteDb[bKey].eq;
+    const bMw = buretteDb[bKey].mw;
+    const bNFactor = bMw / bEqWt;
+    const N2 = (buretteInputMode === 'molarity') 
+      ? (parseFloat(document.getElementById('buretteMolarity').value) || 0.1) * bNFactor 
+      : (parseFloat(document.getElementById('buretteNormality').value) || 0.1);
 
+    let N1 = 0.1;
     if (flaskInputMode === 'normality') {
       N1 = parseFloat(document.getElementById('flaskNormality').value) || 0.1;
+    } else if (flaskInputMode === 'molarity') {
+      const M1 = parseFloat(document.getElementById('flaskMolarity').value) || 0.1;
+      const eqWt = flaskDb[fKey].eq;
+      const mw = flaskDb[fKey].mw;
+      N1 = M1 * (mw / eqWt);
     } else if (flaskInputMode === 'weight') {
       const mass = parseFloat(document.getElementById('flaskMass').value) || 0.6303;
       const volMade = parseFloat(document.getElementById('flaskVolMade').value) || 100;
-      const flaskKey = document.getElementById('flaskChem').value;
-      const eqWt = flaskDb[flaskKey].eq;
+      const eqWt = flaskDb[fKey].eq;
       N1 = (mass * 1000) / (eqWt * volMade);
     } else if (flaskInputMode === 'game') {
       N1 = gameSecretNormality;
