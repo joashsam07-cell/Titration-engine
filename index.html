@@ -5,19 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="google-site-verification" content="P6Mdk1RGkNOp1FRiAvc_6n_WMnMY3mo2BvgtLaBA4hQ" />
   
-  <!-- SEO & Hidden Crawler Metadata -->
-  <title>Universal Dynamic Titration Calculator | Online Pharmacy & Chemistry Lab Tool by Joash Sam</title>
+  <!-- SEO & Chemistry Analytics Hot Search Metadata -->
+  <title>Universal Dynamic Titration Calculator | Joash Sam</title>
   <meta name="author" content="Joash Sam">
-  <meta name="description" content="Advanced Universal Dynamic Titration Calculator and real-time lab simulation tool created by Joash Sam (MVP College of Pharmacy Nashik). Free online utility for stoichiometry, molarity, normality, assay purity, and chemistry/pharmacy calculations.">
-  <meta name="keywords" content="Joash Sam, titration calculator, universal titration engine, pharmacy calculations, chemistry calculator, MVP College of Pharmacy Nashik, online titration simulator, assay purity calculator, MHTCET, B.Pharm tools, chemical stoichiometry calculator">
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="description" content="Advanced Universal Dynamic Titration Calculator by Joash Sam. Features real-time simulation, redox titration, complexometric titration, acid-base curves, assay purity, and stoichiometry tools for chemistry and pharmacy.">
+  <meta name="keywords" content="Joash Sam, Universal Dynamic Titration Calculator, redox titration, complexometric titration, acid base titration calculator, assay purity calculation, stoichiometry engine, pharmacy calculations, MVP College of Pharmacy Nashik, chemistry analytics">
   
   <!-- Open Graph / Social Sharing Tags -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Universal Dynamic Titration Calculator | Joash Sam">
-  <meta property="og:description" content="Advanced web-based titration engine and simulation tool for analytical chemistry, assay testing, and pharmaceutical calculations by Joash Sam.">
+  <meta property="og:description" content="Advanced web-based titration engine, redox/complexometric simulation tool, and analytical chemistry calculator.">
   <meta property="og:url" content="https://joashsam07-cell.github.io/Titration-engine/">
-  <meta property="og:image" content="https://joashsam07-cell.github.io/Titration-engine/PATH_TO_A_PREVIEW_IMAGE_OR_LOGO.png">
+  <meta property="og:image" content="PATH_TO_A_PREVIEW_IMAGE_OR_LOGO.png">
 
   <!-- Twitter Card Tags -->
   <meta name="twitter:card" content="summary_large_image">
@@ -26,8 +25,6 @@
 
   <!-- Canonical Tag -->
   <link rel="canonical" href="https://joashsam07-cell.github.io/Titration-engine/">
-
-  <!-- Machine-Readable Authority & Cross-App Link for Crawlers -->
   <link rel="author" href="https://joashsam07-cell.github.io/fitness-calculator/">
 
   <!-- Structured Data (JSON-LD) for Search Engine Crawlers -->
@@ -36,26 +33,19 @@
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Universal Dynamic Titration Calculator",
-    "alternateName": "Titration Engine by Joash Sam",
     "author": {
       "@type": "Person",
       "name": "Joash Sam",
-      "jobTitle": "B.Pharm Student & Developer",
-      "worksFor": {
+      "StudentOf": {
         "@type": "Organization",
         "name": "MVP Samaj's College of Pharmacy, Nashik"
       },
       "description": "10th CBSE: 98%, 12th CBSE: 96.6%, MHTCET: 99.08%ile, NEET: 97.5%ile",
       "sameAs": "https://joashsam07-cell.github.io/fitness-calculator/"
     },
-    "applicationCategory": "EducationalApplication",
+    "applicationCategory": "UtilitiesApplication",
     "operatingSystem": "All",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "INR"
-    },
-    "description": "An interactive web-based titration engine and simulation tool for analytical chemistry, assay testing, and pharmaceutical calculations built for students.",
+    "description": "An interactive web-based titration engine, redox & complexometric simulation tool for analytical chemistry, assay testing, and pharmaceutical calculations.",
     "url": "https://joashsam07-cell.github.io/Titration-engine/"
   }
   </script>
@@ -381,6 +371,12 @@
     .btn-action:hover {
       background-color: var(--primary);
     }
+    .btn-pdf {
+      background-color: #059669;
+    }
+    .btn-pdf:hover {
+      background-color: #047857;
+    }
     .btn-row {
       background: #cbd5e1;
       border: none;
@@ -483,6 +479,43 @@
       font-size: 1.5rem;
       cursor: pointer;
       color: #64748b;
+    }
+
+    /* PRINT STYLES FOR CLIENT-SIDE PDF GENERATION */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printableReportArea, #printableReportArea * {
+        visibility: visible;
+      }
+      #printableReportArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white !important;
+        padding: 20px;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      .sidebar-toggle-btn, .sidebar-panel, .btn-action-grid, .btn-pdf, .sim-container, .collapsible-btn, #tableContainer, div[style*="font-size: 0.75rem"] {
+        display: none !important;
+      }
+      #reportTableWrapper table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      #reportTableWrapper th, #reportTableWrapper td {
+        border: 1px solid #cbd5e1;
+        padding: 6px;
+        text-align: center;
+        font-size: 0.85rem;
+      }
+      #reportCanvas {
+        display: block;
+        margin: 0 auto;
+      }
     }
   </style>
 </head>
@@ -738,40 +771,60 @@
 
     </div>
 
-    <!-- RESULTS DISPLAY CARD -->
+    <!-- RESULTS DISPLAY CARD (WITH PRINTABLE REPORT AREA FOR CLIENT-SIDE PDF) -->
     <div class="card results-card" id="resultsBox">
-      <h3>Calculated Results</h3>
-      
-      <div class="form-group">
-        <label id="lblTiterType">Selected Burette Reading (Titer Volume - V2):</label>
-        <div class="res-val" id="outMeanTiter">0.00 mL</div>
+      <div id="printableReportArea">
+        <h3>Calculated Results & Summary Report</h3>
+        <p style="font-size:0.85rem; color:#475569; margin-bottom:15px;">Generated by Universal Dynamic Titration Calculator | Creator: Joash Sam[cite: 1]</p>
+        
+        <div class="form-group">
+          <label id="lblTiterType">Selected Burette Reading (Titer Volume - V2):</label>
+          <div class="res-val" id="outMeanTiter">0.00 mL</div>
+        </div>
+
+        <!-- Readings Table in PDF Report -->
+        <div class="form-group" style="margin-top: 15px;">
+          <label>Titration Readings / Trials Taken:</label>
+          <div id="reportTableWrapper"></div>
+        </div>
+
+        <!-- Graph in PDF Report -->
+        <div class="form-group" style="margin-top: 15px; text-align: center;">
+          <label style="text-align: left;">Titration Curve & Equivalence Point:</label>
+          <canvas id="reportCanvas" width="280" height="200" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; margin-top: 5px;"></canvas>
+          <div id="reportGraphInfo" style="font-size: 0.85rem; margin-top: 5px; color: #475569; text-align: left; line-height: 1.5;"></div>
+        </div>
+
+        <div class="form-group" id="resNormBuretteContainer" style="margin-top: 15px;">
+          <label id="lblNormBurette">Exact Concentration & Entities (Burette Titrant):</label>
+          <div class="res-val" id="outNormBurette">0.0000 N</div>
+          <div class="ext-detail" id="outMolarityBurette"></div>
+          <div class="ext-subdetail" id="outMolesBurette"></div>
+        </div>
+
+        <div class="form-group" id="resNormFlaskContainer">
+          <label id="lblNormFlask">Exact Concentration & Entities (Flask Titrand):</label>
+          <div class="res-val" id="outNormFlask">0.0000 N</div>
+          <div class="ext-detail" id="outMolarityFlask"></div>
+          <div class="ext-subdetail" id="outMolesFlask"></div>
+        </div>
+
+        <div class="form-group" id="resAssayContainer" style="display: none;">
+          <label>Percentage Purity / Assay:</label>
+          <div class="res-val" id="outAssay">0.0000 % w/v</div>
+        </div>
+
+        <div class="form-group" id="resSolubilityContainer" style="display: none;">
+          <label>Solubility Concentration:</label>
+          <div class="res-val" id="outSolubility">0.0000 g / 100 mL</div>
+        </div>
+
+        <div class="factor-box" id="factorSentenceBox"></div>
       </div>
 
-      <div class="form-group" id="resNormBuretteContainer">
-        <label id="lblNormBurette">Exact Concentration & Entities (Burette Titrant):</label>
-        <div class="res-val" id="outNormBurette">0.0000 N</div>
-        <div class="ext-detail" id="outMolarityBurette"></div>
-        <div class="ext-subdetail" id="outMolesBurette"></div>
+      <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn-action btn-pdf" onclick="generatePDFReport()" style="flex: 1;">📥 Download Summary PDF Report</button>
       </div>
-
-      <div class="form-group" id="resNormFlaskContainer">
-        <label id="lblNormFlask">Exact Concentration & Entities (Flask Titrand):</label>
-        <div class="res-val" id="outNormFlask">0.0000 N</div>
-        <div class="ext-detail" id="outMolarityFlask"></div>
-        <div class="ext-subdetail" id="outMolesFlask"></div>
-      </div>
-
-      <div class="form-group" id="resAssayContainer" style="display: none;">
-        <label>Percentage Purity / Assay:</label>
-        <div class="res-val" id="outAssay">0.0000 % w/v</div>
-      </div>
-
-      <div class="form-group" id="resSolubilityContainer" style="display: none;">
-        <label>Solubility Concentration:</label>
-        <div class="res-val" id="outSolubility">0.0000 g / 100 mL</div>
-      </div>
-
-      <div class="factor-box" id="factorSentenceBox"></div>
       <div class="sync-status" id="syncStatus"></div>
     </div>
   </div>
@@ -883,9 +936,9 @@
   </div>
 
   <div style="font-size: 0.75rem; text-align: center; margin-top: 15px; color: #64748b;">
-    Disclaimer: This calculator is created for assistance and is not a substitute to actual experimental result.<br>
-    Calculated data is collected for improvement and devlopment<br><br>
-    <a href="https://joashsam07-cell.github.io/fitness-calculator/" style="color: var(--secondary); text-decoration: none; font-weight: bold;">Click here to visit Fitness calculator by the same creator.</a>
+    Disclaimer: This calculator is created for assistance and is not a substitute to actual experimental result[cite: 1].<br>
+    Calculated data is collected for improvement and development<br><br>
+    <a href="https://joashsam07-cell.github.io/fitness-calculator/" style="color: var(--secondary); text-decoration: none; font-weight: bold;">Click here to visit Fitness calculator by the same creator[cite: 1].</a>
   </div>
 
 </div>
@@ -1278,6 +1331,14 @@
     }
   }
 
+  function formatSci(val) {
+    if (val === 0) return "0.0000";
+    const exp = Math.floor(Math.log10(Math.abs(val)));
+    const mant = val / Math.pow(10, exp);
+    if (Math.abs(exp) <= 2) return val.toFixed(4);
+    return `${mant.toFixed(2)} × 10<sup>${exp}</sup>`;
+  }
+
   function sendDataToSheet(payload) {
     const syncStatus = document.getElementById('syncStatus');
     syncStatus.style.color = '#0369a1';
@@ -1357,6 +1418,21 @@
     document.getElementById('outMeanTiter').innerText = V2.toFixed(2) + ' mL';
     document.getElementById('factorSentenceBox').innerText = factorSentence;
 
+    // Populate Readings Table clone for PDF Report
+    const originalTable = document.getElementById('readingTable');
+    const reportTableWrapper = document.getElementById('reportTableWrapper');
+    reportTableWrapper.innerHTML = '';
+    const clonedTable = originalTable.cloneNode(true);
+    // Convert inputs in cloned table to static text cells for clean printing
+    clonedTable.querySelectorAll('input').forEach(input => {
+      const td = input.closest('td');
+      td.innerText = input.value;
+    });
+    reportTableWrapper.appendChild(clonedTable);
+
+    // Draw graph on PDF Report canvas
+    drawTitrationCurveOnCanvas('reportCanvas', 'reportGraphInfo');
+
     let payload = {
       timestamp: new Date().toISOString(),
       actionType: actionType,
@@ -1383,7 +1459,7 @@
       
       document.getElementById('outNormBurette').innerText = calculatedBuretteNormality.toFixed(4) + ' N';
       document.getElementById('outMolarityBurette').innerText = `Molarity: ${calculatedBuretteMolarity.toFixed(4)} M`;
-      document.getElementById('outMolesBurette').innerHTML = `Equivalents Present (Dispensed): ${buretteEquivalents.toExponential(4)} eq<br>Moles Present (Dispensed): ${buretteMoles.toExponential(4)} mol`;
+      document.getElementById('outMolesBurette').innerHTML = `Equivalents Present (Dispensed): ${formatSci(buretteEquivalents)} eq<br>Moles Present (Dispensed): ${formatSci(buretteMoles)} mol`;
 
       payload.calculatedBuretteNormality = calculatedBuretteNormality.toFixed(4);
 
@@ -1405,7 +1481,7 @@
       
       document.getElementById('outNormFlask').innerText = calculatedFlaskNormality.toFixed(4) + ' N';
       document.getElementById('outMolarityFlask').innerText = `Molarity: ${calculatedFlaskMolarity.toFixed(4)} M`;
-      document.getElementById('outMolesFlask').innerHTML = `Equivalents Present (in V1): ${flaskEquivalents.toExponential(4)} eq<br>Moles Present (in V1): ${flaskMoles.toExponential(4)} mol`;
+      document.getElementById('outMolesFlask').innerHTML = `Equivalents Present (in V1): ${formatSci(flaskEquivalents)} eq<br>Moles Present (in V1): ${formatSci(flaskMoles)} mol`;
 
       payload.calculatedFlaskNormality = calculatedFlaskNormality.toFixed(4);
 
@@ -1430,7 +1506,7 @@
 
       document.getElementById('outNormFlask').innerText = calculatedFlaskNormality.toFixed(4) + ' N';
       document.getElementById('outMolarityFlask').innerText = `Molarity: ${calculatedFlaskMolarity.toFixed(4)} M`;
-      document.getElementById('outMolesFlask').innerHTML = `Equivalents Present (in V1): ${flaskEquivalents.toExponential(4)} eq<br>Moles Present (in V1): ${flaskMoles.toExponential(4)} mol`;
+      document.getElementById('outMolesFlask').innerHTML = `Equivalents Present (in V1): ${formatSci(flaskEquivalents)} eq<br>Moles Present (in V1): ${formatSci(flaskMoles)} mol`;
       document.getElementById('outAssay').innerText = purityPercent.toFixed(2) + ' % w/v';
 
       payload.calculatedFlaskNormality = calculatedFlaskNormality.toFixed(4);
@@ -1457,7 +1533,7 @@
 
       document.getElementById('outNormFlask').innerText = calculatedFlaskNormality.toFixed(4) + ' N';
       document.getElementById('outMolarityFlask').innerText = `Molarity: ${calculatedFlaskMolarity.toFixed(4)} M`;
-      document.getElementById('outMolesFlask').innerHTML = `Equivalents Present (in V1): ${flaskEquivalents.toExponential(4)} eq<br>Moles Present (in V1): ${flaskMoles.toExponential(4)} mol`;
+      document.getElementById('outMolesFlask').innerHTML = `Equivalents Present (in V1): ${formatSci(flaskEquivalents)} eq<br>Moles Present (in V1): ${formatSci(flaskMoles)} mol`;
       document.getElementById('outSolubility').innerText = `${gramsPer100mL.toFixed(4)} g / 100 mL (${gramsPerLitre.toFixed(2)} g/L)`;
 
       payload.calculatedFlaskNormality = calculatedFlaskNormality.toFixed(4);
@@ -1474,6 +1550,11 @@
     if(document.getElementById('titrationSidebar').classList.contains('open')) {
       drawTitrationCurve();
     }
+  }
+
+  // --- CLIENT-SIDE PDF GENERATOR TRIGGER ---
+  function generatePDFReport() {
+    window.print();
   }
 
   // --- REAGENT PREPARATION CALCULATOR JS ---
@@ -1548,7 +1629,7 @@
     }
   }
 
-  // --- TITRATION GRAPH SIDEBAR JS ---
+  // --- SMART TITRATION GRAPH RENDERER ---
   function toggleSidebar() {
     const sidebar = document.getElementById('titrationSidebar');
     sidebar.classList.toggle('open');
@@ -1558,7 +1639,11 @@
   }
 
   function drawTitrationCurve() {
-    const canvas = document.getElementById('titrationChart');
+    drawTitrationCurveOnCanvas('titrationChart', 'graphInfo');
+  }
+
+  function drawTitrationCurveOnCanvas(canvasId, infoId) {
+    const canvas = document.getElementById(canvasId);
     if(!canvas) return;
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1566,8 +1651,8 @@
     const bKey = document.getElementById('buretteChem').value;
     const fKey = document.getElementById('flaskChem').value;
     
-    // Determine if Acid-Base vs Redox/Complexometric
     const isAcidBase = ['naoh', 'hcl', 'hno3', 'h2so4', 'hclo4'].includes(bKey) && !['feso4', 'h2o2'].includes(fKey);
+    const isBaseIntoAcid = (bKey === 'naoh');
 
     const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
     const N2 = parseFloat(document.getElementById('buretteNormality').value) || 0.1;
@@ -1589,15 +1674,15 @@
     const maxVol = Math.max(eqVol * 1.5, 20);
 
     const originX = 42;
-    const originY = 220;
+    const originY = 160;
     const plotWidth = 220;
-    const plotHeight = 180;
+    const plotHeight = 120;
 
     // Draw Axes lines
     ctx.strokeStyle = '#64748b';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(originX, 20);
+    ctx.moveTo(originX, 15);
     ctx.lineTo(originX, originY);
     ctx.lineTo(originX + plotWidth, originY);
     ctx.stroke();
@@ -1606,30 +1691,28 @@
     ctx.fillStyle = '#1e3a8a';
     ctx.font = 'bold 11px sans-serif';
     if (isAcidBase) {
-      ctx.fillText('pH vs Vol (mL)', 10, 15);
+      ctx.fillText('pH vs Vol (mL)', 10, 12);
       ctx.font = '9px sans-serif';
       ctx.fillStyle = '#475569';
-      // Y-Axis Ticks & Numbers (pH 0 to 14)
-      for (let pH = 0; pH <= 14; pH += 2) {
+      for (let pH = 0; pH <= 14; pH += 4) {
         let y = originY - (pH / 14) * plotHeight;
         ctx.beginPath();
         ctx.moveTo(originX - 3, y);
         ctx.lineTo(originX, y);
         ctx.stroke();
-        ctx.fillText(pH, originX - 22, y + 3);
+        ctx.fillText(pH, originX - 20, y + 3);
       }
     } else {
-      ctx.fillText('Potential vs Vol (mL)', 10, 15);
+      ctx.fillText('Potential / mV vs Vol (mL)', 10, 12);
       ctx.font = '9px sans-serif';
       ctx.fillStyle = '#475569';
-      // Y-Axis Ticks & Numbers (Potential 0 to 1000 mV)
-      for (let mv = 0; mv <= 1000; mv += 200) {
+      for (let mv = 0; mv <= 1000; mv += 250) {
         let y = originY - (mv / 1000) * plotHeight;
         ctx.beginPath();
         ctx.moveTo(originX - 3, y);
         ctx.lineTo(originX, y);
         ctx.stroke();
-        ctx.fillText(mv, originX - 30, y + 3);
+        ctx.fillText(mv, originX - 28, y + 3);
       }
     }
 
@@ -1643,12 +1726,11 @@
         ctx.moveTo(x, originY);
         ctx.lineTo(x, originY + 3);
         ctx.stroke();
-        ctx.fillText(v, x - 6, originY + 15);
+        ctx.fillText(v, x - 6, originY + 14);
       }
     }
-    ctx.fillText('Vol (mL)', originX + plotWidth - 35, originY + 28);
 
-    // Plot Titration Curve
+    // Plot Smart Titration Curve
     ctx.strokeStyle = '#2563eb';
     ctx.lineWidth = 2.5;
     ctx.beginPath();
@@ -1657,11 +1739,13 @@
       let yVal, yCoord;
 
       if (isAcidBase) {
-        // Sigmoidal pH curve
-        yVal = 1 + 12 / (1 + Math.exp(-0.8 * (v - eqVol)));
+        if (isBaseIntoAcid) {
+          yVal = 1 + 12 / (1 + Math.exp(-0.8 * (v - eqVol)));
+        } else {
+          yVal = 13 - 12 / (1 + Math.exp(-0.8 * (v - eqVol)));
+        }
         yCoord = originY - (yVal / 14) * plotHeight;
       } else {
-        // Sigmoidal Potential curve (mV)
         yVal = 100 + 800 / (1 + Math.exp(-0.8 * (v - eqVol)));
         yCoord = originY - (yVal / 1000) * plotHeight;
       }
@@ -1675,7 +1759,7 @@
     // Draw Equivalence Point marker & Line
     let eqX = originX + (eqVol / maxVol) * plotWidth;
     let eqYVal = isAcidBase ? 7 : 500;
-    let eqY = isAcidBase ? (originY - (7 / 14) * plotHeight) : (originY - (500 / 1000) * plotHeight);
+    let eqY = isAcidBase ? (originY - (eqYVal / 14) * plotHeight) : (originY - (500 / 1000) * plotHeight);
     
     ctx.strokeStyle = '#dc2626';
     ctx.setLineDash([3, 3]);
@@ -1687,14 +1771,17 @@
 
     ctx.fillStyle = '#dc2626';
     ctx.beginPath();
-    ctx.arc(eqX, eqY, 4.5, 0, 2 * Math.PI);
+    ctx.arc(eqX, eqY, 4, 0, 2 * Math.PI);
     ctx.fill();
 
-    document.getElementById('graphInfo').innerHTML = `
-      <strong>Graph Mode:</strong> ${isAcidBase ? 'Acid-Base (pH vs Vol)' : 'Redox / Potentiometric (Potential vs Vol)'}<br>
-      <strong>Equivalence Volume ($V_{eq}$):</strong> ~${eqVol.toFixed(2)} mL<br>
-      <span style="color:#dc2626; font-weight:bold;">● Inflection / Equivalence Point</span>
-    `;
+    const infoElem = document.getElementById(infoId);
+    if(infoElem) {
+      infoElem.innerHTML = `
+        <strong>Graph Mode:</strong> ${isAcidBase ? (isBaseIntoAcid ? 'Base into Acid (Rising pH)' : 'Acid into Base (Falling pH)') : 'Redox / Complexometric'}<br>
+        <strong>Equivalence Volume (V<sub>eq</sub>):</strong> ~${eqVol.toFixed(2)} mL<br>
+        <span style="color:#dc2626; font-weight:bold;">● Inflection / Equivalence Point</span>
+      `;
+    }
   }
 
   window.onload = function() {
