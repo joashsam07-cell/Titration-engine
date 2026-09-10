@@ -1034,7 +1034,6 @@
     znso4: { name: "Zinc Sulphate Heptahydrate", formula: "ZnSO4·7H2O", mw: 287.54, eq: 287.54, state: "Crystalline solid", structure: "[Zn(H2O)6]2+ [SO4]2- · H2O", acidBaseType: null, mp: "100 °C", bp: "740 °C", solubility: "960 g/L", reaction: "ZnSO4 + Na2H2EDTA → Na2[ZnEDTA] + H2SO4", indicator: "Mordant Black II / Eriochrome Black T / EBT at pH 10 Buffer (Wine-Red to Clean Distinct Blue)" }
   };
 
-  /* Comprehensive Titration Pair Configuration Map */
   const pairConfigMap = {
     'naoh_oxalic': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Phenolphthalein (Colourless to Permanent Pale Pink)' },
     'naoh_khp': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Phenolphthalein (Colourless to Light Pink)' },
@@ -1060,7 +1059,7 @@
     'hno3_ammonia': { colors: ['#e2e8f0', '#38bdf8'], indicator: 'Methyl Orange / Mixed Indicator' },
     'h2so4_ammonia': { colors: ['#e2e8f0', '#38bdf8'], indicator: 'Methyl Orange / Mixed Indicator' },
     'hcl_pyridine': { colors: ['#e2e8f0', '#38bdf8'], indicator: 'Bromothymol Blue' },
-    'acetic_naoh_flask': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein' }, // Added explicitly
+    'acetic_naoh_flask': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein' }, 
     'ammonia_hcl': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Methyl Orange' },
     'pyridine_hcl': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Bromothymol Blue' },
     'kmno4_oxalic': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Self-indicator at ~60°C (Colourless to Faint Pink)' },
@@ -1075,6 +1074,90 @@
     'hclo4_salicylic': { colors: ['#6b21a8', '#10b981'], indicator: 'Crystal Violet (Violet to Emerald Green)' },
     'edta_znso4': { colors: ['#881337', '#2563eb'], indicator: 'Mordant Black II / EBT (Wine-Red to Blue)' }
   };
+
+  /* LOCAL STORAGE PERSISTENCY ENGINE */
+  function saveAppSession() {
+    const state = {
+      flaskInputMode: flaskInputMode,
+      buretteInputMode: buretteInputMode,
+      inputs: {},
+      radios: {},
+      table: []
+    };
+    
+    document.querySelectorAll('input[id], select[id]').forEach(el => {
+      state.inputs[el.id] = el.value;
+    });
+    
+    document.querySelectorAll('input[type="radio"]:checked').forEach(el => {
+      state.radios[el.name] = el.value;
+    });
+    
+    document.querySelectorAll('#readingTable tbody tr').forEach(tr => {
+      state.table.push({
+        init: tr.querySelector('.b-init').value,
+        fin: tr.querySelector('.b-final').value
+      });
+    });
+    
+    localStorage.setItem('titrationEngineSession', JSON.stringify(state));
+  }
+
+  function restoreAppSession() {
+    const stateStr = localStorage.getItem('titrationEngineSession');
+    if (!stateStr) return;
+    
+    try {
+      const state = JSON.parse(stateStr);
+      
+      // Restore modes
+      if(state.flaskInputMode) setFlaskInputMode(state.flaskInputMode);
+      if(state.buretteInputMode) setBuretteInputMode(state.buretteInputMode);
+
+      // Restore simple inputs & selects
+      if(state.inputs) {
+        Object.keys(state.inputs).forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = state.inputs[id];
+        });
+      }
+
+      // Restore radios
+      if(state.radios) {
+        Object.keys(state.radios).forEach(name => {
+          const el = document.querySelector(`input[name="${name}"][value="${state.radios[name]}"]`);
+          if (el) el.checked = true;
+        });
+      }
+
+      // Restore interactive table
+      if(state.table && state.table.length > 0) {
+        const tbody = document.querySelector('#readingTable tbody');
+        tbody.innerHTML = '';
+        state.table.forEach((r, i) => {
+          const tr = document.createElement('tr');
+          const diff = Math.max(0, parseFloat(r.fin) - parseFloat(r.init)).toFixed(2);
+          tr.innerHTML = `
+            <td>${i + 1}</td>
+            <td><input type="number" class="b-init" value="${r.init}" step="0.05" oninput="updateTiter(this); saveAppSession();"></td>
+            <td><input type="number" class="b-final" value="${r.fin}" step="0.05" oninput="updateTiter(this); saveAppSession();"></td>
+            <td class="titer-val">${diff}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    } catch(e) {
+      console.warn("Local storage restore failed, continuing with fresh state.", e);
+    }
+  }
+
+  // Attach event listeners for auto-save
+  document.addEventListener('input', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') saveAppSession();
+  });
+  document.addEventListener('change', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') saveAppSession();
+  });
 
   function switchAppMode(mode) {
     if(mode === 'titration') {
@@ -1098,14 +1181,13 @@
     document.getElementById('containerBuretteMolarity').style.display = (mode === 'molarity') ? 'block' : 'none';
   }
 
-  // UPDATED: Universal fallback engine prevents any valid Acid+Base pairing from being marked invalid.
   function getPairConfig(bKey, fKey) {
     const pairKey = `${bKey}_${fKey}`;
     if (pairConfigMap[pairKey]) {
       return pairConfigMap[pairKey];
     }
     
-    // Auto-fallback for universal Acid-Base support (e.g., WA + WB, acetic + naoh_flask)
+    // Auto-fallback for universal Acid-Base support
     const bData = buretteDb[bKey];
     const fData = flaskDb[fKey];
     if (bData && fData && bData.acidBaseType && fData.acidBaseType) {
@@ -1113,23 +1195,21 @@
         const fType = fData.acidBaseType;
         
         let indicator = "Mixed / Universal Indicator";
-        let colors = ['#e2e8f0', '#38bdf8']; // Default colorless to blue
+        let colors = ['#e2e8f0', '#38bdf8']; 
         
-        // Base titrating into Acid
         if ((bType === 'SB' || bType === 'WB') && (fType === 'SA' || fType === 'WA')) {
-            colors = ['#e2e8f0', '#f472b6']; // Colorless to Pink
+            colors = ['#e2e8f0', '#f472b6']; 
             if(fType === 'SA' && bType === 'SB') indicator = "Phenolphthalein or Methyl Orange";
             else if(fType === 'WA' && bType === 'SB') indicator = "Phenolphthalein";
             else if(fType === 'SA' && bType === 'WB') indicator = "Methyl Orange";
-            else indicator = "Bromothymol Blue"; // WA + WB
+            else indicator = "Bromothymol Blue"; 
         } 
-        // Acid titrating into Base
         else if ((bType === 'SA' || bType === 'WA') && (fType === 'SB' || fType === 'WB')) {
-            colors = ['#f472b6', '#e2e8f0']; // Pink to Colorless
+            colors = ['#f472b6', '#e2e8f0']; 
             if(fType === 'SB' && bType === 'SA') indicator = "Phenolphthalein or Methyl Orange";
             else if(fType === 'WB' && bType === 'SA') indicator = "Methyl Orange";
             else if(fType === 'SB' && bType === 'WA') indicator = "Phenolphthalein";
-            else indicator = "Bromothymol Blue"; // WA + WB
+            else indicator = "Bromothymol Blue"; 
         }
         return { colors: colors, indicator: indicator };
     }
@@ -1168,12 +1248,8 @@
         btns.forEach(b => b.disabled = false);
       }
       
-      // INSTANT SIMULATOR ACTIVATION: Fills burette and flask instantly on valid selection
-      if (wasInvalid) {
-        resetSim();
-      } else {
-        updateSimColors();
-      }
+      if (wasInvalid) resetSim();
+      else updateSimColors();
     }
   }
 
@@ -1317,6 +1393,7 @@
     if (firstFinal) {
       firstFinal.value = simVol.toFixed(2);
       updateTiter(firstFinal);
+      saveAppSession(); // Auto-save on simulation update
     }
   }
   
@@ -1433,13 +1510,14 @@
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${rowCount}</td>
-      <td><input type="number" class="b-init" value="0.00" step="0.05" oninput="updateTiter(this)"></td>
-      <td><input type="number" class="b-final" value="0.00" step="0.05" oninput="updateTiter(this)"></td>
+      <td><input type="number" class="b-init" value="0.00" step="0.05" oninput="updateTiter(this); saveAppSession();"></td>
+      <td><input type="number" class="b-final" value="0.00" step="0.05" oninput="updateTiter(this); saveAppSession();"></td>
       <td class="titer-val">0.00</td>
     `;
     tbody.appendChild(tr);
     const container = document.getElementById('tableContainer');
     container.style.maxHeight = container.scrollHeight + "px";
+    saveAppSession();
   }
 
   function getCalculatedTiter() {
@@ -1508,8 +1586,8 @@
       syncStatus.innerText = "✓ Data recorded in Google Sheet.";
     })
     .catch(err => {
-      syncStatus.style.color = "#dc2626";
-      syncStatus.innerText = "❌ Sync failed: " + err.message;
+      syncStatus.style.color = "#d97706";
+      syncStatus.innerHTML = "⚠️ Offline / Sync skipped. <strong>Your results are safely generated above</strong> and ready for PDF download.";
     });
   }
 
@@ -1575,9 +1653,9 @@
         } else if ((bData.acidBaseType === 'WA' && fData.acidBaseType === 'WB') || (bData.acidBaseType === 'WB' && fData.acidBaseType === 'WA')) {
             let pKa = fData.pKa || bData.pKa;
             let pKb = fData.pKb || bData.pKb;
-            eq_pH = 7.0 + 0.5 * pKa - 0.5 * pKb; // UPDATED WA + WB salt hydrolysis pH
+            eq_pH = 7.0 + 0.5 * pKa - 0.5 * pKb; 
         } else {
-             eq_pH = 7.0; // Strong Acid + Strong Base
+             eq_pH = 7.0; 
         }
     }
     eq_pH = Math.max(minY, Math.min(maxY, eq_pH)); 
@@ -1635,7 +1713,6 @@
       let pH = 7.0;
 
       if (!isAcidBase) {
-          // Strong proxy for Redox/Complexometric visual layout
           if (isBaseTitrant) {
             if (v < eqVol) pH = -Math.log10(Math.max(((eqVol - v) * N2) / (V1 + v), 1e-7));
             else if (v > eqVol) pH = 14.0 + Math.log10(Math.max(((v - eqVol) * N2) / (V1 + v), 1e-7));
@@ -1644,11 +1721,12 @@
             else if (v > eqVol) pH = -Math.log10(Math.max(((v - eqVol) * N2) / (V1 + v), 1e-7));
           }
       } else {
-          // Scientifically precise Henderson-Hasselbalch / Excess Acid-Base tracking
           if (isBaseTitrant) {
-             if (v < eqVol) { // Acid in flask
+             if (v < eqVol) { 
                  if (fData.acidBaseType === 'WA') {
-                     let ratio = v / (eqVol - v);
+                     let delta = eqVol - v;
+                     if (Math.abs(delta) < 1e-5) delta = 1e-5;
+                     let ratio = v / delta;
                      if (ratio <= 0.001) pH = 0.5 * fData.pKa - 0.5 * Math.log10(N1);
                      else pH = fData.pKa + Math.log10(Math.max(ratio, 1e-10));
                  } else {
@@ -1657,7 +1735,9 @@
                  }
              } else if (v > eqVol) {
                  if (bData.acidBaseType === 'WB') {
-                     let ratio = (eqVol) / (v - eqVol);
+                     let delta = v - eqVol;
+                     if (Math.abs(delta) < 1e-5) delta = 1e-5;
+                     let ratio = eqVol / delta;
                      let pOH = bData.pKb + Math.log10(Math.max(ratio, 1e-10));
                      pH = 14.0 - pOH;
                  } else {
@@ -1667,10 +1747,12 @@
              } else {
                  pH = eq_pH;
              }
-          } else { // Acid in burette
-             if (v < eqVol) { // Base in flask
+          } else { 
+             if (v < eqVol) { 
                  if (fData.acidBaseType === 'WB') {
-                     let ratio = v / (eqVol - v);
+                     let delta = eqVol - v;
+                     if (Math.abs(delta) < 1e-5) delta = 1e-5;
+                     let ratio = v / delta;
                      let pOH;
                      if (ratio <= 0.001) pOH = 0.5 * fData.pKb - 0.5 * Math.log10(N1);
                      else pOH = fData.pKb + Math.log10(Math.max(ratio, 1e-10));
@@ -1681,7 +1763,9 @@
                  }
              } else if (v > eqVol) {
                  if (bData.acidBaseType === 'WA') {
-                     let ratio = (eqVol) / (v - eqVol);
+                     let delta = v - eqVol;
+                     if (Math.abs(delta) < 1e-5) delta = 1e-5;
+                     let ratio = eqVol / delta;
                      pH = bData.pKa + Math.log10(Math.max(ratio, 1e-10));
                  } else {
                      const excessH = ((v - eqVol) * N2) / (V1 + v);
@@ -1971,6 +2055,7 @@
   }
 
   window.onload = function() {
+    restoreAppSession();
     updateBuretteInfo();
     updateFlaskInfo();
     checkValidity();
