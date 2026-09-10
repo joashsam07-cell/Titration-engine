@@ -426,6 +426,7 @@
 
 <div class="container">
   
+  <!-- TITRATION ENGINE CARD -->
   <div class="card">
     <div class="header-box">
       <h2>🧪 Universal Titration Engine</h2>
@@ -647,7 +648,7 @@
 
   </div>
 
-  <!-- RESULTS DISPLAY -->
+  <!-- RESULTS DISPLAY CARD -->
   <div class="card results-card" id="resultsBox">
     <h3>Calculated Results</h3>
     
@@ -682,6 +683,73 @@
 
     <div class="factor-box" id="factorSentenceBox"></div>
     <div class="sync-status" id="syncStatus"></div>
+  </div>
+
+  <!-- REAGENT PREPARATION CALCULATOR CARD -->
+  <div class="card" id="reagentMakerCard">
+    <div class="header-box">
+      <h2>⚖️ Reagent Preparation Calculator</h2>
+    </div>
+    
+    <div class="form-group">
+      <label for="prepChem">Select Chemical to Prepare:</label>
+      <select id="prepChem">
+        <optgroup label="Standard Titrants (Burette)">
+          <option value="b_naoh">Sodium Hydroxide (NaOH)</option>
+          <option value="b_hcl">Hydrochloric Acid (HCl)</option>
+          <option value="b_hno3">Nitric Acid (HNO3)</option>
+          <option value="b_h2so4">Sulphuric Acid (H2SO4)</option>
+          <option value="b_kmno4">Potassium Permanganate (KMnO4)</option>
+          <option value="b_na2s2o3">Sodium Thiosulphate (Na2S2O3)</option>
+          <option value="b_i2">Iodine (I2)</option>
+          <option value="b_hclo4">Perchloric Acid (HClO4)</option>
+          <option value="b_ceric">Ceric Ammonium Sulphate</option>
+          <option value="b_edta">Disodium EDTA</option>
+        </optgroup>
+        <optgroup label="Standard Samples (Flask)">
+          <option value="f_oxalic">Oxalic Acid Dihydrate</option>
+          <option value="f_khp">Potassium Hydrogen Phthalate (KHP)</option>
+          <option value="f_na2co3">Sodium Carbonate (Na2CO3)</option>
+          <option value="f_benzoic">Benzoic Acid</option>
+          <option value="f_salicylic">Salicylic Acid</option>
+          <option value="f_aspirin">Acetylsalicylic Acid (Aspirin)</option>
+          <option value="f_nahco3">Sodium Bicarbonate (NaHCO3)</option>
+          <option value="f_nh4cl">Ammonium Chloride (NH4Cl)</option>
+          <option value="f_acetic">Acetic Acid</option>
+          <option value="f_h2o2">Hydrogen Peroxide (H2O2)</option>
+          <option value="f_feso4">Ferrous Sulphate (FeSO4)</option>
+          <option value="f_na_benzoate">Sodium Benzoate</option>
+          <option value="f_boric">Boric Acid</option>
+          <option value="f_znso4">Zinc Sulphate Heptahydrate</option>
+          <option value="f_as2o3">Arsenic Trioxide (As2O3)</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="grid-2 form-group">
+      <div>
+        <label for="prepConcType">Concentration Type:</label>
+        <select id="prepConcType">
+          <option value="N">Normality (N)</option>
+          <option value="M">Molarity (M)</option>
+        </select>
+      </div>
+      <div>
+        <label for="prepConcValue">Target Concentration:</label>
+        <input type="number" id="prepConcValue" value="0.1" step="0.01">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="prepVol">Target Final Volume (mL):</label>
+      <input type="number" id="prepVol" value="1000" step="10">
+    </div>
+
+    <button class="btn-action" style="width: 100%;" onclick="calculatePreparation()">Calculate Recipe</button>
+    
+    <div class="factor-box" id="prepResultBox" style="display: none; margin-top: 15px;">
+       <!-- Preparation results injected here -->
+    </div>
   </div>
 
   <div style="font-size: 0.75rem; text-align: center; margin-top: 15px; color: #64748b;">
@@ -929,8 +997,10 @@
   function setFlaskInputMode(mode) {
     flaskInputMode = mode;
     
-    document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById('btnMode' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
+    document.getElementById('btnModeNormality').className = 'toggle-btn' + (mode === 'normality' ? ' active' : '');
+    document.getElementById('btnModeWeight').className = 'toggle-btn' + (mode === 'weight' ? ' active' : '');
+    document.getElementById('btnModeUnknown').className = 'toggle-btn' + (mode === 'unknown' ? ' active' : '');
+    document.getElementById('btnModeGame').className = 'toggle-btn' + (mode === 'game' ? ' active' : '');
 
     document.getElementById('containerFlaskNormality').style.display = (mode === 'normality') ? 'block' : 'none';
     document.getElementById('containerFlaskWeight').style.display = (mode === 'weight') ? 'block' : 'none';
@@ -1258,6 +1328,43 @@
 
     resBox.style.display = 'block';
     sendDataToSheet(payload);
+  }
+
+  // --- REAGENT PREPARATION CALCULATOR JS ---
+  function calculatePreparation() {
+    const chemVal = document.getElementById('prepChem').value;
+    const concType = document.getElementById('prepConcType').value;
+    const concValue = parseFloat(document.getElementById('prepConcValue').value) || 0;
+    const vol = parseFloat(document.getElementById('prepVol').value) || 0;
+    
+    if (concValue <= 0 || vol <= 0) {
+      alert("Please enter valid positive numbers for concentration and volume.");
+      return;
+    }
+
+    let db = chemVal.startsWith('b_') ? buretteDb : flaskDb;
+    let key = chemVal.substring(2);
+    let chemData = db[key];
+
+    let mass = 0;
+    let weightType = "";
+    if (concType === 'N') {
+      mass = (concValue * chemData.eq * vol) / 1000;
+      weightType = `Equivalent Weight (${chemData.eq} g/eq)`;
+    } else {
+      mass = (concValue * chemData.mw * vol) / 1000;
+      weightType = `Molecular Weight (${chemData.mw} g/mol)`;
+    }
+
+    const resBox = document.getElementById('prepResultBox');
+    resBox.style.display = 'block';
+    
+    let instructions = `To prepare <strong>${vol} mL</strong> of <strong>${concValue} ${concType}</strong> ${chemData.name}:<br><br>`;
+    instructions += `⚖️ <strong>Weigh exactly: ${mass.toFixed(4)} grams</strong> of pure active compound.<br>`;
+    instructions += `💧 <strong>Solvent:</strong> Dissolve the solute in a small amount of distilled water (or appropriate solvent), then make up the total volume to exactly the ${vol} mL mark in a volumetric flask.<br><br>`;
+    instructions += `<span style="font-size:0.85rem; color:#64748b;">* Calculation based on ${weightType}. Note: For liquid concentrates (like HCl, H2SO4), use specific gravity and purity % to convert this mass into the required stock volume.</span>`;
+
+    resBox.innerHTML = instructions;
   }
 
   window.onload = function() {
