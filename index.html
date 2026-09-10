@@ -5,29 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="google-site-verification" content="P6Mdk1RGkNOp1FRiAvc_6n_WMnMY3mo2BvgtLaBA4hQ" />
   
-  <!-- SEO & Chemistry Analytics Hot Search Metadata -->
   <title>Universal Dynamic Titration Calculator | Joash Sam</title>
   <meta name="author" content="Joash Sam">
   <meta name="description" content="Advanced Universal Dynamic Titration Calculator by Joash Sam. Features real-time simulation, redox titration, complexometric titration, acid-base curves, assay purity, and stoichiometry tools for chemistry and pharmacy.">
   <meta name="keywords" content="Joash Sam, Universal Dynamic Titration Calculator, redox titration, complexometric titration, acid base titration calculator, assay purity calculation, stoichiometry engine, pharmacy calculations, MVP College of Pharmacy Nashik, chemistry analytics">
   
-  <!-- Open Graph / Social Sharing Tags -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Universal Dynamic Titration Calculator | Joash Sam">
   <meta property="og:description" content="Advanced web-based titration engine, redox/complexometric simulation tool, and analytical chemistry calculator.">
   <meta property="og:url" content="https://joashsam07-cell.github.io/Titration-engine/">
   <meta property="og:image" content="PATH_TO_A_PREVIEW_IMAGE_OR_LOGO.png">
 
-  <!-- Twitter Card Tags -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Universal Dynamic Titration Calculator | Joash Sam">
   <meta name="twitter:description" content="Advanced web-based titration engine and simulation tool for analytical chemistry and pharmacy calculations.">
 
-  <!-- Canonical Tag -->
   <link rel="canonical" href="https://joashsam07-cell.github.io/Titration-engine/">
   <link rel="author" href="https://joashsam07-cell.github.io/fitness-calculator/">
 
-  <!-- Structured Data (JSON-LD) for Search Engine Crawlers -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -186,6 +181,17 @@
       border-color: var(--secondary);
     }
     
+    .sample-method-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .sample-method-grid .toggle-btn {
+      flex: none;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
     .unknown-note, .game-note {
       padding: 10px 12px;
       border-radius: 6px;
@@ -562,17 +568,23 @@
       <div class="form-group">
         <label for="buretteChem">Select Reagent:</label>
         <div class="input-with-bulb">
-          <select id="buretteChem" onchange="updateBuretteInfo(); checkValidity(); updateSimColors();">
-            <option value="naoh">Sodium Hydroxide (NaOH)</option>
-            <option value="hcl">Hydrochloric Acid (HCl)</option>
-            <option value="hno3">Nitric Acid (HNO3) - Standardisation</option>
-            <option value="h2so4">Sulphuric Acid (H2SO4) - Standardisation</option>
-            <option value="kmno4">Potassium Permanganate (KMnO4)</option>
-            <option value="na2s2o3">Sodium Thiosulphate (Na2S2O3)</option>
-            <option value="i2">Iodine Solution (I2)</option>
-            <option value="hclo4">Perchloric Acid (HClO4)</option>
+          <select id="buretteChem" onchange="updateBuretteInfo(); checkValidity();">
+            <option value="" disabled selected>-- Select Titrant --</option>
+            <option value="acetic">Acetic Acid (CH3COOH) [Weak Acid]</option>
+            <option value="ammonia">Ammonia Solution (NH3) [Weak Base]</option>
             <option value="ceric">Ceric Ammonium Sulphate</option>
             <option value="edta">Disodium EDTA</option>
+            <option value="hcl">Hydrochloric Acid (HCl)</option>
+            <option value="hclo4">Perchloric Acid (HClO4)</option>
+            <option value="hno3">Nitric Acid (HNO3) - Standardisation</option>
+            <option value="h2so4">Sulphuric Acid (H2SO4) - Standardisation</option>
+            <option value="i2">Iodine Solution (I2)</option>
+            <option value="khp">Potassium Hydrogen Phthalate (KHP)</option>
+            <option value="kmno4">Potassium Permanganate (KMnO4)</option>
+            <option value="oxalic">Oxalic Acid Dihydrate</option>
+            <option value="pyridine">Pyridine (C5H5N) [Weak Base]</option>
+            <option value="naoh">Sodium Hydroxide (NaOH)</option>
+            <option value="na2s2o3">Sodium Thiosulphate (Na2S2O3)</option>
           </select>
           <button type="button" class="bulb-btn" onclick="toggleInfo('buretteInfoCard')" title="View Chemical Information">💡</button>
         </div>
@@ -609,24 +621,28 @@
       <div class="form-group">
         <label for="flaskChem">Select Chemical / Sample:</label>
         <div class="input-with-bulb">
-          <select id="flaskChem" onchange="updateFlaskInfo(); checkValidity(); updateSimColors();">
-            <option value="oxalic">Oxalic Acid Dihydrate</option>
+          <select id="flaskChem" onchange="updateFlaskInfo(); checkValidity();">
+            <option value="" disabled selected>-- Select Sample --</option>
+            <option value="acetic">Acetic Acid</option>
+            <option value="ammonia">Ammonia Solution (Weak Base)</option>
+            <option value="as2o3">Arsenic Trioxide (As2O3)</option>
+            <option value="aspirin">Acetylsalicylic Acid (Aspirin)</option>
+            <option value="benzoic">Benzoic Acid</option>
+            <option value="boric">Boric Acid</option>
+            <option value="feso4">Ferrous Sulphate (FeSO4)</option>
+            <option value="h2o2">Hydrogen Peroxide (H2O2)</option>
+            <option value="hcl">Hydrochloric Acid (HCl)</option>
+            <option value="i2_flask">Iodine Solution (I2)</option>
             <option value="khp">Potassium Hydrogen Phthalate (KHP)</option>
             <option value="na2co3">Sodium Carbonate (Na2CO3)</option>
-            <option value="benzoic">Benzoic Acid</option>
-            <option value="salicylic">Salicylic Acid</option>
-            <option value="aspirin">Acetylsalicylic Acid (Aspirin)</option>
-            <option value="nahco3">Sodium Bicarbonate (NaHCO3)</option>
-            <option value="nh4cl">Ammonium Chloride (NH4Cl)</option>
-            <option value="acetic">Acetic Acid</option>
-            <option value="h2o2">Hydrogen Peroxide (H2O2)</option>
-            <option value="feso4">Ferrous Sulphate (FeSO4)</option>
             <option value="na_benzoate">Sodium Benzoate</option>
-            <option value="boric">Boric Acid</option>
+            <option value="nahco3">Sodium Bicarbonate (NaHCO3)</option>
             <option value="naoh_flask">Sodium Hydroxide Solution (Standardisation)</option>
+            <option value="nh4cl">Ammonium Chloride (NH4Cl)</option>
+            <option value="oxalic">Oxalic Acid Dihydrate</option>
+            <option value="pyridine">Pyridine (Weak Base)</option>
+            <option value="salicylic">Salicylic Acid</option>
             <option value="znso4">Zinc Sulphate Heptahydrate (Complexometric)</option>
-            <option value="i2_flask">Iodine Solution (I2)</option>
-            <option value="as2o3">Arsenic Trioxide (As2O3)</option>
           </select>
           <button type="button" class="bulb-btn" onclick="toggleInfo('flaskInfoCard')" title="View Chemical Information">💡</button>
         </div>
@@ -636,12 +652,12 @@
 
       <div class="form-group">
         <label>Specify Sample Amount Method:</label>
-        <div class="input-mode-toggle" style="display: flex; flex-wrap: wrap; gap: 6px;">
-          <div class="toggle-btn active" id="btnModeNormality" onclick="setFlaskInputMode('normality')" style="flex: 1 1 calc(33% - 6px);">By Normality</div>
-          <div class="toggle-btn" id="btnModeMolarity" onclick="setFlaskInputMode('molarity')" style="flex: 1 1 calc(33% - 6px);">By Molarity (IUPAC)</div>
-          <div class="toggle-btn" id="btnModeWeight" onclick="setFlaskInputMode('weight')" style="flex: 1 1 calc(33% - 6px);">By Mass (g)</div>
-          <div class="toggle-btn" id="btnModeUnknown" onclick="setFlaskInputMode('unknown')" style="flex: 1 1 calc(50% - 6px);">❓ Unknown</div>
-          <div class="toggle-btn" id="btnModeGame" onclick="setFlaskInputMode('game')" style="flex: 1 1 calc(50% - 6px);">🎮 Game</div>
+        <div class="sample-method-grid">
+          <div class="toggle-btn active" id="btnModeNormality" onclick="setFlaskInputMode('normality')">By Normality</div>
+          <div class="toggle-btn" id="btnModeMolarity" onclick="setFlaskInputMode('molarity')">By Molarity (IUPAC)</div>
+          <div class="toggle-btn" id="btnModeWeight" onclick="setFlaskInputMode('weight')">By Mass (g)</div>
+          <div class="toggle-btn" id="btnModeUnknown" onclick="setFlaskInputMode('unknown')">❓ Unknown</div>
+          <div class="toggle-btn" id="btnModeGame" onclick="setFlaskInputMode('game')" style="grid-column: span 2;">🎮 Digital Titration Practice</div>
         </div>
 
         <div id="containerFlaskNormality" style="margin-top: 10px;">
@@ -676,7 +692,7 @@
         </div>
         
         <div id="containerFlaskGame" class="game-note" style="display: none;">
-          🎮 <strong>Game Mode Active:</strong> A secret, random concentration has been generated for the flask. Use the simulator to drop titrant and carefully find the endpoint visual color change!<br><br>
+          🎮 <strong>Digital Titration Practice Active:</strong> A secret, random concentration has been generated for the flask. Use the simulator to drop titrant and carefully find the endpoint visual color change!<br><br>
           <div style="margin-top: 10px; background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #c7d2fe;">
             <label for="gameUserReading" style="display: inline-block; margin-right: 10px; color: #334155;">Your Titration Reading (mL):</label>
             <input type="number" id="gameUserReading" step="0.05" style="width: 100px; display: inline-block; padding: 6px;">
@@ -693,13 +709,13 @@
 
       <!-- 3. INTERACTIVE SIMULATOR PANEL -->
       <div class="section-title">3. Interactive Titration Simulator</div>
-      <div class="sim-container" id="simContainer">
+      <div class="sim-container disabled-sim" id="simContainer">
         <div class="sim-freeze-banner" id="simFreezeBanner">
           🔒 SIMULATOR FROZEN: Cannot simulate visual endpoint without a known concentration. Please enter your experimental lab burette readings manually into Section 4 below.
         </div>
         
         <div class="sim-invalid-banner" id="simInvalidBanner">
-          ❌ INVALID TITRATION: This specific Titrant-Titrand combination is chemically incompatible or lacks a defined endpoint in this engine.
+          ❌ <strong>Invalid titration</strong>: This specific Titrant-Titrand combination is chemically incompatible or lacks a defined endpoint in this engine. Please select a valid combination.
         </div>
 
         <div class="sim-viewport">
@@ -730,9 +746,9 @@
         </div>
 
         <div class="sim-controls">
-          <button type="button" class="sim-btn" id="btnSimAdd1" onclick="addTitrant(1.0)">+1.0 mL</button>
-          <button type="button" class="sim-btn" id="btnSimAdd01" onclick="addTitrant(0.1)">+0.1 mL (Drop)</button>
-          <button type="button" class="sim-btn refill" id="btnSimRefill" onclick="refillBurette()">Refill & Continue</button>
+          <button type="button" class="sim-btn" id="btnSimAdd1" onclick="addTitrant(1.0)" disabled>+1.0 mL</button>
+          <button type="button" class="sim-btn" id="btnSimAdd01" onclick="addTitrant(0.1)" disabled>+0.1 mL (Drop)</button>
+          <button type="button" class="sim-btn refill" id="btnSimRefill" onclick="refillBurette()" disabled>Refill & Continue</button>
           <button type="button" class="sim-btn reset" id="btnSimReset" onclick="resetSim()">Reset Liquid</button>
         </div>
         <div class="sim-readout">Burette Dispensed Volume: <span id="simDispensed">0.00</span> mL</div>
@@ -790,24 +806,22 @@
 
     </div>
 
-    <!-- RESULTS DISPLAY CARD (WITH PRINTABLE REPORT AREA FOR CLIENT-SIDE PDF) -->
+    <!-- RESULTS DISPLAY CARD -->
     <div class="card results-card" id="resultsBox">
       <div id="printableReportArea">
         <h3>Calculated Results & Summary Report</h3>
-        <p style="font-size:0.85rem; color:#475569; margin-bottom:15px;">Generated by Universal Dynamic Titration Calculator | Creator: Joash Sam[cite: 1]</p>
+        <p style="font-size:0.85rem; color:#475569; margin-bottom:15px;">Generated by Universal Dynamic Titration Calculator | Creator: Joash Sam</p>
         
         <div class="form-group">
           <label id="lblTiterType">Selected Burette Reading (Titer Volume - V2):</label>
           <div class="res-val" id="outMeanTiter">0.00 mL</div>
         </div>
 
-        <!-- Readings Table in PDF Report -->
         <div class="form-group" style="margin-top: 15px;">
           <label>Titration Readings / Trials Taken:</label>
           <div id="reportTableWrapper"></div>
         </div>
 
-        <!-- Graph in PDF Report -->
         <div class="form-group" style="margin-top: 15px; text-align: center;">
           <label style="text-align: left;">Titration Curve & Equivalence Point:</label>
           <canvas id="reportCanvas" width="280" height="200" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; margin-top: 5px;"></canvas>
@@ -858,34 +872,45 @@
       <div class="form-group">
         <label for="prepChem">Select Chemical to Prepare:</label>
         <select id="prepChem">
+          <option value="" disabled selected>-- Select Chemical to Prepare --</option>
           <optgroup label="Standard Titrants (Burette)">
-            <option value="b_naoh">Sodium Hydroxide (NaOH)</option>
-            <option value="b_hcl">Hydrochloric Acid (HCl)</option>
-            <option value="b_hno3">Nitric Acid (HNO3)</option>
-            <option value="b_h2so4">Sulphuric Acid (H2SO4)</option>
-            <option value="b_kmno4">Potassium Permanganate (KMnO4)</option>
-            <option value="b_na2s2o3">Sodium Thiosulphate (Na2S2O3)</option>
-            <option value="b_i2">Iodine (I2)</option>
-            <option value="b_hclo4">Perchloric Acid (HClO4)</option>
+            <option value="b_acetic">Acetic Acid (CH3COOH)</option>
+            <option value="b_ammonia">Ammonia Solution (NH3)</option>
             <option value="b_ceric">Ceric Ammonium Sulphate</option>
             <option value="b_edta">Disodium EDTA</option>
+            <option value="b_hcl">Hydrochloric Acid (HCl)</option>
+            <option value="b_hclo4">Perchloric Acid (HClO4)</option>
+            <option value="b_hno3">Nitric Acid (HNO3)</option>
+            <option value="b_h2so4">Sulphuric Acid (H2SO4)</option>
+            <option value="b_i2">Iodine (I2)</option>
+            <option value="b_khp">Potassium Hydrogen Phthalate (KHP)</option>
+            <option value="b_kmno4">Potassium Permanganate (KMnO4)</option>
+            <option value="b_oxalic">Oxalic Acid Dihydrate</option>
+            <option value="b_pyridine">Pyridine (C5H5N)</option>
+            <option value="b_naoh">Sodium Hydroxide (NaOH)</option>
+            <option value="b_na2s2o3">Sodium Thiosulphate (Na2S2O3)</option>
           </optgroup>
           <optgroup label="Standard Samples (Flask)">
-            <option value="f_oxalic">Oxalic Acid Dihydrate</option>
-            <option value="f_khp">Potassium Hydrogen Phthalate (KHP)</option>
-            <option value="f_na2co3">Sodium Carbonate (Na2CO3)</option>
-            <option value="f_benzoic">Benzoic Acid</option>
-            <option value="f_salicylic">Salicylic Acid</option>
-            <option value="f_aspirin">Acetylsalicylic Acid (Aspirin)</option>
-            <option value="f_nahco3">Sodium Bicarbonate (NaHCO3)</option>
-            <option value="f_nh4cl">Ammonium Chloride (NH4Cl)</option>
             <option value="f_acetic">Acetic Acid</option>
-            <option value="f_h2o2">Hydrogen Peroxide (H2O2)</option>
-            <option value="f_feso4">Ferrous Sulphate (FeSO4)</option>
-            <option value="f_na_benzoate">Sodium Benzoate</option>
-            <option value="f_boric">Boric Acid</option>
-            <option value="f_znso4">Zinc Sulphate Heptahydrate</option>
+            <option value="f_ammonia">Ammonia Solution</option>
             <option value="f_as2o3">Arsenic Trioxide (As2O3)</option>
+            <option value="f_aspirin">Acetylsalicylic Acid (Aspirin)</option>
+            <option value="f_benzoic">Benzoic Acid</option>
+            <option value="f_boric">Boric Acid</option>
+            <option value="f_feso4">Ferrous Sulphate Heptahydrate</option>
+            <option value="f_h2o2">Hydrogen Peroxide</option>
+            <option value="f_hcl">Hydrochloric Acid</option>
+            <option value="f_i2_flask">Iodine Solution</option>
+            <option value="f_khp">Potassium Hydrogen Phthalate (KHP)</option>
+            <option value="f_na2co3">Sodium Carbonate</option>
+            <option value="f_na_benzoate">Sodium Benzoate</option>
+            <option value="f_nahco3">Sodium Bicarbonate</option>
+            <option value="f_naoh_flask">Sodium Hydroxide Solution</option>
+            <option value="f_nh4cl">Ammonium Chloride</option>
+            <option value="f_oxalic">Oxalic Acid Dihydrate</option>
+            <option value="f_pyridine">Pyridine</option>
+            <option value="f_salicylic">Salicylic Acid</option>
+            <option value="f_znso4">Zinc Sulphate Heptahydrate</option>
           </optgroup>
         </select>
       </div>
@@ -898,7 +923,6 @@
         </div>
       </div>
 
-      <!-- Solid Preparation Mode -->
       <div id="reagentSolidMode">
         <div class="grid-2 form-group">
           <div>
@@ -919,7 +943,6 @@
         </div>
       </div>
 
-      <!-- Liquid Stock Preparation Mode -->
       <div id="reagentLiquidMode" style="display: none;">
         <div class="grid-2 form-group">
           <div>
@@ -948,16 +971,14 @@
 
       <button class="btn-action" style="width: 100%;" onclick="calculatePreparation()">Calculate Recipe</button>
       
-      <div class="factor-box" id="prepResultBox" style="display: none; margin-top: 15px;">
-         <!-- Preparation results injected here -->
-      </div>
+      <div class="factor-box" id="prepResultBox" style="display: none; margin-top: 15px;"></div>
     </div>
   </div>
 
   <div style="font-size: 0.75rem; text-align: center; margin-top: 15px; color: #64748b;">
-    Disclaimer: This calculator is created for assistance and is not a substitute to actual experimental result[cite: 1].<br>
+    Disclaimer: This calculator is created for assistance and is not a substitute to actual experimental result.<br>
     Calculated data is collected for improvement and development<br><br>
-    <a href="https://joashsam07-cell.github.io/fitness-calculator/" style="color: var(--secondary); text-decoration: none; font-weight: bold;">Click here to visit Fitness calculator by the same creator[cite: 1].</a>
+    <a href="https://joashsam07-cell.github.io/fitness-calculator/" style="color: var(--secondary); text-decoration: none; font-weight: bold;">Click here to visit Fitness calculator by the same creator.</a>
   </div>
 
 </div>
@@ -970,39 +991,47 @@
   let simVol = 0.0;
   let dispensedSinceRefill = 0.0;
   let gameSecretNormality = 0.1;
-  let isTitrationValid = true;
+  let isTitrationValid = false;
 
   const buretteDb = {
-    naoh: { name: "Sodium Hydroxide (NaOH)", mw: 40.00, eq: 40.00, state: "Solid pellets / Aqueous solution", structure: "Na+ OH-", type: "Primary Base Titrant", mp: "318 °C", bp: "1388 °C", solubility: "1090 g/L (at 20 °C in H2O)", color: "#60a5fa", indicator: "Phenolphthalein (Colourless to Permanent Pale Pink)" },
-    hcl: { name: "Hydrochloric Acid (HCl)", mw: 36.46, eq: 36.46, state: "Clear fuming liquid solution", structure: "H+ Cl-", type: "Primary Acid Titrant", mp: "-30 °C (37% soln)", bp: "108.5 °C (20.2% constant boiling azeotrope)", solubility: "Miscible in all proportions with H2O", color: "#93c5fd", indicator: "Methyl Orange (Yellow to Faint Reddish-Orange)" },
-    hno3: { name: "Nitric Acid (HNO3)", mw: 63.01, eq: 63.01, state: "Clear aqueous acid solution", structure: "H+ [NO3]-", type: "Acid Titrant", mp: "-42 °C", bp: "83 °C", solubility: "Miscible in all proportions with H2O", color: "#93c5fd", indicator: "Methyl Orange or Phenolphthalein" },
-    h2so4: { name: "Sulphuric Acid (H2SO4)", mw: 98.08, eq: 49.04, state: "Clear viscous liquid solution", structure: "2 H+ [SO4]2-", type: "Diprotic Acid Titrant", mp: "10.31 °C", bp: "337 °C", solubility: "Miscible in all proportions with H2O", color: "#93c5fd", indicator: "Methyl Orange or Phenolphthalein" },
-    kmno4: { name: "Potassium Permanganate (KMnO4)", mw: 158.03, eq: 31.61, state: "Dark purple solution", structure: "K+ [MnO4]-", type: "Oxidizing Titrant", mp: "240 °C (decomposes)", bp: "Decomposes before boiling", solubility: "63.8 g/L (at 20 °C in H2O)", color: "#7e22ce", indicator: "Self-indicator (Colourless to Faint Pink Tint)" },
-    na2s2o3: { name: "Sodium Thiosulphate (Na2S2O3·5H2O)", mw: 248.18, eq: 248.18, state: "Clear aqueous solution", structure: "2 Na+ [S2O3]2- · 5H2O", type: "Redox Titrant", mp: "48.3 °C", bp: "Decomposes at 100 °C", solubility: "701 g/L (at 20 °C in H2O)", color: "#cbd5e1", indicator: "Starch Mucilage (Dark Blue-Black to Completely Colourless)" },
-    i2: { name: "Iodine Solution (I2)", mw: 253.81, eq: 126.90, state: "Deep brown solution in KI", structure: "I3- (Triiodide complex)", type: "Iodimetric Titrant", mp: "113.7 °C (pure I2)", bp: "184.3 °C (pure I2)", solubility: "0.33 g/L in pure H2O; highly soluble in aqueous KI", color: "#b45309", indicator: "Starch Mucilage (Colourless/Straw-Yellow to Dark Blue-Black)" },
-    hclo4: { name: "Perchloric Acid (HClO4)", mw: 100.46, eq: 100.46, state: "Clear liquid in Glacial Acetic Acid", structure: "H+ [ClO4]-", type: "Nonaqueous Titrant", mp: "-18 °C (70% soln) / -112 °C (anhydrous)", bp: "203 °C (70% azeotrope) / 75 °C (anhydrous, decomposes)", solubility: "Miscible in H2O & glacial acetic acid", color: "#e2e8f0", indicator: "Crystal Violet (Violet to Yellowish-Green / Emerald Green)" },
-    ceric: { name: "Ceric Ammonium Sulphate", mw: 632.55, eq: 632.55, state: "Yellow-orange solution", structure: "(NH4)4Ce(SO4)4 · 2H2O", type: "Cerimetric Titrant", mp: "130 °C (decomposes)", bp: "Decomposes", solubility: "Soluble in dilute H2SO4 solutions", color: "#f59e0b", indicator: "Ferroin (Intense Red to Pale Blue)" },
-    edta: { name: "Disodium EDTA", mw: 372.24, eq: 372.24, state: "Clear aqueous solution", structure: "Na2H2EDTA · 2H2O", type: "Complexometric Titrant", mp: "252 °C (decomposes)", bp: "Decomposes", solubility: "108 g/L (at 20 °C in H2O)", color: "#e2e8f0", indicator: "Mordant Black II / EBT (Wine-Red to Clean Distinct Blue)" }
+    acetic: { name: "Acetic Acid (CH3COOH)", mw: 60.05, eq: 60.05, state: "Clear liquid solution", structure: "CH3-COOH", type: "Weak Acid Titrant", acidBaseType: "WA", pKa: 4.76, mp: "16.6 °C", bp: "117.9 °C", solubility: "Miscible in all proportions with H2O", color: "#93c5fd", indicator: "Phenolphthalein" },
+    ammonia: { name: "Ammonia Solution (NH3)", mw: 17.03, eq: 17.03, state: "Aqueous alkaline solution", structure: "NH3 · H2O", type: "Weak Base Titrant", acidBaseType: "WB", pKb: 4.75, mp: "-77.7 °C", bp: "36 °C", solubility: "Miscible with H2O", color: "#60a5fa", indicator: "Methyl Orange / Mixed Indicator" },
+    ceric: { name: "Ceric Ammonium Sulphate", mw: 632.55, eq: 632.55, state: "Yellow-orange solution", structure: "(NH4)4Ce(SO4)4 · 2H2O", type: "Cerimetric Titrant", acidBaseType: null, mp: "130 °C (decomposes)", bp: "Decomposes", solubility: "Soluble in dilute H2SO4 solutions", color: "#f59e0b", indicator: "Ferroin (Intense Red to Pale Blue)" },
+    edta: { name: "Disodium EDTA", mw: 372.24, eq: 372.24, state: "Clear aqueous solution", structure: "Na2H2EDTA · 2H2O", type: "Complexometric Titrant", acidBaseType: null, mp: "252 °C (decomposes)", bp: "Decomposes", solubility: "108 g/L (at 20 °C in H2O)", color: "#e2e8f0", indicator: "Mordant Black II / EBT (Wine-Red to Clean Distinct Blue)" },
+    hcl: { name: "Hydrochloric Acid (HCl)", mw: 36.46, eq: 36.46, state: "Clear fuming liquid solution", structure: "H+ Cl-", type: "Primary Acid Titrant", acidBaseType: "SA", mp: "-30 °C (37% soln)", bp: "108.5 °C (20.2% constant boiling azeotrope)", solubility: "Miscible in all proportions with H2O", color: "#93c5fd", indicator: "Methyl Orange (Yellow to Faint Reddish-Orange)" },
+    hclo4: { name: "Perchloric Acid (HClO4)", mw: 100.46, eq: 100.46, state: "Clear liquid in Glacial Acetic Acid", structure: "H+ [ClO4]-", type: "Nonaqueous Titrant", acidBaseType: "SA", mp: "-18 °C (70% soln) / -112 °C (anhydrous)", bp: "203 °C (70% azeotrope) / 75 °C (anhydrous, decomposes)", solubility: "Miscible in H2O & glacial acetic acid", color: "#e2e8f0", indicator: "Crystal Violet (Violet to Yellowish-Green / Emerald Green)" },
+    hno3: { name: "Nitric Acid (HNO3)", mw: 63.01, eq: 63.01, state: "Clear aqueous acid solution", structure: "H+ [NO3]-", type: "Acid Titrant", acidBaseType: "SA", mp: "-42 °C", bp: "83 °C", solubility: "Miscible in all proportions with H2O", color: "#93c5fd", indicator: "Methyl Orange or Phenolphthalein" },
+    h2so4: { name: "Sulphuric Acid (H2SO4)", mw: 98.08, eq: 49.04, state: "Clear viscous liquid solution", structure: "2 H+ [SO4]2-", type: "Diprotic Acid Titrant", acidBaseType: "SA", mp: "10.31 °C", bp: "337 °C", solubility: "Miscible in all proportions with H2O", color: "#93c5fd", indicator: "Methyl Orange or Phenolphthalein" },
+    i2: { name: "Iodine Solution (I2)", mw: 253.81, eq: 126.90, state: "Deep brown solution in KI", structure: "I3- (Triiodide complex)", type: "Iodimetric Titrant", acidBaseType: null, mp: "113.7 °C (pure I2)", bp: "184.3 °C (pure I2)", solubility: "0.33 g/L in pure H2O; highly soluble in aqueous KI", color: "#b45309", indicator: "Starch Mucilage (Colourless/Straw-Yellow to Dark Blue-Black)" },
+    khp: { name: "Potassium Hydrogen Phthalate (KHP)", mw: 204.22, eq: 204.22, state: "Aqueous solution", structure: "C8H5KO4", type: "Acidic Standard Titrant", acidBaseType: "WA", pKa: 5.4, mp: "295 °C", bp: "Decomposes", solubility: "80 g/L in H2O", color: "#93c5fd", indicator: "Phenolphthalein" },
+    kmno4: { name: "Potassium Permanganate (KMnO4)", mw: 158.03, eq: 31.61, state: "Dark purple solution", structure: "K+ [MnO4]-", type: "Oxidizing Titrant", acidBaseType: null, mp: "240 °C (decomposes)", bp: "Decomposes before boiling", solubility: "63.8 g/L (at 20 °C in H2O)", color: "#7e22ce", indicator: "Self-indicator (Colourless to Faint Pink Tint)" },
+    oxalic: { name: "Oxalic Acid Dihydrate", mw: 126.07, eq: 63.03, state: "Aqueous solution", structure: "C2H2O4 · 2H2O", type: "Acidic Titrant", acidBaseType: "WA", pKa: 1.25, mp: "101.5 °C", bp: "157 °C", solubility: "90 g/L in H2O", color: "#93c5fd", indicator: "Phenolphthalein / KMnO4" },
+    pyridine: { name: "Pyridine (C5H5N)", mw: 79.10, eq: 79.10, state: "Clear liquid", structure: "C5H5N", type: "Weak Base Titrant", acidBaseType: "WB", pKb: 8.75, mp: "-42 °C", bp: "115.2 °C", solubility: "Miscible with H2O", color: "#60a5fa", indicator: "Bromothymol Blue / Methyl Orange" },
+    naoh: { name: "Sodium Hydroxide (NaOH)", mw: 40.00, eq: 40.00, state: "Solid pellets / Aqueous solution", structure: "Na+ OH-", type: "Primary Base Titrant", acidBaseType: "SB", mp: "318 °C", bp: "1388 °C", solubility: "1090 g/L (at 20 °C in H2O)", color: "#60a5fa", indicator: "Phenolphthalein (Colourless to Permanent Pale Pink)" },
+    na2s2o3: { name: "Sodium Thiosulphate (Na2S2O3·5H2O)", mw: 248.18, eq: 248.18, state: "Clear aqueous solution", structure: "2 Na+ [S2O3]2- · 5H2O", type: "Redox Titrant", acidBaseType: null, mp: "48.3 °C", bp: "Decomposes at 100 °C", solubility: "701 g/L (at 20 °C in H2O)", color: "#cbd5e1", indicator: "Starch Mucilage (Dark Blue-Black to Completely Colourless)" }
   };
 
   const flaskDb = {
-    oxalic: { name: "Oxalic Acid Dihydrate", formula: "C2H2O4·2H2O", mw: 126.07, eq: 63.03, state: "Crystalline solid (White)", structure: "HOOC-COOH · 2H2O", mp: "101.5 °C", bp: "157 °C (sublimes)", solubility: "90 – 100 g/L (at 20 °C in H2O)", reaction: "C2H2O4 + 2 NaOH → Na2C2O4 + 2 H2O", indicator: "Phenolphthalein (Colourless to Permanent Pale Pink) / Self-indicator (KMnO4)" },
-    khp: { name: "Potassium Hydrogen Phthalate (KHP)", formula: "C8H5KO4", mw: 204.22, eq: 204.22, state: "Crystalline powder (White)", structure: "C6H4(COOK)(COOH)", mp: "295 °C (decomposes)", bp: "Decomposes", solubility: "80 g/L (at 20 °C in H2O)", reaction: "C8H5KO4 + NaOH → C8H4KNaO4 + H2O", indicator: "Phenolphthalein (Colourless to Light Pink)" },
-    na2co3: { name: "Sodium Carbonate", formula: "Na2CO3", mw: 105.99, eq: 52.99, state: "Fine powder (White)", structure: "Na+ [O-C(=O)-O]- Na+", mp: "851 °C", bp: "1600 °C (decomposes)", solubility: "215 g/L (at 20 °C in H2O)", reaction: "Na2CO3 + 2 HCl → 2 NaCl + CO2 + H2O", indicator: "Methyl Orange (Yellow to Faint Reddish-Orange)" },
-    benzoic: { name: "Benzoic Acid", formula: "C7H6O2", mw: 122.12, eq: 122.12, state: "Monoclinic crystalline flakes", structure: "C6H5-COOH", mp: "122.3 °C", bp: "249.2 °C", solubility: "2.9 g/L (at 20 °C) / 3.4 g/L (at 25 °C in H2O)", reaction: "C6H5COOH + NaOH → C6H5COONa + H2O", indicator: "Phenolphthalein (Colourless to Pink)" },
-    salicylic: { name: "Salicylic Acid", formula: "C7H6O3", mw: 138.12, eq: 138.12, state: "Needle-like crystals", structure: "2-(HO)-C6H4-COOH", mp: "158.6 °C", bp: "211 °C (at 20 mmHg)", solubility: "2.24 g/L (at 25 °C in H2O)", reaction: "C6H4(OH)COOH + NaOH → C6H4(OH)COONa + H2O", indicator: "Phenolphthalein (Colourless to Pink) / Crystal Violet in Nonaqueous (Violet to Emerald Green)" },
-    aspirin: { name: "Acetylsalicylic Acid (Aspirin)", formula: "C9H8O4", mw: 180.16, eq: 180.16, state: "Crystalline powder", structure: "2-(CH3COO)-C6H4-COOH", mp: "135 °C", bp: "140 °C (decomposes)", solubility: "3.3 g/L (at 20 °C in H2O)", reaction: "C9H8O4 + NaOH → C9H7O4Na + H2O", indicator: "Phenolphthalein (Colourless to Pink Tint)" },
-    nahco3: { name: "Sodium Bicarbonate", formula: "NaHCO3", mw: 84.01, eq: 84.01, state: "Crystalline powder", structure: "Na+ [HO-C(=O)-O]-", mp: "50 °C (decomposes)", bp: "Decomposes", solubility: "96 g/L (at 20 °C in H2O)", reaction: "NaHCO3 + HCl → NaCl + CO2 + H2O", indicator: "Methyl Orange (Yellow to Pinkish-Orange)" },
-    nh4cl: { name: "Ammonium Chloride", formula: "NH4Cl", mw: 53.49, eq: 53.49, state: "Crystalline solid", structure: "[NH4]+ Cl-", mp: "338 °C (sublimes)", bp: "520 °C", solubility: "372 g/L (at 20 °C in H2O)", reaction: "4 NH4Cl + 6 HCHO → (CH2)6N4 + 4 HCl + 6 H2O ; HCl + NaOH → NaCl + H2O", indicator: "Phenolphthalein - Formol Titration (Colourless to Pale Pink)" },
-    acetic: { name: "Acetic Acid", formula: "CH3COOH", mw: 60.05, eq: 60.05, state: "Clear liquid", structure: "CH3-COOH", mp: "16.6 °C", bp: "117.9 °C", solubility: "Miscible in all proportions with H2O", reaction: "CH3COOH + NaOH → CH3COONa + H2O", indicator: "Phenolphthalein (Colourless to Light Pink)" },
-    h2o2: { name: "Hydrogen Peroxide", formula: "H2O2", mw: 34.015, eq: 17.008, state: "Clear liquid", structure: "H-O-O-H", mp: "-0.43 °C", bp: "150.2 °C", solubility: "Miscible in all proportions with H2O", reaction: "5 H2O2 + 2 KMnO4 + 3 H2SO4 → 2 MnSO4 + K2SO4 + 5 O2 + 8 H2O", indicator: "Self-indicator in H2SO4 (Colourless to Persistent Pale Pink)" },
-    feso4: { name: "Ferrous Sulphate Heptahydrate", formula: "FeSO4·7H2O", mw: 278.01, eq: 278.01, state: "Blue-green crystals", structure: "[Fe]2+ [SO4]2- · 7H2O", mp: "64 °C (loses hydration water)", bp: "Decomposes > 300 °C", solubility: "295 g/L (at 20 °C in H2O)", reaction: "10 FeSO4 + 2 KMnO4 + 8 H2O4 → 5 Fe2(SO4)3 + 2 MnSO4 + K2SO4 + 8 H2O", indicator: "Self-indicator (Very Pale Green to Pink Flash) / Ferroin (Intense Red to Pale Blue)" },
-    na_benzoate: { name: "Sodium Benzoate", formula: "C7H5NaO2", mw: 144.11, eq: 144.11, state: "Crystalline powder", structure: "C6H5-COO- Na+", mp: "> 300 °C", bp: "410 °C", solubility: "629 g/L (at 20 °C in H2O)", reaction: "C6H5COONa + HClO4 → C6H5COOH + NaClO4", indicator: "Methyl Orange in Ether-Water Biphasic System (Yellow to Orange-Pink) / Crystal Violet (Violet to Yellowish-Green)" },
-    boric: { name: "Boric Acid", formula: "H3BO3", mw: 61.83, eq: 61.83, state: "Crystalline powder", structure: "B(OH)3", mp: "170.9 °C", bp: "Decomposes above 170.9 °C to metaboric acid", solubility: "47.2 g/L (at 20 °C in H2O)", reaction: "H3BO3 + Glycerol + NaOH → Sodium Glyceroborate + H2O", indicator: "Phenolphthalein + Glycerol (Colourless to Distinct Pink)" },
-    naoh_flask: { name: "Sodium Hydroxide Solution", formula: "NaOH", mw: 40.00, eq: 40.00, state: "Aqueous solution", structure: "Na+ OH-", mp: "318 °C", bp: "1388 °C", solubility: "1090 g/L", reaction: "NaOH + HCl → NaCl + H2O", indicator: "Phenolphthalein (Pink to Colourless) / Methyl Red (Yellow to Red)" },
-    znso4: { name: "Zinc Sulphate Heptahydrate", formula: "ZnSO4·7H2O", mw: 287.54, eq: 287.54, state: "Crystalline solid", structure: "[Zn(H2O)6]2+ [SO4]2- · H2O", mp: "100 °C", bp: "740 °C", solubility: "960 g/L", reaction: "ZnSO4 + Na2H2EDTA → Na2[ZnEDTA] + H2SO4", indicator: "Mordant Black II / Eriochrome Black T / EBT at pH 10 Buffer (Wine-Red to Clean Distinct Blue)" },
-    i2_flask: { name: "Iodine Solution", formula: "I2", mw: 253.81, eq: 126.90, state: "Deep brown solution in KI", structure: "I3- (Triiodide complex)", mp: "113.7 °C (pure I2)", bp: "184.3 °C (pure I2)", solubility: "Highly soluble in aqueous KI solution", reaction: "I2 + 2 Na2S2O3 → 2 NaI + Na2S4O6", indicator: "Starch Mucilage (Dark Blue-Black to Completely Colourless)" },
-    as2o3: { name: "Arsenic Trioxide", formula: "As2O3", mw: 197.84, eq: 49.46, state: "Fine powder (White)", structure: "As2O3 / H3AsO3 in solution", mp: "312 °C", bp: "465 °C", solubility: "20 g/L (at 25 °C in H2O, soluble in NaHCO3/NaOH)", reaction: "As2O3 + 2 I2 + 2 H2O → As2O5 + 4 HI", indicator: "Starch Mucilage (Colourless/Straw-Yellow to Dark Blue-Black)" }
+    acetic: { name: "Acetic Acid", formula: "CH3COOH", mw: 60.05, eq: 60.05, state: "Clear liquid", structure: "CH3-COOH", acidBaseType: "WA", pKa: 4.76, mp: "16.6 °C", bp: "117.9 °C", solubility: "Miscible in all proportions with H2O", reaction: "CH3COOH + NaOH → CH3COONa + H2O", indicator: "Phenolphthalein (Colourless to Light Pink)" },
+    ammonia: { name: "Ammonia Solution", formula: "NH3", mw: 17.03, eq: 17.03, state: "Aqueous solution", structure: "NH3 · H2O", acidBaseType: "WB", pKb: 4.75, mp: "-77.7 °C", bp: "36 °C", solubility: "Miscible with H2O", reaction: "NH3 + HCl → NH4Cl", indicator: "Methyl Orange / Mixed Indicator" },
+    as2o3: { name: "Arsenic Trioxide", formula: "As2O3", mw: 197.84, eq: 49.46, state: "Fine powder (White)", structure: "As2O3 / H3AsO3 in solution", acidBaseType: null, mp: "312 °C", bp: "465 °C", solubility: "20 g/L (at 25 °C in H2O, soluble in NaHCO3/NaOH)", reaction: "As2O3 + 2 I2 + 2 H2O → As2O5 + 4 HI", indicator: "Starch Mucilage (Colourless/Straw-Yellow to Dark Blue-Black)" },
+    aspirin: { name: "Acetylsalicylic Acid (Aspirin)", formula: "C9H8O4", mw: 180.16, eq: 180.16, state: "Crystalline powder", structure: "2-(CH3COO)-C6H4-COOH", acidBaseType: "WA", pKa: 3.5, mp: "135 °C", bp: "140 °C (decomposes)", solubility: "3.3 g/L (at 20 °C in H2O)", reaction: "C9H8O4 + NaOH → C9H7O4Na + H2O", indicator: "Phenolphthalein (Colourless to Pink Tint)" },
+    benzoic: { name: "Benzoic Acid", formula: "C7H6O2", mw: 122.12, eq: 122.12, state: "Monoclinic crystalline flakes", structure: "C6H5-COOH", acidBaseType: "WA", pKa: 4.2, mp: "122.3 °C", bp: "249.2 °C", solubility: "2.9 g/L (at 20 °C) / 3.4 g/L (at 25 °C in H2O)", reaction: "C6H5COOH + NaOH → C6H5COONa + H2O", indicator: "Phenolphthalein (Colourless to Pink)" },
+    boric: { name: "Boric Acid", formula: "H3BO3", mw: 61.83, eq: 61.83, state: "Crystalline powder", structure: "B(OH)3", acidBaseType: "WA", pKa: 9.24, mp: "170.9 °C", bp: "Decomposes above 170.9 °C to metaboric acid", solubility: "47.2 g/L (at 20 °C in H2O)", reaction: "H3BO3 + Glycerol + NaOH → Sodium Glyceroborate + H2O", indicator: "Phenolphthalein + Glycerol (Colourless to Distinct Pink)" },
+    feso4: { name: "Ferrous Sulphate Heptahydrate", formula: "FeSO4·7H2O", mw: 278.01, eq: 278.01, state: "Blue-green crystals", structure: "[Fe]2+ [SO4]2- · 7H2O", acidBaseType: null, mp: "64 °C (loses hydration water)", bp: "Decomposes > 300 °C", solubility: "295 g/L (at 20 °C in H2O)", reaction: "10 FeSO4 + 2 KMnO4 + 8 H2O4 → 5 Fe2(SO4)3 + 2 MnSO4 + K2SO4 + 8 H2O", indicator: "Self-indicator (Very Pale Green to Pink Flash) / Ferroin (Intense Red to Pale Blue)" },
+    h2o2: { name: "Hydrogen Peroxide", formula: "H2O2", mw: 34.015, eq: 17.008, state: "Clear liquid", structure: "H-O-O-H", acidBaseType: null, mp: "-0.43 °C", bp: "150.2 °C", solubility: "Miscible in all proportions with H2O", reaction: "5 H2O2 + 2 KMnO4 + 3 H2SO4 → 2 MnSO4 + K2SO4 + 5 O2 + 8 H2O", indicator: "Self-indicator in H2SO4 (Colourless to Persistent Pale Pink)" },
+    hcl: { name: "Hydrochloric Acid", formula: "HCl", mw: 36.46, eq: 36.46, state: "Aqueous solution", structure: "H+ Cl-", acidBaseType: "SA", mp: "-30 °C", bp: "108.5 °C", solubility: "Miscible in H2O", reaction: "HCl + NaOH → NaCl + H2O", indicator: "Phenolphthalein / Methyl Orange" },
+    i2_flask: { name: "Iodine Solution", formula: "I2", mw: 253.81, eq: 126.90, state: "Deep brown solution in KI", structure: "I3- (Triiodide complex)", acidBaseType: null, mp: "113.7 °C (pure I2)", bp: "184.3 °C (pure I2)", solubility: "Highly soluble in aqueous KI solution", reaction: "I2 + 2 Na2S2O3 → 2 NaI + Na2S4O6", indicator: "Starch Mucilage (Dark Blue-Black to Completely Colourless)" },
+    khp: { name: "Potassium Hydrogen Phthalate (KHP)", formula: "C8H5KO4", mw: 204.22, eq: 204.22, state: "Crystalline powder (White)", structure: "C6H4(COOK)(COOH)", acidBaseType: "WA", pKa: 5.4, mp: "295 °C (decomposes)", bp: "Decomposes", solubility: "80 g/L (at 20 °C in H2O)", reaction: "C8H5KO4 + NaOH → C8H4KNaO4 + H2O", indicator: "Phenolphthalein (Colourless to Light Pink)" },
+    na2co3: { name: "Sodium Carbonate", formula: "Na2CO3", mw: 105.99, eq: 52.99, state: "Fine powder (White)", structure: "Na+ [O-C(=O)-O]- Na+", acidBaseType: "WB", pKb: 7.63, mp: "851 °C", bp: "1600 °C (decomposes)", solubility: "215 g/L (at 20 °C in H2O)", reaction: "Na2CO3 + 2 HCl → 2 NaCl + CO2 + H2O", indicator: "Methyl Orange (Yellow to Faint Reddish-Orange)" },
+    na_benzoate: { name: "Sodium Benzoate", formula: "C7H5NaO2", mw: 144.11, eq: 144.11, state: "Crystalline powder", structure: "C6H5-COO- Na+", acidBaseType: "WB", pKb: 9.8, mp: "> 300 °C", bp: "410 °C", solubility: "629 g/L (at 20 °C in H2O)", reaction: "C6H5COONa + HClO4 → C6H5COOH + NaClO4", indicator: "Methyl Orange in Ether-Water Biphasic System (Yellow to Orange-Pink) / Crystal Violet (Violet to Yellowish-Green)" },
+    nahco3: { name: "Sodium Bicarbonate", formula: "NaHCO3", mw: 84.01, eq: 84.01, state: "Crystalline powder", structure: "Na+ [HO-C(=O)-O]-", acidBaseType: "WB", pKb: 7.63, mp: "50 °C (decomposes)", bp: "Decomposes", solubility: "96 g/L (at 20 °C in H2O)", reaction: "NaHCO3 + HCl → NaCl + CO2 + H2O", indicator: "Methyl Orange (Yellow to Pinkish-Orange)" },
+    naoh_flask: { name: "Sodium Hydroxide Solution", formula: "NaOH", mw: 40.00, eq: 40.00, state: "Aqueous solution", structure: "Na+ OH-", acidBaseType: "SB", mp: "318 °C", bp: "1388 °C", solubility: "1090 g/L", reaction: "NaOH + HCl → NaCl + H2O", indicator: "Phenolphthalein (Pink to Colourless) / Methyl Red (Yellow to Red)" },
+    nh4cl: { name: "Ammonium Chloride", formula: "NH4Cl", mw: 53.49, eq: 53.49, state: "Crystalline solid", structure: "[NH4]+ Cl-", acidBaseType: "WA", pKa: 9.25, mp: "338 °C (sublimes)", bp: "520 °C", solubility: "372 g/L (at 20 °C in H2O)", reaction: "4 NH4Cl + 6 HCHO → (CH2)6N4 + 4 HCl + 6 H2O ; HCl + NaOH → NaCl + H2O", indicator: "Phenolphthalein - Formol Titration (Colourless to Pale Pink)" },
+    oxalic: { name: "Oxalic Acid Dihydrate", formula: "C2H2O4·2H2O", mw: 126.07, eq: 63.03, state: "Crystalline solid (White)", structure: "HOOC-COOH · 2H2O", acidBaseType: "WA", pKa: 1.25, mp: "101.5 °C", bp: "157 °C (sublimes)", solubility: "90 – 100 g/L (at 20 °C in H2O)", reaction: "C2H2O4 + 2 NaOH → Na2C2O4 + 2 H2O", indicator: "Phenolphthalein (Colourless to Permanent Pale Pink) / Self-indicator (KMnO4)" },
+    pyridine: { name: "Pyridine", formula: "C5H5N", mw: 79.10, eq: 79.10, state: "Clear liquid", structure: "C5H5N", acidBaseType: "WB", pKb: 8.75, mp: "-42 °C", bp: "115.2 °C", solubility: "Miscible with H2O", reaction: "C5H5N + HCl → C5H5NH+ Cl-", indicator: "Bromothymol Blue / Methyl Orange" },
+    salicylic: { name: "Salicylic Acid", formula: "C7H6O3", mw: 138.12, eq: 138.12, state: "Needle-like crystals", structure: "2-(HO)-C6H4-COOH", acidBaseType: "WA", pKa: 2.97, mp: "158.6 °C", bp: "211 °C (at 20 mmHg)", solubility: "2.24 g/L (at 25 °C in H2O)", reaction: "C6H4(OH)COOH + NaOH → C6H4(OH)COONa + H2O", indicator: "Phenolphthalein (Colourless to Pink) / Crystal Violet in Nonaqueous (Violet to Emerald Green)" },
+    znso4: { name: "Zinc Sulphate Heptahydrate", formula: "ZnSO4·7H2O", mw: 287.54, eq: 287.54, state: "Crystalline solid", structure: "[Zn(H2O)6]2+ [SO4]2- · H2O", acidBaseType: null, mp: "100 °C", bp: "740 °C", solubility: "960 g/L", reaction: "ZnSO4 + Na2H2EDTA → Na2[ZnEDTA] + H2SO4", indicator: "Mordant Black II / Eriochrome Black T / EBT at pH 10 Buffer (Wine-Red to Clean Distinct Blue)" }
   };
 
   /* Comprehensive Titration Pair Configuration Map */
@@ -1027,6 +1056,13 @@
     'hcl_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless)' },
     'hno3_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless)' },
     'h2so4_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless)' },
+    'hcl_ammonia': { colors: ['#e2e8f0', '#38bdf8'], indicator: 'Methyl Orange / Mixed Indicator' },
+    'hno3_ammonia': { colors: ['#e2e8f0', '#38bdf8'], indicator: 'Methyl Orange / Mixed Indicator' },
+    'h2so4_ammonia': { colors: ['#e2e8f0', '#38bdf8'], indicator: 'Methyl Orange / Mixed Indicator' },
+    'hcl_pyridine': { colors: ['#e2e8f0', '#38bdf8'], indicator: 'Bromothymol Blue' },
+    'acetic_naoh_flask': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein' }, // Added explicitly
+    'ammonia_hcl': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Methyl Orange' },
+    'pyridine_hcl': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Bromothymol Blue' },
     'kmno4_oxalic': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Self-indicator at ~60°C (Colourless to Faint Pink)' },
     'kmno4_h2o2': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Self-indicator (Colourless to Persistent Pale Pink)' },
     'kmno4_feso4': { colors: ['#dcfce7', '#f472b6'], indicator: 'Self-indicator (Very Pale Green to Lasting Pink)' },
@@ -1040,7 +1076,6 @@
     'edta_znso4': { colors: ['#881337', '#2563eb'], indicator: 'Mordant Black II / EBT (Wine-Red to Blue)' }
   };
 
-  /* APP NAVIGATION */
   function switchAppMode(mode) {
     if(mode === 'titration') {
       document.getElementById('titrationApp').style.display = 'block';
@@ -1063,10 +1098,40 @@
     document.getElementById('containerBuretteMolarity').style.display = (mode === 'molarity') ? 'block' : 'none';
   }
 
+  // UPDATED: Universal fallback engine prevents any valid Acid+Base pairing from being marked invalid.
   function getPairConfig(bKey, fKey) {
     const pairKey = `${bKey}_${fKey}`;
     if (pairConfigMap[pairKey]) {
       return pairConfigMap[pairKey];
+    }
+    
+    // Auto-fallback for universal Acid-Base support (e.g., WA + WB, acetic + naoh_flask)
+    const bData = buretteDb[bKey];
+    const fData = flaskDb[fKey];
+    if (bData && fData && bData.acidBaseType && fData.acidBaseType) {
+        const bType = bData.acidBaseType;
+        const fType = fData.acidBaseType;
+        
+        let indicator = "Mixed / Universal Indicator";
+        let colors = ['#e2e8f0', '#38bdf8']; // Default colorless to blue
+        
+        // Base titrating into Acid
+        if ((bType === 'SB' || bType === 'WB') && (fType === 'SA' || fType === 'WA')) {
+            colors = ['#e2e8f0', '#f472b6']; // Colorless to Pink
+            if(fType === 'SA' && bType === 'SB') indicator = "Phenolphthalein or Methyl Orange";
+            else if(fType === 'WA' && bType === 'SB') indicator = "Phenolphthalein";
+            else if(fType === 'SA' && bType === 'WB') indicator = "Methyl Orange";
+            else indicator = "Bromothymol Blue"; // WA + WB
+        } 
+        // Acid titrating into Base
+        else if ((bType === 'SA' || bType === 'WA') && (fType === 'SB' || fType === 'WB')) {
+            colors = ['#f472b6', '#e2e8f0']; // Pink to Colorless
+            if(fType === 'SB' && bType === 'SA') indicator = "Phenolphthalein or Methyl Orange";
+            else if(fType === 'WB' && bType === 'SA') indicator = "Methyl Orange";
+            else if(fType === 'SB' && bType === 'WA') indicator = "Phenolphthalein";
+            else indicator = "Bromothymol Blue"; // WA + WB
+        }
+        return { colors: colors, indicator: indicator };
     }
     return null;
   }
@@ -1074,31 +1139,53 @@
   function checkValidity() {
     const bKey = document.getElementById('buretteChem').value;
     const fKey = document.getElementById('flaskChem').value;
-    const config = getPairConfig(bKey, fKey);
-    
     const banner = document.getElementById('simInvalidBanner');
     const simContainer = document.getElementById('simContainer');
     const btns = document.querySelectorAll('.sim-controls button:not(.reset)');
 
+    if (!bKey || !fKey) {
+      isTitrationValid = false;
+      banner.style.display = 'none';
+      simContainer.classList.add('disabled-sim');
+      btns.forEach(b => b.disabled = true);
+      return;
+    }
+
+    const config = getPairConfig(bKey, fKey);
+    
     if (!config) {
       isTitrationValid = false;
+      banner.innerHTML = "❌ <strong>Invalid titration</strong>: This specific Titrant-Titrand combination is chemically incompatible or lacks a defined endpoint in this engine. Please select a valid combination.";
       banner.style.display = 'block';
       simContainer.classList.add('disabled-sim');
       btns.forEach(b => b.disabled = true);
     } else {
+      let wasInvalid = !isTitrationValid;
       isTitrationValid = true;
       banner.style.display = 'none';
       if(flaskInputMode !== 'unknown') {
         simContainer.classList.remove('disabled-sim');
         btns.forEach(b => b.disabled = false);
       }
+      
+      // INSTANT SIMULATOR ACTIVATION: Fills burette and flask instantly on valid selection
+      if (wasInvalid) {
+        resetSim();
+      } else {
+        updateSimColors();
+      }
     }
   }
 
   function updateBuretteInfo() {
     const key = document.getElementById('buretteChem').value;
+    const card = document.getElementById('buretteInfoCard');
+    if (!key) {
+        card.style.display = 'none';
+        return;
+    }
     const data = buretteDb[key];
-    document.getElementById('buretteInfoCard').innerHTML = `
+    card.innerHTML = `
       <div><strong>Reagent:</strong> ${data.name}</div>
       <div><strong>Type:</strong> ${data.type}</div>
       <div><strong>Molecular Wt:</strong> ${data.mw} g/mol | <strong>Equivalent Wt:</strong> ${data.eq} g/eq</div>
@@ -1112,8 +1199,13 @@
 
   function updateFlaskInfo() {
     const key = document.getElementById('flaskChem').value;
+    const card = document.getElementById('flaskInfoCard');
+    if (!key) {
+        card.style.display = 'none';
+        return;
+    }
     const data = flaskDb[key];
-    document.getElementById('flaskInfoCard').innerHTML = `
+    card.innerHTML = `
       <div><strong>Chemical:</strong> ${data.name} (${data.formula})</div>
       <div><strong>Molecular Wt:</strong> ${data.mw} g/mol | <strong>Equivalent Wt:</strong> ${data.eq} g/eq</div>
       <div><strong>Melting Point (m.p.):</strong> ${data.mp} | <strong>Boiling Point (b.p.):</strong> ${data.bp}</div>
@@ -1127,16 +1219,27 @@
 
   function toggleInfo(cardId) {
     const card = document.getElementById(cardId);
-    card.style.display = (card.style.display === 'block') ? 'none' : 'block';
+    const associatedSelectId = cardId === 'buretteInfoCard' ? 'buretteChem' : 'flaskChem';
+    if(document.getElementById(associatedSelectId).value !== "") {
+        card.style.display = (card.style.display === 'block') ? 'none' : 'block';
+    }
   }
 
-  /* SIMULATOR FUNCTIONS */
+  function toggleSidebar() {
+    const sidebar = document.getElementById('titrationSidebar');
+    sidebar.classList.toggle('open');
+    if (sidebar.classList.contains('open')) {
+      drawTitrationCurveOnCanvas('titrationChart', 'graphInfo');
+    }
+  }
+
   function updateSimColors() {
     if(!isTitrationValid) return;
     const bKey = document.getElementById('buretteChem').value;
     const fKey = document.getElementById('flaskChem').value;
+    if(!bKey || !fKey) return;
+    
     const bColor = buretteDb[bKey].color;
-
     document.getElementById('simBuretteLiquid').setAttribute('fill', bColor);
     document.getElementById('simDrop').setAttribute('stroke', bColor);
 
@@ -1410,6 +1513,223 @@
     });
   }
 
+  function drawTitrationCurveOnCanvas(canvasId, infoId) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    const bKey = document.getElementById('buretteChem').value;
+    const fKey = document.getElementById('flaskChem').value;
+    if(!bKey || !fKey || !isTitrationValid) {
+        const info = document.getElementById(infoId);
+        if (info) info.innerHTML = "⚠️ Please select a valid titrant and sample first.";
+        return;
+    }
+
+    const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
+    
+    const bData = buretteDb[bKey];
+    const fData = flaskDb[fKey];
+    const bEqWt = bData.eq;
+    const bMw = bData.mw;
+    const bNFactor = bMw / bEqWt;
+    const N2 = (buretteInputMode === 'molarity') 
+      ? (parseFloat(document.getElementById('buretteMolarity').value) || 0.1) * bNFactor 
+      : (parseFloat(document.getElementById('buretteNormality').value) || 0.1);
+
+    let N1 = 0.1;
+    if (flaskInputMode === 'normality') {
+      N1 = parseFloat(document.getElementById('flaskNormality').value) || 0.1;
+    } else if (flaskInputMode === 'molarity') {
+      const M1 = parseFloat(document.getElementById('flaskMolarity').value) || 0.1;
+      N1 = M1 * (fData.mw / fData.eq);
+    } else if (flaskInputMode === 'weight') {
+      const mass = parseFloat(document.getElementById('flaskMass').value) || 0.6303;
+      const volMade = parseFloat(document.getElementById('flaskVolMade').value) || 100;
+      N1 = (mass * 1000) / (fData.eq * volMade);
+    } else if (flaskInputMode === 'game') {
+      N1 = gameSecretNormality;
+    }
+
+    const eqVol = (N1 * V1) / N2;
+    const maxVol = Math.max(eqVol * 1.8, 25.0); 
+    const minY = 0.0;
+    const maxY = 14.0;
+
+    // --- EXACT EQUIVALENCE POINT CALCULATION ---
+    let eq_pH = 7.0; 
+    let isAcidBase = (bData.acidBaseType && fData.acidBaseType);
+    let cSalt = (N1 * V1) / (V1 + eqVol); 
+
+    if (isAcidBase) {
+        if ((bData.acidBaseType === 'SB' && fData.acidBaseType === 'WA') || (bData.acidBaseType === 'WA' && fData.acidBaseType === 'SB')) {
+            let pKa = fData.pKa || bData.pKa;
+            eq_pH = 7.0 + 0.5 * pKa + 0.5 * Math.log10(Math.max(cSalt, 1e-10));
+        } else if ((bData.acidBaseType === 'SA' && fData.acidBaseType === 'WB') || (bData.acidBaseType === 'WB' && fData.acidBaseType === 'SA')) {
+            let pKb = fData.pKb || bData.pKb;
+            eq_pH = 7.0 - 0.5 * pKb - 0.5 * Math.log10(Math.max(cSalt, 1e-10));
+        } else if ((bData.acidBaseType === 'WA' && fData.acidBaseType === 'WB') || (bData.acidBaseType === 'WB' && fData.acidBaseType === 'WA')) {
+            let pKa = fData.pKa || bData.pKa;
+            let pKb = fData.pKb || bData.pKb;
+            eq_pH = 7.0 + 0.5 * pKa - 0.5 * pKb; // UPDATED WA + WB salt hydrolysis pH
+        } else {
+             eq_pH = 7.0; // Strong Acid + Strong Base
+        }
+    }
+    eq_pH = Math.max(minY, Math.min(maxY, eq_pH)); 
+
+    // --- PADDING & PLOTTING AREA ---
+    const paddingLeft = 35;
+    const paddingRight = 15;
+    const paddingTop = 15;
+    const paddingBottom = 30;
+
+    const plotWidth = width - paddingLeft - paddingRight;
+    const plotHeight = height - paddingTop - paddingBottom;
+
+    const mapX = (v) => paddingLeft + (v / maxVol) * plotWidth;
+    const mapY = (val) => paddingTop + plotHeight - ((val - minY) / (maxY - minY)) * plotHeight;
+
+    // --- DRAW GRID ---
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.fillStyle = '#64748b';
+    ctx.font = '9px Segoe UI, sans-serif';
+
+    const xStep = maxVol <= 15 ? 2 : (maxVol <= 30 ? 5 : 10);
+    for (let v = 0; v <= maxVol; v += xStep) {
+      const x = mapX(v);
+      ctx.beginPath(); ctx.moveTo(x, paddingTop); ctx.lineTo(x, paddingTop + plotHeight); ctx.stroke();
+      ctx.textAlign = 'center'; ctx.fillText(v.toFixed(0), x, paddingTop + plotHeight + 12);
+    }
+
+    const yStep = 2;
+    for (let p = 0; p <= maxY; p += yStep) {
+      const y = mapY(p);
+      ctx.beginPath(); ctx.moveTo(paddingLeft, y); ctx.lineTo(paddingLeft + plotWidth, y); ctx.stroke();
+      ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText(p.toFixed(0), paddingLeft - 5, y);
+    }
+
+    ctx.strokeStyle = '#334155'; ctx.lineWidth = 1.5; ctx.beginPath();
+    ctx.rect(paddingLeft, paddingTop, plotWidth, plotHeight); ctx.stroke();
+
+    ctx.fillStyle = '#1e3a8a'; ctx.font = 'bold 9px Segoe UI, sans-serif';
+    ctx.textAlign = 'center'; ctx.fillText('Titrant Volume V₂ (mL)', paddingLeft + plotWidth / 2, height - 3);
+
+    ctx.save(); ctx.translate(10, paddingTop + plotHeight / 2); ctx.rotate(-Math.PI / 2);
+    ctx.fillText('pH / Potential', 0, 0); ctx.restore();
+
+    // --- GENERATE & PLOT TITRATION CURVE ---
+    ctx.strokeStyle = '#2563eb';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+
+    const isBaseTitrant = bData.acidBaseType === 'SB' || bData.acidBaseType === 'WB';
+    
+    for (let i = 0; i <= 100; i++) {
+      const v = (i / 100) * maxVol;
+      let pH = 7.0;
+
+      if (!isAcidBase) {
+          // Strong proxy for Redox/Complexometric visual layout
+          if (isBaseTitrant) {
+            if (v < eqVol) pH = -Math.log10(Math.max(((eqVol - v) * N2) / (V1 + v), 1e-7));
+            else if (v > eqVol) pH = 14.0 + Math.log10(Math.max(((v - eqVol) * N2) / (V1 + v), 1e-7));
+          } else {
+            if (v < eqVol) pH = 14.0 + Math.log10(Math.max(((eqVol - v) * N2) / (V1 + v), 1e-7));
+            else if (v > eqVol) pH = -Math.log10(Math.max(((v - eqVol) * N2) / (V1 + v), 1e-7));
+          }
+      } else {
+          // Scientifically precise Henderson-Hasselbalch / Excess Acid-Base tracking
+          if (isBaseTitrant) {
+             if (v < eqVol) { // Acid in flask
+                 if (fData.acidBaseType === 'WA') {
+                     let ratio = v / (eqVol - v);
+                     if (ratio <= 0.001) pH = 0.5 * fData.pKa - 0.5 * Math.log10(N1);
+                     else pH = fData.pKa + Math.log10(Math.max(ratio, 1e-10));
+                 } else {
+                     const excessH = ((eqVol - v) * N2) / (V1 + v);
+                     pH = -Math.log10(Math.max(excessH, 1e-7));
+                 }
+             } else if (v > eqVol) {
+                 if (bData.acidBaseType === 'WB') {
+                     let ratio = (eqVol) / (v - eqVol);
+                     let pOH = bData.pKb + Math.log10(Math.max(ratio, 1e-10));
+                     pH = 14.0 - pOH;
+                 } else {
+                     const excessOH = ((v - eqVol) * N2) / (V1 + v);
+                     pH = 14.0 + Math.log10(Math.max(excessOH, 1e-7));
+                 }
+             } else {
+                 pH = eq_pH;
+             }
+          } else { // Acid in burette
+             if (v < eqVol) { // Base in flask
+                 if (fData.acidBaseType === 'WB') {
+                     let ratio = v / (eqVol - v);
+                     let pOH;
+                     if (ratio <= 0.001) pOH = 0.5 * fData.pKb - 0.5 * Math.log10(N1);
+                     else pOH = fData.pKb + Math.log10(Math.max(ratio, 1e-10));
+                     pH = 14.0 - pOH;
+                 } else {
+                     const excessOH = ((eqVol - v) * N2) / (V1 + v);
+                     pH = 14.0 + Math.log10(Math.max(excessOH, 1e-7));
+                 }
+             } else if (v > eqVol) {
+                 if (bData.acidBaseType === 'WA') {
+                     let ratio = (eqVol) / (v - eqVol);
+                     pH = bData.pKa + Math.log10(Math.max(ratio, 1e-10));
+                 } else {
+                     const excessH = ((v - eqVol) * N2) / (V1 + v);
+                     pH = -Math.log10(Math.max(excessH, 1e-7));
+                 }
+             } else {
+                 pH = eq_pH;
+             }
+          }
+      }
+
+      pH = Math.max(minY, Math.min(maxY, pH));
+      const px = mapX(v);
+      const py = mapY(pH);
+
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+
+    // --- EXTRAPOLATION & EQUIVALENCE POINT DROP LINES ---
+    const eqX = mapX(eqVol);
+    const eqY = mapY(isAcidBase ? eq_pH : 7.0);
+
+    ctx.strokeStyle = '#059669'; ctx.lineWidth = 1.2; ctx.setLineDash([3, 3]); ctx.beginPath();
+    ctx.moveTo(eqX, eqY); ctx.lineTo(eqX, paddingTop + plotHeight); ctx.stroke();
+
+    ctx.beginPath(); ctx.moveTo(paddingLeft, eqY); ctx.lineTo(eqX, eqY); ctx.stroke();
+    ctx.setLineDash([]); 
+
+    ctx.fillStyle = '#dc2626'; ctx.beginPath(); ctx.arc(eqX, eqY, 4, 0, 2 * Math.PI); ctx.fill();
+    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+
+    // --- TEXT READOUT ---
+    const infoContainer = document.getElementById(infoId);
+    if (infoContainer) {
+      let eqStateHTML = isAcidBase 
+          ? `pH <span style="color:#0f172a; font-weight:bold;">${eq_pH.toFixed(2)}</span> (Calculated Exact Endpoint)` 
+          : `Stoichiometric Endpoint`;
+      
+      infoContainer.innerHTML = `
+        🎯 <strong>Equivalence Point (Inflection):</strong> <span style="color: #059669; font-weight: bold;">${eqVol.toFixed(2)} mL</span><br>
+        📊 <strong>Calculated Titrant Equivalence:</strong> ${N2.toFixed(4)} N<br>
+        ⚡ <strong>Equivalence State:</strong> ${eqStateHTML}
+      `;
+    }
+  }
+
   function calculate(actionType) {
     const titerData = getCalculatedTiter();
     if (!titerData) {
@@ -1426,12 +1746,18 @@
     }
 
     const flaskKey = document.getElementById('flaskChem').value;
+    const buretteKey = document.getElementById('buretteChem').value;
+    
+    if(!flaskKey || !buretteKey) {
+        alert("Please ensure both Reagent and Sample are properly selected.");
+        return;
+    }
+
     const flaskData = flaskDb[flaskKey];
     const flaskEqWt = flaskData.eq;
     const flaskMw = flaskData.mw;
     const flaskNFactor = flaskMw / flaskEqWt;
 
-    const buretteKey = document.getElementById('buretteChem').value;
     const buretteName = buretteDb[buretteKey].name;
     const buretteEqWt = buretteDb[buretteKey].eq;
     const buretteMw = buretteDb[buretteKey].mw;
@@ -1471,7 +1797,6 @@
     document.getElementById('outMeanTiter').innerText = V2.toFixed(2) + ' mL';
     document.getElementById('factorSentenceBox').innerText = factorSentence;
 
-    // Populate Readings Table clone for PDF Report
     const originalTable = document.getElementById('readingTable');
     const reportTableWrapper = document.getElementById('reportTableWrapper');
     reportTableWrapper.innerHTML = '';
@@ -1547,24 +1872,14 @@
         return;
       }
       
-      const calculatedFlaskNormality = (buretteNormalityInput * V2) / V1;
-      const calculatedFlaskMolarity = calculatedFlaskNormality / flaskNFactor;
-      const flaskEquivalents = calculatedFlaskNormality * (V1 / 1000);
-      const flaskMoles = calculatedFlaskMolarity * (V1 / 1000);
+      const strengthGramsPerLitre = (buretteNormalityInput * V2 * flaskEqWt) / V1;
+      const percentW_V = strengthGramsPerLitre / 10.0;
       
-      const gramsPerLitre = calculatedFlaskNormality * flaskEqWt;
-      const purityPercent = gramsPerLitre / 10;
-
-      document.getElementById('outNormFlask').innerText = calculatedFlaskNormality.toFixed(4) + ' N';
-      document.getElementById('outMolarityFlask').innerText = `Molarity: ${calculatedFlaskMolarity.toFixed(4)} M`;
-      document.getElementById('outMolesFlask').innerHTML = `Equivalents Present (in V1): ${formatSci(flaskEquivalents)} eq<br>Moles Present (in V1): ${formatSci(flaskMoles)} mol`;
-      document.getElementById('outAssay').innerText = purityPercent.toFixed(2) + ' % w/v';
-
-      payload.calculatedFlaskNormality = calculatedFlaskNormality.toFixed(4);
-      payload.assayPurity = purityPercent.toFixed(2) + ' % w/v';
+      document.getElementById('outAssay').innerText = percentW_V.toFixed(4) + ' % w/v (' + strengthGramsPerLitre.toFixed(2) + ' g/L)';
+      payload.assayPurity = percentW_V.toFixed(4) + ' % w/v';
 
       resNormBuretteContainer.style.display = 'none';
-      resNormFlaskContainer.style.display = 'block';
+      resNormFlaskContainer.style.display = 'none';
       resAssayContainer.style.display = 'block';
       resSolubilityContainer.style.display = 'none';
 
@@ -1574,281 +1889,91 @@
         return;
       }
       
-      const calculatedFlaskNormality = (buretteNormalityInput * V2) / V1;
-      const calculatedFlaskMolarity = calculatedFlaskNormality / flaskNFactor;
-      const flaskEquivalents = calculatedFlaskNormality * (V1 / 1000);
-      const flaskMoles = calculatedFlaskMolarity * (V1 / 1000);
+      const solubilityPer100mL = (buretteNormalityInput * V2 * flaskEqWt) / (V1 * 10.0);
+      const solubilityPerLitre = solubilityPer100mL * 10.0;
       
-      const gramsPerLitre = calculatedFlaskNormality * flaskEqWt;
-      const gramsPer100mL = gramsPerLitre / 10;
-
-      document.getElementById('outNormFlask').innerText = calculatedFlaskNormality.toFixed(4) + ' N';
-      document.getElementById('outMolarityFlask').innerText = `Molarity: ${calculatedFlaskMolarity.toFixed(4)} M`;
-      document.getElementById('outMolesFlask').innerHTML = `Equivalents Present (in V1): ${formatSci(flaskEquivalents)} eq<br>Moles Present (in V1): ${formatSci(flaskMoles)} mol`;
-      document.getElementById('outSolubility').innerText = `${gramsPer100mL.toFixed(4)} g / 100 mL (${gramsPerLitre.toFixed(2)} g/L)`;
-
-      payload.calculatedFlaskNormality = calculatedFlaskNormality.toFixed(4);
-      payload.solubility = `${gramsPer100mL.toFixed(4)} g / 100 mL`;
+      document.getElementById('outSolubility').innerText = solubilityPer100mL.toFixed(4) + ' g / 100 mL (' + solubilityPerLitre.toFixed(2) + ' g/L)';
+      payload.solubility = solubilityPer100mL.toFixed(4) + ' g/100mL';
 
       resNormBuretteContainer.style.display = 'none';
-      resNormFlaskContainer.style.display = 'block';
+      resNormFlaskContainer.style.display = 'none';
       resAssayContainer.style.display = 'none';
       resSolubilityContainer.style.display = 'block';
     }
 
     resBox.style.display = 'block';
+    resBox.scrollIntoView({ behavior: 'smooth' });
     sendDataToSheet(payload);
-    if(document.getElementById('titrationSidebar').classList.contains('open')) {
-      drawTitrationCurve();
-    }
   }
 
-  // --- CLIENT-SIDE PDF GENERATOR TRIGGER ---
   function generatePDFReport() {
     window.print();
   }
 
-  // --- REAGENT PREPARATION CALCULATOR JS ---
   function toggleReagentMode() {
-    const type = document.querySelector('input[name="reagentSourceType"]:checked').value;
-    document.getElementById('reagentSolidMode').style.display = (type === 'solid') ? 'block' : 'none';
-    document.getElementById('reagentLiquidMode').style.display = (type === 'liquid') ? 'block' : 'none';
-    document.getElementById('prepResultBox').style.display = 'none';
+    const isSolid = document.querySelector('input[name="reagentSourceType"]:checked').value === 'solid';
+    document.getElementById('reagentSolidMode').style.display = isSolid ? 'block' : 'none';
+    document.getElementById('reagentLiquidMode').style.display = isSolid ? 'none' : 'block';
   }
 
   function calculatePreparation() {
-    const chemVal = document.getElementById('prepChem').value;
-    const sourceType = document.querySelector('input[name="reagentSourceType"]:checked').value;
-    let db = chemVal.startsWith('b_') ? buretteDb : flaskDb;
-    let key = chemVal.substring(2);
-    let chemData = db[key];
-    const resBox = document.getElementById('prepResultBox');
+    const chemKey = document.getElementById('prepChem').value;
+    if(!chemKey) {
+        alert("Please select a chemical to prepare.");
+        return;
+    }
+    
+    const isSolid = document.querySelector('input[name="reagentSourceType"]:checked').value === 'solid';
+    const isBurette = chemKey.startsWith('b_');
+    const baseKey = chemKey.substring(2);
+    const db = isBurette ? buretteDb : flaskDb;
+    const chemData = db[baseKey];
 
-    if (sourceType === 'solid') {
+    const mw = chemData.mw;
+    const eq = chemData.eq;
+    const nFactor = mw / eq;
+
+    let resultHTML = "";
+
+    if (isSolid) {
       const concType = document.getElementById('prepConcType').value;
-      const concValue = parseFloat(document.getElementById('prepConcValue').value) || 0;
-      const vol = parseFloat(document.getElementById('prepVol').value) || 0;
-      
-      if (concValue <= 0 || vol <= 0) {
-        alert("Please enter valid positive numbers for concentration and volume.");
-        return;
-      }
+      const targetConc = parseFloat(document.getElementById('prepConcValue').value) || 0.1;
+      const targetVol = parseFloat(document.getElementById('prepVol').value) || 1000;
 
-      let mass = 0;
-      let weightType = "";
-      if (concType === 'N') {
-        mass = (concValue * chemData.eq * vol) / 1000;
-        weightType = `Equivalent Weight (${chemData.eq} g/eq)`;
-      } else {
-        mass = (concValue * chemData.mw * vol) / 1000;
-        weightType = `Molecular Weight (${chemData.mw} g/mol) [IUPAC]`;
-      }
-      
-      let instructions = `To prepare <strong>${vol} mL</strong> of <strong>${concValue} ${concType}</strong> ${chemData.name}:<br><br>`;
-      instructions += `⚖️ <strong>Weigh exactly: ${mass.toFixed(4)} grams</strong> of pure active compound.<br>`;
-      instructions += `💧 <strong>Solvent:</strong> Dissolve the solute in a small amount of distilled water (or appropriate solvent), then make up the total volume to exactly the ${vol} mL mark in a volumetric flask.<br><br>`;
-      instructions += `<span style="font-size:0.85rem; color:#64748b;">* Calculation based on ${weightType}.</span>`;
-      
-      resBox.innerHTML = instructions;
-      resBox.style.display = 'block';
+      const normality = concType === 'N' ? targetConc : targetConc * nFactor;
+      const massRequired = (normality * eq * targetVol) / 1000.0;
 
-    } else if (sourceType === 'liquid') {
-      const stockConc = parseFloat(document.getElementById('liqStockConc').value) || 0;
-      const targetConc = parseFloat(document.getElementById('liqTargetConc').value) || 0;
-      const targetVol = parseFloat(document.getElementById('liqTargetVol').value) || 0;
-      const unit = document.getElementById('liqConcUnit').value;
-
-      if (stockConc <= 0 || targetConc <= 0 || targetVol <= 0) {
-        alert("Please enter valid positive numbers for concentrations and volume.");
-        return;
-      }
-
-      if (targetConc > stockConc) {
-         alert("Target concentration cannot be higher than your stock concentration.");
-         return;
-      }
-
-      const requiredVol = (targetConc * targetVol) / stockConc;
-
-      let instructions = `To prepare <strong>${targetVol} mL</strong> of <strong>${targetConc} ${unit}</strong> ${chemData.name} from a <strong>${stockConc} ${unit}</strong> stock:<br><br>`;
-      instructions += `🧪 <strong>Pipette exactly: ${requiredVol.toFixed(2)} mL</strong> of your stock solution.<br>`;
-      instructions += `💧 <strong>Dilution:</strong> Transfer this into a ${targetVol} mL volumetric flask containing some solvent (<strong>Always add acid to water</strong> if applicable), then make up the volume to exactly the mark.<br><br>`;
-      instructions += `<span style="font-size:0.85rem; color:#64748b;">* Calculated using standard C₁V₁ = C₂V₂ dilution formula.</span>`;
-
-      resBox.innerHTML = instructions;
-      resBox.style.display = 'block';
-    }
-  }
-
-  // --- SMART TITRATION GRAPH RENDERER ---
-  function toggleSidebar() {
-    const sidebar = document.getElementById('titrationSidebar');
-    sidebar.classList.toggle('open');
-    if(sidebar.classList.contains('open')) {
-      drawTitrationCurve();
-    }
-  }
-
-  function drawTitrationCurve() {
-    drawTitrationCurveOnCanvas('titrationChart', 'graphInfo');
-  }
-
-  function drawTitrationCurveOnCanvas(canvasId, infoId) {
-    const canvas = document.getElementById(canvasId);
-    if(!canvas) return;
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const bKey = document.getElementById('buretteChem').value;
-    const fKey = document.getElementById('flaskChem').value;
-    
-    const isAcidBase = ['naoh', 'hcl', 'hno3', 'h2so4', 'hclo4'].includes(bKey) && !['feso4', 'h2o2'].includes(fKey);
-    const isBaseIntoAcid = (bKey === 'naoh');
-
-    const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
-    
-    const bEqWt = buretteDb[bKey].eq;
-    const bMw = buretteDb[bKey].mw;
-    const bNFactor = bMw / bEqWt;
-    const N2 = (buretteInputMode === 'molarity') 
-      ? (parseFloat(document.getElementById('buretteMolarity').value) || 0.1) * bNFactor 
-      : (parseFloat(document.getElementById('buretteNormality').value) || 0.1);
-
-    let N1 = 0.1;
-    if (flaskInputMode === 'normality') {
-      N1 = parseFloat(document.getElementById('flaskNormality').value) || 0.1;
-    } else if (flaskInputMode === 'molarity') {
-      const M1 = parseFloat(document.getElementById('flaskMolarity').value) || 0.1;
-      const eqWt = flaskDb[fKey].eq;
-      const mw = flaskDb[fKey].mw;
-      N1 = M1 * (mw / eqWt);
-    } else if (flaskInputMode === 'weight') {
-      const mass = parseFloat(document.getElementById('flaskMass').value) || 0.6303;
-      const volMade = parseFloat(document.getElementById('flaskVolMade').value) || 100;
-      const eqWt = flaskDb[fKey].eq;
-      N1 = (mass * 1000) / (eqWt * volMade);
-    } else if (flaskInputMode === 'game') {
-      N1 = gameSecretNormality;
-    }
-
-    const eqVol = (N1 * V1) / N2;
-    const maxVol = Math.max(eqVol * 1.5, 20);
-
-    const originX = 42;
-    const originY = 160;
-    const plotWidth = 220;
-    const plotHeight = 120;
-
-    // Draw Axes lines
-    ctx.strokeStyle = '#64748b';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(originX, 15);
-    ctx.lineTo(originX, originY);
-    ctx.lineTo(originX + plotWidth, originY);
-    ctx.stroke();
-
-    // Axis Labels & Title
-    ctx.fillStyle = '#1e3a8a';
-    ctx.font = 'bold 11px sans-serif';
-    if (isAcidBase) {
-      ctx.fillText('pH vs Vol (mL)', 10, 12);
-      ctx.font = '9px sans-serif';
-      ctx.fillStyle = '#475569';
-      for (let pH = 0; pH <= 14; pH += 4) {
-        let y = originY - (pH / 14) * plotHeight;
-        ctx.beginPath();
-        ctx.moveTo(originX - 3, y);
-        ctx.lineTo(originX, y);
-        ctx.stroke();
-        ctx.fillText(pH, originX - 20, y + 3);
-      }
+      resultHTML = `
+        🧪 <strong>Reagent Preparation Recipe (${chemData.name}):</strong><br>
+        • <strong>Target:</strong> ${targetConc} ${concType} in ${targetVol} mL solution<br>
+        • <strong>Mass to Weigh:</strong> <span style="color:#065f46; font-size:1.1rem;">${massRequired.toFixed(4)} grams</span><br>
+        • <strong>Procedure:</strong> Accurately weigh ${massRequired.toFixed(4)} g of ${chemData.name}, dissolve in distilled water in a volumetric flask, and make up the volume precisely to ${targetVol} mL.
+      `;
     } else {
-      ctx.fillText('Potential / mV vs Vol (mL)', 10, 12);
-      ctx.font = '9px sans-serif';
-      ctx.fillStyle = '#475569';
-      for (let mv = 0; mv <= 1000; mv += 250) {
-        let y = originY - (mv / 1000) * plotHeight;
-        ctx.beginPath();
-        ctx.moveTo(originX - 3, y);
-        ctx.lineTo(originX, y);
-        ctx.stroke();
-        ctx.fillText(mv, originX - 28, y + 3);
-      }
-    }
+      const stockConc = parseFloat(document.getElementById('liqStockConc').value) || 1.0;
+      const targetConc = parseFloat(document.getElementById('liqTargetConc').value) || 0.1;
+      const concUnit = document.getElementById('liqConcUnit').value;
+      const targetVol = parseFloat(document.getElementById('liqTargetVol').value) || 1000;
 
-    // X-Axis Ticks & Numbers (Volume)
-    ctx.fillStyle = '#475569';
-    let volStep = maxVol > 40 ? 10 : (maxVol > 20 ? 5 : 2);
-    for (let v = 0; v <= maxVol; v += volStep) {
-      let x = originX + (v / maxVol) * plotWidth;
-      if (x <= originX + plotWidth) {
-        ctx.beginPath();
-        ctx.moveTo(x, originY);
-        ctx.lineTo(x, originY + 3);
-        ctx.stroke();
-        ctx.fillText(v, x - 6, originY + 14);
-      }
-    }
+      const aliquot = (targetConc * targetVol) / stockConc;
 
-    // Plot Smart Titration Curve
-    ctx.strokeStyle = '#2563eb';
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    for (let px = 0; px <= plotWidth; px++) {
-      let v = (px / plotWidth) * maxVol;
-      let yVal, yCoord;
-
-      if (isAcidBase) {
-        if (isBaseIntoAcid) {
-          yVal = 1 + 12 / (1 + Math.exp(-0.8 * (v - eqVol)));
-        } else {
-          yVal = 13 - 12 / (1 + Math.exp(-0.8 * (v - eqVol)));
-        }
-        yCoord = originY - (yVal / 14) * plotHeight;
-      } else {
-        yVal = 100 + 800 / (1 + Math.exp(-0.8 * (v - eqVol)));
-        yCoord = originY - (yVal / 1000) * plotHeight;
-      }
-
-      let x = originX + px;
-      if (px === 0) ctx.moveTo(x, yCoord);
-      else ctx.lineTo(x, yCoord);
-    }
-    ctx.stroke();
-
-    // Draw Equivalence Point marker & Line
-    let eqX = originX + (eqVol / maxVol) * plotWidth;
-    let eqYVal = isAcidBase ? 7 : 500;
-    let eqY = isAcidBase ? (originY - (eqYVal / 14) * plotHeight) : (originY - (500 / 1000) * plotHeight);
-    
-    ctx.strokeStyle = '#dc2626';
-    ctx.setLineDash([3, 3]);
-    ctx.beginPath();
-    ctx.moveTo(eqX, originY);
-    ctx.lineTo(eqX, eqY);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    ctx.fillStyle = '#dc2626';
-    ctx.beginPath();
-    ctx.arc(eqX, eqY, 4, 0, 2 * Math.PI);
-    ctx.fill();
-
-    const infoElem = document.getElementById(infoId);
-    if(infoElem) {
-      infoElem.innerHTML = `
-        <strong>Graph Mode:</strong> ${isAcidBase ? (isBaseIntoAcid ? 'Base into Acid (Rising pH)' : 'Acid into Base (Falling pH)') : 'Redox / Complexometric'}<br>
-        <strong>Equivalence Volume (V<sub>eq</sub>):</strong> ~${eqVol.toFixed(2)} mL<br>
-        <span style="color:#dc2626; font-weight:bold;">● Inflection / Equivalence Point</span>
+      resultHTML = `
+        🧪 <strong>Liquid Dilution Recipe (${chemData.name}):</strong><br>
+        • <strong>Dilution Formula:</strong> C₁V₁ = C₂V₂<br>
+        • <strong>Volume of Stock Required (V₁):</strong> <span style="color:#065f46; font-size:1.1rem;">${aliquot.toFixed(2)} mL</span><br>
+        • <strong>Procedure:</strong> Pipette out ${aliquot.toFixed(2)} mL of the ${stockConc} ${concUnit} stock solution and dilute with distilled water in a volumetric flask to a final volume of ${targetVol} mL.
       `;
     }
+
+    const box = document.getElementById('prepResultBox');
+    box.innerHTML = resultHTML;
+    box.style.display = 'block';
   }
 
   window.onload = function() {
-    checkValidity();
     updateBuretteInfo();
     updateFlaskInfo();
+    checkValidity();
     updateSimColors();
   };
 </script>
