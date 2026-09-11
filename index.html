@@ -566,7 +566,8 @@
       border-radius: 8px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.3);
       z-index: 10000;
-      width: 320px;
+      width: calc(100vw - 40px); /* Updates from 320px fixed to perfectly fluid on mobile */
+      max-width: 320px;
       display: none;
       opacity: 0;
       transition: all 0.3s ease;
@@ -2234,6 +2235,11 @@
     updateFlaskInfo();
     checkValidity();
     updateSimColors();
+    
+    // Triggers background plotting if a valid titration was restored from local storage
+    if (isTitrationValid && document.getElementById('buretteChem').value) {
+        drawTitrationCurveOnCanvas('titrationChart', 'graphInfo');
+    }
   };
 </script>
 
