@@ -505,7 +505,7 @@
         box-shadow: none !important;
         border: none !important;
       }
-      .sidebar-toggle-btn, .sidebar-panel, .btn-action-grid, .btn-pdf, .sim-container, .collapsible-btn, #tableContainer, div[style*="font-size: 0.75rem"] {
+      .sidebar-toggle-btn, .sidebar-panel, .btn-action-grid, .btn-pdf, .sim-container, .collapsible-btn, #tableContainer, div[style*="font-size: 0.75rem"], .glow-btn {
         display: none !important;
       }
       #reportTableWrapper table {
@@ -523,6 +523,61 @@
         margin: 0 auto;
       }
     }
+
+    /* --- QUICK TOUR STYLES --- */
+    .glow-btn {
+      background: linear-gradient(45deg, #059669, #10b981);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #10b981, 0 0 20px #059669;
+      animation: pulseGlow 1.5s infinite alternate;
+      transition: transform 0.2s;
+    }
+    .glow-btn:hover {
+      transform: scale(1.05);
+    }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 5px #10b981, 0 0 10px #059669; }
+      100% { box-shadow: 0 0 15px #10b981, 0 0 30px #059669; }
+    }
+    .tour-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 9998; display: none;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .tour-highlight {
+      position: relative !important;
+      z-index: 9999 !important;
+      box-shadow: 0 0 0 4px #f59e0b, 0 0 20px rgba(255,255,255,0.9) !important;
+      border-radius: 8px;
+      background: white; 
+      transition: all 0.3s ease;
+    }
+    .tour-tooltip {
+      position: fixed;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      z-index: 10000;
+      width: 320px;
+      display: none;
+      opacity: 0;
+      transition: all 0.3s ease;
+      border-top: 5px solid #f59e0b;
+    }
+    .tour-tooltip h4 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.1rem; }
+    .tour-tooltip p { margin: 0 0 15px 0; font-size: 0.95rem; color: #475569; line-height: 1.5; }
+    .tour-nav { display: flex; justify-content: space-between; align-items: center; }
+    .tour-btn { background: var(--secondary); color: white; border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold;}
+    .tour-btn:hover { background: var(--primary); }
+    .tour-skip { background: none; color: #64748b; border: none; cursor: pointer; font-size: 0.85rem; text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -544,9 +599,13 @@
   
   <!-- MAIN HEADER -->
   <div class="card">
-    <div class="header-box" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
-      <h2>Universal Dynamic Titration Calculator</h2>
-      <span class="author-tag">by Joash Sam</span>
+    <div class="header-box" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0; flex-wrap: wrap; gap: 15px; align-items: center;">
+      <div>
+        <h2>Universal Dynamic Titration Calculator</h2>
+        <span class="author-tag">by Joash Sam</span>
+      </div>
+      <!-- ADDED QUICK TOUR BUTTON -->
+      <button id="quickTourBtn" class="glow-btn" onclick="startTour()">✨ Take a Quick Tour</button>
     </div>
   </div>
 
@@ -565,7 +624,7 @@
       <!-- 1. BURETTE SETUP -->
       <div class="section-title">1. In Burette (Titrant)</div>
       
-      <div class="form-group">
+      <div class="form-group" id="tour-target-burette">
         <label for="buretteChem">Select Reagent:</label>
         <div class="input-with-bulb">
           <select id="buretteChem" onchange="updateBuretteInfo(); checkValidity();">
@@ -618,7 +677,7 @@
 
       <!-- 2. CONICAL FLASK SETUP -->
       <div class="section-title">2. In Conical Flask (Titrand)</div>
-      <div class="form-group">
+      <div class="form-group" id="tour-target-flask">
         <label for="flaskChem">Select Chemical / Sample:</label>
         <div class="input-with-bulb">
           <select id="flaskChem" onchange="updateFlaskInfo(); checkValidity();">
@@ -797,7 +856,7 @@
 
       <!-- 5. DYNAMIC TARGET SELECTION -->
       <div class="section-title" style="margin-top: 20px;">5. Choose Target Calculation</div>
-      <div class="btn-action-grid">
+      <div class="btn-action-grid" id="tour-target-calculate">
         <button class="btn-action" onclick="calculate('std_burette')">Find Normality of Burette Titrant</button>
         <button class="btn-action" onclick="calculate('norm_flask')">Find Normality of Flask Titrand</button>
         <button class="btn-action" onclick="calculate('assay')">Calculate Assay / Purity (% w/v)</button>
@@ -981,6 +1040,17 @@
     <a href="https://joashsam07-cell.github.io/fitness-calculator/" style="color: var(--secondary); text-decoration: none; font-weight: bold;">Click here to visit Fitness calculator by the same creator.</a>
   </div>
 
+</div>
+
+<!-- ADDED: TOUR OVERLAY & TOOLTIP ELEMENTS -->
+<div id="tourOverlay" class="tour-overlay"></div>
+<div id="tourTooltip" class="tour-tooltip">
+  <h4 id="tourTitle">Tour</h4>
+  <p id="tourText">Text</p>
+  <div class="tour-nav">
+    <button class="tour-skip" onclick="endTour()">Skip Tour</button>
+    <button id="tourNextBtn" class="tour-btn" onclick="nextTourStep()">Next ➔</button>
+  </div>
 </div>
 
 <script>
@@ -1635,30 +1705,39 @@
 
     const eqVol = (N1 * V1) / N2;
     const maxVol = Math.max(eqVol * 1.8, 25.0); 
-    const minY = 0.0;
-    const maxY = 14.0;
+
+    const isBaseTitrant = bData.acidBaseType === 'SB' || bData.acidBaseType === 'WB';
+    let isRedox = bData.type.includes("Redox") || bData.type.includes("Oxidizing") || bData.type.includes("Cerimetric") || bData.type.includes("Iodimetric");
+    let isComplex = bData.type.includes("Complexometric");
+    let isAcidBase = (bData.acidBaseType && fData.acidBaseType);
+
+    const minY = isRedox ? 0.0 : 0.0;
+    const maxY = isRedox ? 1.6 : (isComplex ? 12.0 : 14.0);
 
     // --- EXACT EQUIVALENCE POINT CALCULATION ---
-    let eq_pH = 7.0; 
-    let isAcidBase = (bData.acidBaseType && fData.acidBaseType);
+    let eq_Y = 7.0; 
     let cSalt = (N1 * V1) / (V1 + eqVol); 
 
     if (isAcidBase) {
         if ((bData.acidBaseType === 'SB' && fData.acidBaseType === 'WA') || (bData.acidBaseType === 'WA' && fData.acidBaseType === 'SB')) {
             let pKa = fData.pKa || bData.pKa;
-            eq_pH = 7.0 + 0.5 * pKa + 0.5 * Math.log10(Math.max(cSalt, 1e-10));
+            eq_Y = 7.0 + 0.5 * pKa + 0.5 * Math.log10(Math.max(cSalt, 1e-10));
         } else if ((bData.acidBaseType === 'SA' && fData.acidBaseType === 'WB') || (bData.acidBaseType === 'WB' && fData.acidBaseType === 'SA')) {
             let pKb = fData.pKb || bData.pKb;
-            eq_pH = 7.0 - 0.5 * pKb - 0.5 * Math.log10(Math.max(cSalt, 1e-10));
+            eq_Y = 7.0 - 0.5 * pKb - 0.5 * Math.log10(Math.max(cSalt, 1e-10));
         } else if ((bData.acidBaseType === 'WA' && fData.acidBaseType === 'WB') || (bData.acidBaseType === 'WB' && fData.acidBaseType === 'WA')) {
             let pKa = fData.pKa || bData.pKa;
             let pKb = fData.pKb || bData.pKb;
-            eq_pH = 7.0 + 0.5 * pKa - 0.5 * pKb; 
+            eq_Y = 7.0 + 0.5 * pKa - 0.5 * pKb; 
         } else {
-             eq_pH = 7.0; 
+             eq_Y = 7.0; 
         }
+    } else if (isRedox) {
+        eq_Y = 0.8; // Estimated exact eq potential for standard plots 
+    } else if (isComplex) {
+        eq_Y = 6.0; // Estimated pM exact equivalence
     }
-    eq_pH = Math.max(minY, Math.min(maxY, eq_pH)); 
+    eq_Y = Math.max(minY, Math.min(maxY, eq_Y)); 
 
     // --- PADDING & PLOTTING AREA ---
     const paddingLeft = 35;
@@ -1685,11 +1764,11 @@
       ctx.textAlign = 'center'; ctx.fillText(v.toFixed(0), x, paddingTop + plotHeight + 12);
     }
 
-    const yStep = 2;
-    for (let p = 0; p <= maxY; p += yStep) {
+    const yStep = isRedox ? 0.2 : 2;
+    for (let p = minY; p <= maxY; p += yStep) {
       const y = mapY(p);
       ctx.beginPath(); ctx.moveTo(paddingLeft, y); ctx.lineTo(paddingLeft + plotWidth, y); ctx.stroke();
-      ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText(p.toFixed(0), paddingLeft - 5, y);
+      ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText(p.toFixed(isRedox ? 1 : 0), paddingLeft - 5, y);
     }
 
     ctx.strokeStyle = '#334155'; ctx.lineWidth = 1.5; ctx.beginPath();
@@ -1699,87 +1778,89 @@
     ctx.textAlign = 'center'; ctx.fillText('Titrant Volume V₂ (mL)', paddingLeft + plotWidth / 2, height - 3);
 
     ctx.save(); ctx.translate(10, paddingTop + plotHeight / 2); ctx.rotate(-Math.PI / 2);
-    ctx.fillText('pH / Potential', 0, 0); ctx.restore();
+    ctx.fillText(isAcidBase ? 'pH' : (isRedox ? 'Potential (E) in V' : 'pM (Metal Ion)'), 0, 0); ctx.restore();
 
-    // --- GENERATE & PLOT TITRATION CURVE ---
+    // --- GENERATE EXACT LAB-LEVEL TITRATION CURVE ---
     ctx.strokeStyle = '#2563eb';
     ctx.lineWidth = 2;
     ctx.beginPath();
 
-    const isBaseTitrant = bData.acidBaseType === 'SB' || bData.acidBaseType === 'WB';
-    
-    for (let i = 0; i <= 100; i++) {
-      const v = (i / 100) * maxVol;
-      let pH = 7.0;
+    for (let i = 0; i <= 500; i++) {
+      const v = (i / 500) * maxVol;
+      let yVal = 7.0;
 
-      if (!isAcidBase) {
+      if (Math.abs(v - eqVol) < 1e-5) {
+          yVal = eq_Y;
+      } else if (isAcidBase) {
           if (isBaseTitrant) {
-            if (v < eqVol) pH = -Math.log10(Math.max(((eqVol - v) * N2) / (V1 + v), 1e-7));
-            else if (v > eqVol) pH = 14.0 + Math.log10(Math.max(((v - eqVol) * N2) / (V1 + v), 1e-7));
-          } else {
-            if (v < eqVol) pH = 14.0 + Math.log10(Math.max(((eqVol - v) * N2) / (V1 + v), 1e-7));
-            else if (v > eqVol) pH = -Math.log10(Math.max(((v - eqVol) * N2) / (V1 + v), 1e-7));
-          }
-      } else {
-          if (isBaseTitrant) {
-             if (v < eqVol) { 
-                 if (fData.acidBaseType === 'WA') {
-                     let delta = eqVol - v;
-                     if (Math.abs(delta) < 1e-5) delta = 1e-5;
-                     let ratio = v / delta;
-                     if (ratio <= 0.001) pH = 0.5 * fData.pKa - 0.5 * Math.log10(N1);
-                     else pH = fData.pKa + Math.log10(Math.max(ratio, 1e-10));
-                 } else {
-                     const excessH = ((eqVol - v) * N2) / (V1 + v);
-                     pH = -Math.log10(Math.max(excessH, 1e-7));
-                 }
-             } else if (v > eqVol) {
-                 if (bData.acidBaseType === 'WB') {
-                     let delta = v - eqVol;
-                     if (Math.abs(delta) < 1e-5) delta = 1e-5;
-                     let ratio = eqVol / delta;
-                     let pOH = bData.pKb + Math.log10(Math.max(ratio, 1e-10));
-                     pH = 14.0 - pOH;
-                 } else {
-                     const excessOH = ((v - eqVol) * N2) / (V1 + v);
-                     pH = 14.0 + Math.log10(Math.max(excessOH, 1e-7));
-                 }
-             } else {
-                 pH = eq_pH;
-             }
+              if (v < eqVol) {
+                  if (fData.acidBaseType === 'WA') {
+                      let Ka = Math.pow(10, -fData.pKa);
+                      let Ca = ((eqVol - v) * N2) / (V1 + v);
+                      let Cb = (v * N2) / (V1 + v);
+                      let H = (-(Cb + Ka) + Math.sqrt(Math.pow(Cb + Ka, 2) + 4 * Ka * Ca)) / 2;
+                      yVal = -Math.log10(Math.max(H, 1e-14));
+                  } else {
+                      let excessH = ((eqVol - v) * N2) / (V1 + v);
+                      yVal = -Math.log10(Math.max(excessH, 1e-14));
+                  }
+              } else {
+                  if (bData.acidBaseType === 'WB') {
+                      let Kb = Math.pow(10, -bData.pKb);
+                      let Cb = ((v - eqVol) * N2) / (V1 + v);
+                      let Ca = (eqVol * N2) / (V1 + v);
+                      let OH = (-(Ca + Kb) + Math.sqrt(Math.pow(Ca + Kb, 2) + 4 * Kb * Cb)) / 2;
+                      yVal = 14.0 + Math.log10(Math.max(OH, 1e-14));
+                  } else {
+                      let excessOH = ((v - eqVol) * N2) / (V1 + v);
+                      yVal = 14.0 + Math.log10(Math.max(excessOH, 1e-14));
+                  }
+              }
           } else { 
-             if (v < eqVol) { 
-                 if (fData.acidBaseType === 'WB') {
-                     let delta = eqVol - v;
-                     if (Math.abs(delta) < 1e-5) delta = 1e-5;
-                     let ratio = v / delta;
-                     let pOH;
-                     if (ratio <= 0.001) pOH = 0.5 * fData.pKb - 0.5 * Math.log10(N1);
-                     else pOH = fData.pKb + Math.log10(Math.max(ratio, 1e-10));
-                     pH = 14.0 - pOH;
-                 } else {
-                     const excessOH = ((eqVol - v) * N2) / (V1 + v);
-                     pH = 14.0 + Math.log10(Math.max(excessOH, 1e-7));
-                 }
-             } else if (v > eqVol) {
-                 if (bData.acidBaseType === 'WA') {
-                     let delta = v - eqVol;
-                     if (Math.abs(delta) < 1e-5) delta = 1e-5;
-                     let ratio = eqVol / delta;
-                     pH = bData.pKa + Math.log10(Math.max(ratio, 1e-10));
-                 } else {
-                     const excessH = ((v - eqVol) * N2) / (V1 + v);
-                     pH = -Math.log10(Math.max(excessH, 1e-7));
-                 }
-             } else {
-                 pH = eq_pH;
-             }
+              if (v < eqVol) { 
+                  if (fData.acidBaseType === 'WB') {
+                      let Kb = Math.pow(10, -fData.pKb);
+                      let Cb = ((eqVol - v) * N2) / (V1 + v);
+                      let Ca = (v * N2) / (V1 + v);
+                      let OH = (-(Ca + Kb) + Math.sqrt(Math.pow(Ca + Kb, 2) + 4 * Kb * Cb)) / 2;
+                      yVal = 14.0 + Math.log10(Math.max(OH, 1e-14));
+                  } else {
+                      let excessOH = ((eqVol - v) * N2) / (V1 + v);
+                      yVal = 14.0 + Math.log10(Math.max(excessOH, 1e-14));
+                  }
+              } else {
+                  if (bData.acidBaseType === 'WA') {
+                      let Ka = Math.pow(10, -bData.pKa);
+                      let Ca = ((v - eqVol) * N2) / (V1 + v);
+                      let Cb = (eqVol * N2) / (V1 + v);
+                      let H = (-(Cb + Ka) + Math.sqrt(Math.pow(Cb + Ka, 2) + 4 * Ka * Ca)) / 2;
+                      yVal = -Math.log10(Math.max(H, 1e-14));
+                  } else {
+                      let excessH = ((v - eqVol) * N2) / (V1 + v);
+                      yVal = -Math.log10(Math.max(excessH, 1e-14));
+                  }
+              }
+          }
+      } else if (isRedox) {
+          if (v < eqVol) {
+              let ratio = Math.max(v / Math.max(eqVol - v, 1e-6), 1e-6);
+              yVal = 0.4 + 0.059 * Math.log10(ratio);
+          } else {
+              let ratio = Math.max((v - eqVol) / Math.max(eqVol, 1e-6), 1e-6);
+              yVal = 1.2 - 0.059 * Math.log10(1 / ratio);
+          }
+      } else if (isComplex) {
+          if (v < eqVol) {
+              let excessM = ((eqVol - v) * N2) / (V1 + v);
+              yVal = -Math.log10(Math.max(excessM, 1e-12));
+          } else {
+              yVal = 10.0 - 0.059 * Math.log10((v - eqVol)/eqVol); 
           }
       }
 
-      pH = Math.max(minY, Math.min(maxY, pH));
+      yVal = Math.max(minY, Math.min(maxY, yVal));
       const px = mapX(v);
-      const py = mapY(pH);
+      const py = mapY(yVal);
 
       if (i === 0) ctx.moveTo(px, py);
       else ctx.lineTo(px, py);
@@ -1788,7 +1869,7 @@
 
     // --- EXTRAPOLATION & EQUIVALENCE POINT DROP LINES ---
     const eqX = mapX(eqVol);
-    const eqY = mapY(isAcidBase ? eq_pH : 7.0);
+    const eqY = mapY(eq_Y);
 
     ctx.strokeStyle = '#059669'; ctx.lineWidth = 1.2; ctx.setLineDash([3, 3]); ctx.beginPath();
     ctx.moveTo(eqX, eqY); ctx.lineTo(eqX, paddingTop + plotHeight); ctx.stroke();
@@ -1803,8 +1884,8 @@
     const infoContainer = document.getElementById(infoId);
     if (infoContainer) {
       let eqStateHTML = isAcidBase 
-          ? `pH <span style="color:#0f172a; font-weight:bold;">${eq_pH.toFixed(2)}</span> (Calculated Exact Endpoint)` 
-          : `Stoichiometric Endpoint`;
+          ? `pH <span style="color:#0f172a; font-weight:bold;">${eq_Y.toFixed(2)}</span> (Calculated Exact Endpoint)` 
+          : (isRedox ? `Potential <span style="color:#0f172a; font-weight:bold;">${eq_Y.toFixed(2)} V</span>` : `pM <span style="color:#0f172a; font-weight:bold;">${eq_Y.toFixed(2)}</span>`);
       
       infoContainer.innerHTML = `
         🎯 <strong>Equivalence Point (Inflection):</strong> <span style="color: #059669; font-weight: bold;">${eqVol.toFixed(2)} mL</span><br>
@@ -1815,6 +1896,12 @@
   }
 
   function calculate(actionType) {
+    // ENFORCING CONSTRAINT 1: Valid Titration Check Block
+    if (!isTitrationValid) {
+        alert("Invalid Titrant-Sample combination. Please select a chemically compatible pair before calculating.");
+        return;
+    }
+
     const titerData = getCalculatedTiter();
     if (!titerData) {
       alert('Please enter at least one valid set of burette readings.');
@@ -2053,6 +2140,93 @@
     box.innerHTML = resultHTML;
     box.style.display = 'block';
   }
+
+  // --- ADDED: QUICK TOUR LOGIC ---
+  const tourSteps = [
+    { sel: '.header-box', title: 'Welcome to the Engine! ✨', text: 'This Quick Tour will guide you through the process of simulating and calculating a full titration experiment without leaving this page.' },
+    { sel: '#tour-target-burette', title: 'Step 1: The Burette', text: 'Start by selecting your Titrant (the solution in the burette). You can set its concentration exactness by switching between standard input modes.' },
+    { sel: '#tour-target-flask', title: 'Step 2: The Conical Flask', text: 'Select your sample chemical. Try checking out the "Digital Titration Practice" mode to test your estimation skills with random unknown concentrations!' },
+    { sel: '#simContainer', title: 'Step 3: Virtual Simulator', text: 'Watch chemistry happen in real-time. Use the controls to drop titrant visually until you witness the equivalence point color change indicator.' },
+    { sel: '#toggleTableBtn', title: 'Step 4: Record Readings', text: 'Open the table to feed your initial and final burette readings (V2). You can add trial rows and select Concordant or Mean calculation methods.' },
+    { sel: '#tour-target-calculate', title: 'Step 5: Get Results', text: 'Click any of these to crunch the numbers. The app will generate precise analytics, dynamic curve graphs, and a shareable PDF summary report below.' }
+  ];
+  
+  let currentStep = -1;
+  let highlightedElement = null;
+
+  function startTour() {
+    currentStep = 0;
+    document.getElementById('tourOverlay').style.display = 'block';
+    document.getElementById('tourTooltip').style.display = 'block';
+    // Allow slight delay for display block to register before fading in
+    setTimeout(() => {
+      document.getElementById('tourOverlay').style.opacity = '1';
+      document.getElementById('tourTooltip').style.opacity = '1';
+      showTourStep();
+    }, 10);
+  }
+
+  function showTourStep() {
+    if (highlightedElement) {
+      highlightedElement.classList.remove('tour-highlight');
+    }
+    
+    if (currentStep >= tourSteps.length) {
+      endTour();
+      return;
+    }
+
+    const step = tourSteps[currentStep];
+    const el = document.querySelector(step.sel);
+    
+    if (el) {
+      highlightedElement = el;
+      highlightedElement.classList.add('tour-highlight');
+      // Instantly jump to the item so the fixed tooltip doesn't get positioned incorrectly during a smooth scroll frame
+      highlightedElement.scrollIntoView({ behavior: 'instant', block: 'center' });
+      
+      document.getElementById('tourTitle').innerText = step.title;
+      document.getElementById('tourText').innerText = step.text;
+      document.getElementById('tourNextBtn').innerText = (currentStep === tourSteps.length - 1) ? 'Finish ✓' : 'Next ➔';
+      
+      // Calculate position
+      const rect = highlightedElement.getBoundingClientRect();
+      const tooltip = document.getElementById('tourTooltip');
+      
+      let top = rect.bottom + 15;
+      let left = rect.left;
+      
+      // Safety net: ensure tooltip doesn't bleed off-screen
+      if (top + tooltip.offsetHeight > window.innerHeight) {
+          top = rect.top - tooltip.offsetHeight - 15;
+      }
+      if (left + tooltip.offsetWidth > window.innerWidth) {
+          left = window.innerWidth - tooltip.offsetWidth - 20;
+      }
+      
+      tooltip.style.top = top + 'px';
+      tooltip.style.left = Math.max(10, left) + 'px';
+    } else {
+        nextTourStep(); // Failsafe skip if element is somehow hidden
+    }
+  }
+
+  function nextTourStep() {
+    currentStep++;
+    showTourStep();
+  }
+
+  function endTour() {
+    if (highlightedElement) highlightedElement.classList.remove('tour-highlight');
+    document.getElementById('tourOverlay').style.opacity = '0';
+    document.getElementById('tourTooltip').style.opacity = '0';
+    setTimeout(() => {
+      document.getElementById('tourOverlay').style.display = 'none';
+      document.getElementById('tourTooltip').style.display = 'none';
+    }, 300);
+    currentStep = -1;
+  }
+  // --- END OF QUICK TOUR LOGIC ---
 
   window.onload = function() {
     restoreAppSession();
