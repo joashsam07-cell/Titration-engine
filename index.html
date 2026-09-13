@@ -1435,7 +1435,7 @@
     const fKey = document.getElementById('flaskChem').value;
     const banner = document.getElementById('simInvalidBanner');
     const simContainer = document.getElementById('simContainer');
-    const btns = document.querySelectorAll('.sim-controls button:not(.reset)');
+    const btns = document.querySelectorAll('#simContainer .sim-controls button:not(.reset)');
 
     if (!bKey || !fKey) {
       isTitrationValid = false;
@@ -1597,7 +1597,7 @@
     const fKey = document.getElementById('flaskChem').value;
     const config = getPairConfig(bKey, fKey);
 
-    if (simVol >= (eqVolume * 0.98)) {
+    if (simVol >= eqVolume) {
       flaskLiq.setAttribute('fill', config.colors[1]);
     } else {
       flaskLiq.setAttribute('fill', config.colors[0]);
@@ -1649,7 +1649,7 @@
     }
 
     const simFreezeBanner = document.getElementById('simFreezeBanner');
-    const btns = document.querySelectorAll('.sim-controls button:not(.reset)');
+    const btns = document.querySelectorAll('#simContainer .sim-controls button:not(.reset)');
     
     checkValidity();
 
@@ -2329,7 +2329,7 @@
   }
 
   // --- ADDED: QUICK TOUR LOGIC ---
-  const tourSteps = [
+  const titrationTourSteps = [
     { sel: '.header-box', title: 'Welcome to the Engine! ✨', text: 'This Quick Tour will guide you through the process of simulating and calculating a full titration experiment without leaving this page.' },
     { sel: '#tour-target-burette', title: 'Step 1: The Burette', text: 'Start by selecting your Titrant (the solution in the burette). You can set its concentration exactness by switching between standard input modes.' },
     { sel: '#tour-target-flask', title: 'Step 2: The Conical Flask', text: 'Select your sample chemical. Try checking out the "Digital Titration Practice" mode to test your estimation skills with random unknown concentrations!' },
@@ -2337,11 +2337,36 @@
     { sel: '#toggleTableBtn', title: 'Step 4: Record Readings', text: 'Open the table to feed your initial and final burette readings (V2). You can add trial rows and select Concordant or Mean calculation methods.' },
     { sel: '#tour-target-calculate', title: 'Step 5: Get Results', text: 'Click any of these to crunch the numbers. The app will generate precise analytics, dynamic curve graphs, and a shareable PDF summary report below.' }
   ];
+
+  const reagentTourSteps = [
+    { sel: '#reagentMakerCard h2', title: 'Reagent Preparation Calculator ⚖️', text: 'This tool helps you calculate exactly how to prepare standard solutions.' },
+    { sel: '#prepChem', title: 'Step 1: Select Chemical', text: 'Choose the chemical you want to prepare from the standard list.' },
+    { sel: 'input[name="reagentSourceType"]', title: 'Step 2: Source Type', text: 'Select whether you are starting from a solid powder, liquid stock, or preparing a percentage solution.' },
+    { sel: '#reagentSolidMode', title: 'Step 3: Target Concentration', text: 'Set your desired concentration (Normality or Molarity) and the final volume.' },
+    { sel: 'button[onclick="calculatePreparation()"]', title: 'Step 4: Calculate Recipe', text: 'Click here to generate step-by-step instructions and required mass/volume to prepare your reagent.' }
+  ];
+
+  const precipitationTourSteps = [
+    { sel: '#precipitationApp h2', title: 'Precipitation Titration 💧', text: 'Simulate and calculate precipitation titrations using Mohr and Volhard methods.' },
+    { sel: '#precipMethod', title: 'Step 1: Select Method', text: 'Choose between Mohr, Volhard, or Modified Volhard methods. Click the bulb icon for educational info.' },
+    { sel: '#containerPrecipN', title: 'Step 2: Input Concentrations', text: 'Enter the concentrations of your titrant and analyte. You can switch input modes above.' },
+    { sel: '#simPrecipContainer', title: 'Step 3: Precipitation Simulator', text: 'Add titrant to see the visual endpoint color change based on Ksp.' },
+    { sel: 'button[onclick="calculatePrecipitation()"]', title: 'Step 4: Calculate & Plot', text: 'Generate your precipitation curve and calculated equivalence volume.' }
+  ];
   
+  let activeTourSteps = titrationTourSteps;
   let currentStep = -1;
   let highlightedElement = null;
 
   function startTour() {
+    if (document.getElementById('titrationApp').style.display !== 'none') {
+        activeTourSteps = titrationTourSteps;
+    } else if (document.getElementById('reagentApp').style.display !== 'none') {
+        activeTourSteps = reagentTourSteps;
+    } else {
+        activeTourSteps = precipitationTourSteps;
+    }
+
     currentStep = 0;
     document.getElementById('tourOverlay').style.display = 'block';
     document.getElementById('tourTooltip').style.display = 'block';
@@ -2357,12 +2382,12 @@
       highlightedElement.classList.remove('tour-highlight');
     }
     
-    if (currentStep >= tourSteps.length) {
+    if (currentStep >= activeTourSteps.length) {
       endTour();
       return;
     }
 
-    const step = tourSteps[currentStep];
+    const step = activeTourSteps[currentStep];
     const el = document.querySelector(step.sel);
     
     if (el) {
@@ -2372,7 +2397,7 @@
       
       document.getElementById('tourTitle').innerText = step.title;
       document.getElementById('tourText').innerText = step.text;
-      document.getElementById('tourNextBtn').innerText = (currentStep === tourSteps.length - 1) ? 'Finish ✓' : 'Next ➔';
+      document.getElementById('tourNextBtn').innerText = (currentStep === activeTourSteps.length - 1) ? 'Finish ✓' : 'Next ➔';
       
       const rect = highlightedElement.getBoundingClientRect();
       const tooltip = document.getElementById('tourTooltip');
@@ -2559,7 +2584,7 @@
     const flaskLiq = document.getElementById('simPrecipFlaskLiquid');
     const mData = precipMethods[mKey];
 
-    if (precipVol >= (eqVolume * 0.98)) {
+    if (precipVol >= eqVolume) {
       flaskLiq.setAttribute('fill', mData.endColor);
     } else {
       flaskLiq.setAttribute('fill', mData.startColor);
