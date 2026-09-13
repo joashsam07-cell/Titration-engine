@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-FHXNG7EXZ2"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -575,7 +575,7 @@
       border-radius: 8px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.3);
       z-index: 10000;
-      width: calc(100vw - 40px); /* Updates from 320px fixed to perfectly fluid on mobile */
+      width: calc(100vw - 40px);
       max-width: 320px;
       display: none;
       opacity: 0;
@@ -624,6 +624,8 @@
     <div class="input-mode-toggle" style="margin-bottom: 0;">
       <div class="toggle-btn active" id="tabTitration" onclick="switchAppMode('titration')" style="font-size: 1rem; padding: 12px;">🧪 Titration Engine</div>
       <div class="toggle-btn" id="tabReagent" onclick="switchAppMode('reagent')" style="font-size: 1rem; padding: 12px;">⚖️ Reagent Maker</div>
+      <!-- ADDED: Precipitation Tab -->
+      <div class="toggle-btn" id="tabPrecipitation" onclick="switchAppMode('precipitation')" style="font-size: 1rem; padding: 12px;">💧 Precipitation Visualiser</div>
     </div>
   </div>
 
@@ -989,6 +991,7 @@
         <div class="radio-group" style="margin-bottom: 15px;">
           <label class="radio-label"><input type="radio" name="reagentSourceType" value="solid" checked onchange="toggleReagentMode()"> Solid / Pure Powder (Weighing)</label>
           <label class="radio-label"><input type="radio" name="reagentSourceType" value="liquid" onchange="toggleReagentMode()"> Liquid Stock Solution (Dilution)</label>
+          <label class="radio-label"><input type="radio" name="reagentSourceType" value="percent" onchange="toggleReagentMode()"> Percentage (% w/v)</label>
         </div>
       </div>
 
@@ -1038,9 +1041,149 @@
         </div>
       </div>
 
+      <div id="reagentPercentMode" style="display: none;">
+        <div class="grid-2 form-group">
+          <div>
+            <label for="prepPercentValue">Target Percentage (% w/v):</label>
+            <input type="number" id="prepPercentValue" value="1.0" step="0.1">
+          </div>
+          <div>
+            <label for="prepPercentVol">Target Final Volume (mL):</label>
+            <input type="number" id="prepPercentVol" value="1000" step="10">
+          </div>
+        </div>
+      </div>
+
       <button class="btn-action" style="width: 100%;" onclick="calculatePreparation()">Calculate Recipe</button>
       
       <div class="factor-box" id="prepResultBox" style="display: none; margin-top: 15px;"></div>
+    </div>
+  </div>
+
+  <!-- ADDED: APP 3: PRECIPITATION TITRATION -->
+  <div id="precipitationApp" style="display: none;">
+    <div class="card">
+      <div class="header-box">
+        <h2>💧 Precipitation Titration Visualiser</h2>
+      </div>
+
+      <div class="form-group">
+        <label for="precipMethod">Select Precipitation Method:</label>
+        <div class="input-with-bulb">
+          <select id="precipMethod" onchange="updatePrecipMethod()">
+            <option value="mohr">Mohr's Method (Direct Halide Titration)</option>
+            <option value="volhard">Volhard's Method (Direct Silver Titration)</option>
+            <option value="mod_volhard">Modified Volhard's Method (Back Titration for Halides)</option>
+          </select>
+          <button type="button" class="bulb-btn" onclick="togglePrecipInfo()" title="View Method Educational Info">💡</button>
+        </div>
+      </div>
+
+      <div class="chem-info-card" id="precipDetails" style="display:block;"></div>
+      <div class="chem-info-card" id="precipEduCard" style="display:none; background-color:#eef2ff; border-color:#818cf8;"></div>
+
+      <div class="form-group">
+        <label>Input Mode for Concentrations:</label>
+        <div class="input-mode-toggle" style="margin-bottom: 8px;">
+          <div class="toggle-btn active" id="btnPrecipNormality" onclick="setPrecipInputMode('normality')">By Normality (N)</div>
+          <div class="toggle-btn" id="btnPrecipMolarity" onclick="setPrecipInputMode('molarity')">By Molarity (M)</div>
+          <div class="toggle-btn" id="btnPrecipWeight" onclick="setPrecipInputMode('weight')">Analyte by Weight (g)</div>
+        </div>
+      </div>
+
+      <div id="containerPrecipN" class="grid-2 form-group" style="margin-top: 15px;">
+        <div>
+          <label>Titrant Concentration (N):</label>
+          <input type="number" id="precipTitrantN" value="0.1000" step="0.0001">
+        </div>
+        <div>
+          <label>Analyte Concentration (N):</label>
+          <input type="number" id="precipAnalyteN" value="0.1000" step="0.0001">
+        </div>
+      </div>
+
+      <div id="containerPrecipM" class="grid-2 form-group" style="margin-top: 15px; display: none;">
+        <div>
+          <label>Titrant Concentration (M):</label>
+          <input type="number" id="precipTitrantM" value="0.1000" step="0.0001">
+        </div>
+        <div>
+          <label>Analyte Concentration (M):</label>
+          <input type="number" id="precipAnalyteM" value="0.1000" step="0.0001">
+        </div>
+      </div>
+
+      <div id="containerPrecipW" class="grid-2 form-group" style="margin-top: 15px; display: none;">
+        <div>
+          <label>Titrant Concentration (N):</label>
+          <input type="number" id="precipTitrantW_N" value="0.1000" step="0.0001">
+        </div>
+        <div>
+          <label>Analyte Mass Weighed (g):</label>
+          <input type="number" id="precipAnalyteW" value="0.5844" step="0.0001">
+        </div>
+        <div style="grid-column: span 2;">
+          <label>Total Vol Made Up In (mL):</label>
+          <input type="number" id="precipAnalyteVolMade" value="100" step="1">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Volume of Analyte pipetted (mL):</label>
+        <input type="number" id="precipAnalyteV" value="10.0" step="0.1">
+      </div>
+
+      <div class="section-title">Precipitation Simulator</div>
+      <div class="sim-container" id="simPrecipContainer">
+        <div class="sim-viewport">
+          <svg width="200" height="250" viewBox="0 0 200 250">
+            <rect x="20" y="235" width="160" height="8" fill="#64748b" rx="2"/>
+            <rect x="40" y="20" width="6" height="215" fill="#94a3b8"/>
+            <rect x="40" y="70" width="55" height="6" fill="#64748b"/>
+            <rect x="40" y="160" width="55" height="6" fill="#64748b"/>
+            <rect x="90" y="20" width="14" height="130" fill="none" stroke="#334155" stroke-width="2"/>
+            
+            <rect id="simPrecipBuretteLiquid" x="91" y="21" width="12" height="128" fill="#e2e8f0" opacity="0.85"/>
+            <circle cx="97" cy="153" r="4" fill="#1e293b"/>
+            <line x1="97" y1="157" x2="97" y2="170" stroke="#334155" stroke-width="2"/>
+            <line id="simPrecipDrop" x1="97" y1="170" x2="97" y2="195" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="3,3" opacity="0"/>
+
+            <polygon points="97,190 70,230 124,230" fill="none" stroke="#334155" stroke-width="2" stroke-linejoin="round"/>
+            <rect x="92" y="180" width="10" height="12" fill="none" stroke="#334155" stroke-width="2"/>
+            
+            <polygon id="simPrecipFlaskLiquid" points="97,205 73,228 121,228" fill="#fef08a" opacity="0.8"/>
+          </svg>
+        </div>
+
+        <div class="sim-controls">
+          <button type="button" class="sim-btn" onclick="addPrecipTitrant(1.0)">+1.0 mL</button>
+          <button type="button" class="sim-btn" onclick="addPrecipTitrant(0.1)">+0.1 mL (Drop)</button>
+          <button type="button" class="sim-btn refill" onclick="resetPrecipSim()">Reset Experiment</button>
+        </div>
+        <div class="sim-readout">Titrant Dispensed: <span id="simPrecipDispensed">0.00</span> mL</div>
+      </div>
+
+      <button class="btn-action" style="width: 100%; margin-top: 10px;" onclick="calculatePrecipitation()">Calculate & Plot Curve</button>
+    </div>
+
+    <!-- PRECIPITATION RESULTS DISPLAY CARD -->
+    <div class="card results-card" id="precipResultsBox" style="display: none;">
+      <h3>Precipitation Analytics</h3>
+      
+      <div class="form-group" style="margin-top: 15px; text-align: center;">
+        <label style="text-align: left; display: block; margin-bottom: 5px;">Precipitation Curve:</label>
+        
+        <!-- Y-Axis View Toggle -->
+        <div class="form-group" style="text-align: center; margin-bottom: 10px;">
+          <label style="display:inline-block; font-size:0.85rem; margin-right:10px;">Y-Axis View:</label>
+          <label class="radio-label" style="display:inline-flex; font-size:0.85rem;"><input type="radio" name="precipAxis" value="pAg" checked onchange="calculatePrecipitation()"> pAg (Silver)</label>
+          <label class="radio-label" style="display:inline-flex; font-size:0.85rem; margin-left:10px;"><input type="radio" name="precipAxis" value="pX" onchange="calculatePrecipitation()"> pX (Halide)</label>
+        </div>
+
+        <canvas id="precipCanvas" width="280" height="200" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px;"></canvas>
+      </div>
+
+      <div class="factor-box" id="precipDataBox"></div>
     </div>
   </div>
 
@@ -1165,7 +1308,7 @@
       table: []
     };
     
-    document.querySelectorAll('input[id], select[id]').forEach(el => {
+    document.querySelectorAll('input[id]:not([id^="precip"]), select[id]:not([id^="precip"])').forEach(el => {
       state.inputs[el.id] = el.value;
     });
     
@@ -1190,19 +1333,16 @@
     try {
       const state = JSON.parse(stateStr);
       
-      // Restore modes
       if(state.flaskInputMode) setFlaskInputMode(state.flaskInputMode);
       if(state.buretteInputMode) setBuretteInputMode(state.buretteInputMode);
 
-      // Restore simple inputs & selects
       if(state.inputs) {
         Object.keys(state.inputs).forEach(id => {
           const el = document.getElementById(id);
-          if (el) el.value = state.inputs[id];
+          if (el && !id.startsWith('precip')) el.value = state.inputs[id];
         });
       }
 
-      // Restore radios
       if(state.radios) {
         Object.keys(state.radios).forEach(name => {
           const el = document.querySelector(`input[name="${name}"][value="${state.radios[name]}"]`);
@@ -1210,7 +1350,6 @@
         });
       }
 
-      // Restore interactive table
       if(state.table && state.table.length > 0) {
         const tbody = document.querySelector('#readingTable tbody');
         tbody.innerHTML = '';
@@ -1231,26 +1370,22 @@
     }
   }
 
-  // Attach event listeners for auto-save
   document.addEventListener('input', (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') saveAppSession();
+      if ((e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') && !e.target.id.startsWith('precip')) saveAppSession();
   });
   document.addEventListener('change', (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') saveAppSession();
+      if ((e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') && !e.target.id.startsWith('precip')) saveAppSession();
   });
 
+  // UPDATED APP SWITCHER
   function switchAppMode(mode) {
-    if(mode === 'titration') {
-      document.getElementById('titrationApp').style.display = 'block';
-      document.getElementById('reagentApp').style.display = 'none';
-      document.getElementById('tabTitration').classList.add('active');
-      document.getElementById('tabReagent').classList.remove('active');
-    } else {
-      document.getElementById('titrationApp').style.display = 'none';
-      document.getElementById('reagentApp').style.display = 'block';
-      document.getElementById('tabTitration').classList.remove('active');
-      document.getElementById('tabReagent').classList.add('active');
-    }
+    document.getElementById('titrationApp').style.display = (mode === 'titration') ? 'block' : 'none';
+    document.getElementById('reagentApp').style.display = (mode === 'reagent') ? 'block' : 'none';
+    document.getElementById('precipitationApp').style.display = (mode === 'precipitation') ? 'block' : 'none';
+    
+    document.getElementById('tabTitration').classList.toggle('active', mode === 'titration');
+    document.getElementById('tabReagent').classList.toggle('active', mode === 'reagent');
+    document.getElementById('tabPrecipitation').classList.toggle('active', mode === 'precipitation');
   }
 
   function setBuretteInputMode(mode) {
@@ -1267,7 +1402,6 @@
       return pairConfigMap[pairKey];
     }
     
-    // Auto-fallback for universal Acid-Base support
     const bData = buretteDb[bKey];
     const fData = flaskDb[fKey];
     if (bData && fData && bData.acidBaseType && fData.acidBaseType) {
@@ -1473,7 +1607,7 @@
     if (firstFinal) {
       firstFinal.value = simVol.toFixed(2);
       updateTiter(firstFinal);
-      saveAppSession(); // Auto-save on simulation update
+      saveAppSession(); 
     }
   }
   
@@ -1640,12 +1774,16 @@
     }
   }
 
-  function formatSci(val) {
+  // UPDATED: Added isHTML flag to protect canvas drawing engines from receiving literal markup strings.
+  function formatSci(val, isHTML = true) {
     if (val === 0) return "0.0000";
     const exp = Math.floor(Math.log10(Math.abs(val)));
     const mant = val / Math.pow(10, exp);
     if (Math.abs(exp) <= 2) return val.toFixed(4);
-    return `${mant.toFixed(2)} × 10<sup>${exp}</sup>`;
+    if (isHTML) {
+      return `${mant.toFixed(2)} &times; 10<sup>${exp}</sup>`;
+    }
+    return `${mant.toFixed(2)} × 10^${exp}`;
   }
 
   function sendDataToSheet(payload) {
@@ -1906,7 +2044,6 @@
   }
 
   function calculate(actionType) {
-    // ENFORCING CONSTRAINT 1: Valid Titration Check Block
     if (!isTitrationValid) {
         alert("Invalid Titrant-Sample combination. Please select a chemically compatible pair before calculating.");
         return;
@@ -2092,9 +2229,10 @@
   }
 
   function toggleReagentMode() {
-    const isSolid = document.querySelector('input[name="reagentSourceType"]:checked').value === 'solid';
-    document.getElementById('reagentSolidMode').style.display = isSolid ? 'block' : 'none';
-    document.getElementById('reagentLiquidMode').style.display = isSolid ? 'none' : 'block';
+    const mode = document.querySelector('input[name="reagentSourceType"]:checked').value;
+    document.getElementById('reagentSolidMode').style.display = mode === 'solid' ? 'block' : 'none';
+    document.getElementById('reagentLiquidMode').style.display = mode === 'liquid' ? 'block' : 'none';
+    document.getElementById('reagentPercentMode').style.display = mode === 'percent' ? 'block' : 'none';
   }
 
   function calculatePreparation() {
@@ -2104,7 +2242,7 @@
         return;
     }
     
-    const isSolid = document.querySelector('input[name="reagentSourceType"]:checked').value === 'solid';
+    const mode = document.querySelector('input[name="reagentSourceType"]:checked').value;
     const isBurette = chemKey.startsWith('b_');
     const baseKey = chemKey.substring(2);
     const db = isBurette ? buretteDb : flaskDb;
@@ -2116,7 +2254,7 @@
 
     let resultHTML = "";
 
-    if (isSolid) {
+    if (mode === 'solid') {
       const concType = document.getElementById('prepConcType').value;
       const targetConc = parseFloat(document.getElementById('prepConcValue').value) || 0.1;
       const targetVol = parseFloat(document.getElementById('prepVol').value) || 1000;
@@ -2130,7 +2268,7 @@
         • <strong>Mass to Weigh:</strong> <span style="color:#065f46; font-size:1.1rem;">${massRequired.toFixed(4)} grams</span><br>
         • <strong>Procedure:</strong> Accurately weigh ${massRequired.toFixed(4)} g of ${chemData.name}, dissolve in distilled water in a volumetric flask, and make up the volume precisely to ${targetVol} mL.
       `;
-    } else {
+    } else if (mode === 'liquid') {
       const stockConc = parseFloat(document.getElementById('liqStockConc').value) || 1.0;
       const targetConc = parseFloat(document.getElementById('liqTargetConc').value) || 0.1;
       const concUnit = document.getElementById('liqConcUnit').value;
@@ -2143,6 +2281,17 @@
         • <strong>Dilution Formula:</strong> C₁V₁ = C₂V₂<br>
         • <strong>Volume of Stock Required (V₁):</strong> <span style="color:#065f46; font-size:1.1rem;">${aliquot.toFixed(2)} mL</span><br>
         • <strong>Procedure:</strong> Pipette out ${aliquot.toFixed(2)} mL of the ${stockConc} ${concUnit} stock solution and dilute with distilled water in a volumetric flask to a final volume of ${targetVol} mL.
+      `;
+    } else if (mode === 'percent') {
+      const targetPercent = parseFloat(document.getElementById('prepPercentValue').value) || 1.0;
+      const targetVol = parseFloat(document.getElementById('prepPercentVol').value) || 1000;
+      const massRequired = (targetPercent / 100.0) * targetVol;
+
+      resultHTML = `
+        🧪 <strong>Reagent Preparation Recipe (${chemData.name}):</strong><br>
+        • <strong>Target:</strong> ${targetPercent}% w/v in ${targetVol} mL solution<br>
+        • <strong>Mass to Weigh:</strong> <span style="color:#065f46; font-size:1.1rem;">${massRequired.toFixed(4)} grams</span><br>
+        • <strong>Procedure:</strong> Accurately weigh ${massRequired.toFixed(4)} g of ${chemData.name}, dissolve in a small amount of distilled water, and then make up the total volume precisely to ${targetVol} mL in a volumetric flask.
       `;
     }
 
@@ -2168,7 +2317,6 @@
     currentStep = 0;
     document.getElementById('tourOverlay').style.display = 'block';
     document.getElementById('tourTooltip').style.display = 'block';
-    // Allow slight delay for display block to register before fading in
     setTimeout(() => {
       document.getElementById('tourOverlay').style.opacity = '1';
       document.getElementById('tourTooltip').style.opacity = '1';
@@ -2192,21 +2340,18 @@
     if (el) {
       highlightedElement = el;
       highlightedElement.classList.add('tour-highlight');
-      // Instantly jump to the item so the fixed tooltip doesn't get positioned incorrectly during a smooth scroll frame
       highlightedElement.scrollIntoView({ behavior: 'instant', block: 'center' });
       
       document.getElementById('tourTitle').innerText = step.title;
       document.getElementById('tourText').innerText = step.text;
       document.getElementById('tourNextBtn').innerText = (currentStep === tourSteps.length - 1) ? 'Finish ✓' : 'Next ➔';
       
-      // Calculate position
       const rect = highlightedElement.getBoundingClientRect();
       const tooltip = document.getElementById('tourTooltip');
       
       let top = rect.bottom + 15;
       let left = rect.left;
       
-      // Safety net: ensure tooltip doesn't bleed off-screen
       if (top + tooltip.offsetHeight > window.innerHeight) {
           top = rect.top - tooltip.offsetHeight - 15;
       }
@@ -2217,7 +2362,7 @@
       tooltip.style.top = top + 'px';
       tooltip.style.left = Math.max(10, left) + 'px';
     } else {
-        nextTourStep(); // Failsafe skip if element is somehow hidden
+        nextTourStep(); 
     }
   }
 
@@ -2236,7 +2381,6 @@
     }, 300);
     currentStep = -1;
   }
-  // --- END OF QUICK TOUR LOGIC ---
 
   window.onload = function() {
     restoreAppSession();
@@ -2244,12 +2388,325 @@
     updateFlaskInfo();
     checkValidity();
     updateSimColors();
+    updatePrecipMethod(); 
     
-    // Triggers background plotting if a valid titration was restored from local storage
     if (isTitrationValid && document.getElementById('buretteChem').value) {
         drawTitrationCurveOnCanvas('titrationChart', 'graphInfo');
     }
   };
+
+  // --- ADDED: PRECIPITATION ENGINE ---
+  const precipMethods = {
+    mohr: {
+      titrant: "Silver Nitrate (AgNO3)", analyte: "Sodium Chloride (NaCl) / Halides",
+      ksp: 1.77e-10, // Ksp of AgCl
+      startColor: "#fef08a", endColor: "#b91c1c", ind: "Potassium Chromate (K2CrO4)", 
+      type: "mohr",
+      analyteEq: 58.44,
+      edu: "<strong>pH Limitation:</strong> Must be performed in neutral or faintly alkaline solution (pH 6.5 - 9). In acidic pH, the chromate indicator protonates to dichromate, delaying the endpoint. In highly basic pH, silver precipitates as AgOH.<br><br><strong>Drawbacks:</strong> Cannot titrate iodides or thiocyanates because their precipitates heavily adsorb chromate ions."
+    },
+    volhard: {
+      titrant: "Ammonium Thiocyanate (NH4SCN)", analyte: "Silver Nitrate (AgNO3)",
+      ksp: 1.0e-12, // Ksp of AgSCN
+      startColor: "#f8fafc", endColor: "#991b1b", ind: "Ferric Alum (Fe3+)", 
+      type: "volhard",
+      analyteEq: 169.87,
+      edu: "<strong>pH Limitation:</strong> Must be performed in highly acidic medium (dilute HNO3) to prevent the precipitation of the Ferric indicator as hydrated iron(III) oxide.<br><br><strong>Drawbacks:</strong> The direct method only measures silver ions. Requires vigorous shaking to avoid premature trapping of the indicator."
+    },
+    mod_volhard: {
+      titrant: "Ammonium Thiocyanate (NH4SCN)", analyte: "Excess AgNO3 (Back-Titration of Halides)",
+      ksp: 1.0e-12, // Ksp of AgSCN
+      startColor: "#f8fafc", endColor: "#991b1b", ind: "Ferric Alum (Fe3+) [Nitrobenzene coated]", 
+      type: "volhard",
+      analyteEq: 58.44, // Changed to NaCl equivalent weight for Back-Titration mathematically
+      edu: "<strong>pH Limitation:</strong> Back-titration for halides. Must be performed in highly acidic medium (HNO3).<br><br><strong>Drawbacks:</strong> AgCl is more soluble than AgSCN, so the thiocyanate titrant will slowly dissolve the AgCl precipitate, fading the endpoint. To prevent this, nitrobenzene is typically added to coat and isolate the AgCl precipitate."
+    }
+  };
+
+  let precipVol = 0.0;
+  let dispensedPrecip = 0.0;
+  let precipInputMode = 'normality';
+
+  function setPrecipInputMode(mode) {
+    precipInputMode = mode;
+    document.getElementById('btnPrecipNormality').className = 'toggle-btn' + (mode === 'normality' ? ' active' : '');
+    document.getElementById('btnPrecipMolarity').className = 'toggle-btn' + (mode === 'molarity' ? ' active' : '');
+    document.getElementById('btnPrecipWeight').className = 'toggle-btn' + (mode === 'weight' ? ' active' : '');
+
+    document.getElementById('containerPrecipN').style.display = (mode === 'normality') ? 'grid' : 'none';
+    document.getElementById('containerPrecipM').style.display = (mode === 'molarity') ? 'grid' : 'none';
+    document.getElementById('containerPrecipW').style.display = (mode === 'weight') ? 'grid' : 'none';
+    resetPrecipSim();
+  }
+
+  function getPrecipConcentrations() {
+    let Nt = 0.1;
+    let Na = 0.1;
+    const mKey = document.getElementById('precipMethod').value;
+    const mData = precipMethods[mKey];
+    
+    if (precipInputMode === 'normality') {
+        Nt = parseFloat(document.getElementById('precipTitrantN').value) || 0.1;
+        Na = parseFloat(document.getElementById('precipAnalyteN').value) || 0.1;
+    } else if (precipInputMode === 'molarity') {
+        Nt = parseFloat(document.getElementById('precipTitrantM').value) || 0.1;
+        Na = parseFloat(document.getElementById('precipAnalyteM').value) || 0.1;
+    } else if (precipInputMode === 'weight') {
+        Nt = parseFloat(document.getElementById('precipTitrantW_N').value) || 0.1;
+        const mass = parseFloat(document.getElementById('precipAnalyteW').value) || 0.5844;
+        const volMade = parseFloat(document.getElementById('precipAnalyteVolMade').value) || 100;
+        Na = (mass * 1000.0) / (mData.analyteEq * volMade);
+    }
+    return { Nt, Na };
+  }
+
+  function togglePrecipInfo() {
+    const card = document.getElementById('precipEduCard');
+    if(card.style.display === 'block') {
+        card.style.display = 'none';
+    } else {
+        updatePrecipEduInfo();
+        card.style.display = 'block';
+    }
+  }
+
+  function updatePrecipEduInfo() {
+      const m = document.getElementById('precipMethod').value;
+      const data = precipMethods[m];
+      const card = document.getElementById('precipEduCard');
+      card.innerHTML = data.edu;
+  }
+
+  function updatePrecipMethod() {
+    const m = document.getElementById('precipMethod').value;
+    const data = precipMethods[m];
+    document.getElementById('precipDetails').innerHTML = `
+      <div><strong>Precipitating Agent (Burette):</strong> ${data.titrant}</div>
+      <div><strong>Analyte Target (Flask):</strong> ${data.analyte}</div>
+      <div><strong>Indicator Used:</strong> ${data.ind}</div>
+      <div><strong>Visual Endpoint Transition:</strong> <span style="background:${data.startColor}; border:1px solid #ccc; padding:2px 6px; border-radius:4px;">Start</span> ➔ <span style="background:${data.endColor}; color:white; padding:2px 6px; border-radius:4px;">End</span></div>
+    `;
+    
+    const eduCard = document.getElementById('precipEduCard');
+    if (eduCard && eduCard.style.display === 'block') {
+       updatePrecipEduInfo();
+    }
+    
+    resetPrecipSim();
+  }
+
+  function addPrecipTitrant(amt) {
+    if (dispensedPrecip + amt > 25.0) {
+      alert("Burette capacity reached. Please Reset Experiment.");
+      return;
+    }
+
+    precipVol += amt;
+    dispensedPrecip += amt;
+    document.getElementById('simPrecipDispensed').innerText = precipVol.toFixed(2);
+
+    const liquidElem = document.getElementById('simPrecipBuretteLiquid');
+    const newHeight = Math.max(0, 128 - (dispensedPrecip * 5.12));
+    const newY = 21 + (128 - newHeight);
+    liquidElem.setAttribute('height', newHeight);
+    liquidElem.setAttribute('y', newY);
+
+    const drop = document.getElementById('simPrecipDrop');
+    drop.style.opacity = '1';
+    setTimeout(() => { drop.style.opacity = '0'; }, 200);
+
+    const { Nt, Na } = getPrecipConcentrations();
+    const V_a = parseFloat(document.getElementById('precipAnalyteV').value) || 10.0;
+    const mKey = document.getElementById('precipMethod').value;
+    
+    let eqVolume;
+    if (mKey === 'mod_volhard') {
+        const V_excess_Ag = 20.0; 
+        const N_excess_Ag = 0.1000;
+        eqVolume = ((N_excess_Ag * V_excess_Ag) - (Na * V_a)) / Nt;
+    } else {
+        eqVolume = (Na * V_a) / Nt;
+    }
+
+    const flaskLiq = document.getElementById('simPrecipFlaskLiquid');
+    const mData = precipMethods[mKey];
+
+    if (precipVol >= (eqVolume * 0.98)) {
+      flaskLiq.setAttribute('fill', mData.endColor);
+    } else {
+      flaskLiq.setAttribute('fill', mData.startColor);
+    }
+  }
+
+  function resetPrecipSim() {
+    precipVol = 0.0;
+    dispensedPrecip = 0.0;
+    document.getElementById('simPrecipDispensed').innerText = "0.00";
+    const liquidElem = document.getElementById('simPrecipBuretteLiquid');
+    liquidElem.setAttribute('height', '128');
+    liquidElem.setAttribute('y', '21');
+    const mData = precipMethods[document.getElementById('precipMethod').value];
+    document.getElementById('simPrecipFlaskLiquid').setAttribute('fill', mData.startColor);
+  }
+
+  function calculatePrecipitation() {
+    const { Nt, Na } = getPrecipConcentrations();
+    const V_a = parseFloat(document.getElementById('precipAnalyteV').value) || 10.0;
+
+    if (!Nt || !Na || !V_a || V_a <= 0) {
+      alert("Please ensure all concentration and volume inputs are filled correctly.");
+      return;
+    }
+
+    const mKey = document.getElementById('precipMethod').value;
+    const mData = precipMethods[mKey];
+    
+    let V_eq;
+    if (mKey === 'mod_volhard') {
+        const V_excess_Ag = 20.0; 
+        const N_excess_Ag = 0.1000;
+        V_eq = ((N_excess_Ag * V_excess_Ag) - (Na * V_a)) / Nt;
+    } else {
+        V_eq = (Na * V_a) / Nt;
+    }
+
+    document.getElementById('precipResultsBox').style.display = 'block';
+    
+    const activeAxis = document.querySelector('input[name="precipAxis"]:checked').value;
+    let pAg_eq = -Math.log10(Math.sqrt(mData.ksp));
+    if (activeAxis === 'pX') {
+        pAg_eq = -Math.log10(mData.ksp) - pAg_eq;
+    }
+
+    document.getElementById('precipDataBox').innerHTML = `
+      📊 <strong>Calculated Equivalence Volume (V2):</strong> <span style="color:#065f46; font-size:1.05rem;">${V_eq.toFixed(2)} mL</span><br>
+      ⚖️ <strong>Calculated ${activeAxis} at Equivalence:</strong> ${pAg_eq.toFixed(2)}<br>
+      📉 <strong>Solubility Product (Ksp) applied:</strong> ${formatSci(mData.ksp)}
+    `;
+
+    drawPrecipCurve(mKey, Nt, Na, V_a, V_eq, mData.ksp);
+    document.getElementById('precipResultsBox').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function drawPrecipCurve(mKey, Nt, Na, Va, Veq, Ksp) {
+    const canvas = document.getElementById('precipCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const activeAxis = document.querySelector('input[name="precipAxis"]:checked').value;
+    const pKsp = -Math.log10(Ksp);
+
+    const maxVol = Math.max(Veq * 1.8, 25.0);
+    const minY = 0.0;
+    const maxY = 14.0;
+
+    const paddingLeft = 35;
+    const paddingRight = 15;
+    const paddingTop = 15;
+    const paddingBottom = 30;
+    const plotWidth = canvas.width - paddingLeft - paddingRight;
+    const plotHeight = canvas.height - paddingTop - paddingBottom;
+
+    const mapX = (v) => paddingLeft + (v / maxVol) * plotWidth;
+    const mapY = (val) => paddingTop + plotHeight - ((val - minY) / (maxY - minY)) * plotHeight;
+
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.fillStyle = '#64748b';
+    ctx.font = '9px Segoe UI, sans-serif';
+
+    for (let v = 0; v <= maxVol; v += 5) {
+      const x = mapX(v);
+      ctx.beginPath(); ctx.moveTo(x, paddingTop); ctx.lineTo(x, paddingTop + plotHeight); ctx.stroke();
+      ctx.textAlign = 'center'; ctx.fillText(v.toFixed(0), x, paddingTop + plotHeight + 12);
+    }
+    for (let p = minY; p <= maxY; p += 2) {
+      const y = mapY(p);
+      ctx.beginPath(); ctx.moveTo(paddingLeft, y); ctx.lineTo(paddingLeft + plotWidth, y); ctx.stroke();
+      ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText(p.toFixed(0), paddingLeft - 5, y);
+    }
+
+    ctx.strokeStyle = '#334155'; ctx.lineWidth = 1.5; ctx.beginPath();
+    ctx.rect(paddingLeft, paddingTop, plotWidth, plotHeight); ctx.stroke();
+
+    ctx.fillStyle = '#1e3a8a'; ctx.font = 'bold 9px Segoe UI, sans-serif';
+    ctx.textAlign = 'center'; ctx.fillText('Titrant Volume V₂ (mL)', paddingLeft + plotWidth / 2, canvas.height - 3);
+
+    ctx.save(); ctx.translate(10, paddingTop + plotHeight / 2); ctx.rotate(-Math.PI / 2);
+    ctx.fillText(activeAxis === 'pX' ? 'pX (Halide Ion)' : 'pAg (Silver Ion)', 0, 0); ctx.restore();
+
+    ctx.strokeStyle = '#059669';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+
+    for (let i = 0; i <= 500; i++) {
+      let v = (i / 500) * maxVol;
+      let pAg = 7.0;
+
+      if (v === 0) v = 0.001; 
+
+      if (Math.abs(v - Veq) < 1e-3) {
+          pAg = -Math.log10(Math.sqrt(Ksp));
+      } else if (mKey === 'mohr') {
+          if (v < Veq) {
+              let excessCl = ((Veq - v) * Nt) / (Va + v);
+              let Ag = Ksp / Math.max(excessCl, 1e-14);
+              pAg = -Math.log10(Ag);
+          } else {
+              let excessAg = ((v - Veq) * Nt) / (Va + v);
+              pAg = -Math.log10(Math.max(excessAg, 1e-14));
+          }
+      } else if (mKey === 'volhard') {
+          if (v < Veq) {
+              let excessAg = ((Veq - v) * Nt) / (Va + v);
+              pAg = -Math.log10(Math.max(excessAg, 1e-14));
+          } else {
+              let excessSCN = ((v - Veq) * Nt) / (Va + v);
+              let Ag = Ksp / Math.max(excessSCN, 1e-14);
+              pAg = -Math.log10(Ag);
+          }
+      } else if (mKey === 'mod_volhard') {
+          // 💡 TRUE RESIDUAL BACK-TITRATION PHASING:
+          if (v < Veq) {
+              // Silver is dropping because SCN- is binding it into a solid precipitate
+              let remainingAg = ((Veq - v) * Nt) / (Va + v);
+              pAg = -Math.log10(Math.max(remainingAg, 1e-14));
+          } else {
+              // Past endpoint: Excess SCN- floods the matrix, driving free Ag+ down
+              let excessSCN = ((v - Veq) * Nt) / (Va + v);
+              let Ag = Ksp / Math.max(excessSCN, 1e-14);
+              pAg = -Math.log10(Ag);
+          }
+      }
+
+      if (activeAxis === 'pX') {
+          pAg = pKsp - pAg;
+      }
+
+      pAg = Math.max(minY, Math.min(maxY, pAg));
+      const px = mapX(v);
+      const py = mapY(pAg);
+
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+
+    let pAg_eq = -Math.log10(Math.sqrt(Ksp));
+    if (activeAxis === 'pX') {
+        pAg_eq = pKsp - pAg_eq;
+    }
+    const eqY = mapY(pAg_eq);
+    const eqX = mapX(Veq);
+
+    ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 1.2; ctx.setLineDash([3, 3]); ctx.beginPath();
+    ctx.moveTo(eqX, eqY); ctx.lineTo(eqX, paddingTop + plotHeight); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(paddingLeft, eqY); ctx.lineTo(eqX, eqY); ctx.stroke();
+    ctx.setLineDash([]); 
+
+    ctx.fillStyle = '#1e3a8a'; ctx.beginPath(); ctx.arc(eqX, eqY, 4, 0, 2 * Math.PI); ctx.fill();
+    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+  }
 </script>
 
 </body>
