@@ -59,36 +59,68 @@
       --primary: #1e3a8a;
       --secondary: #2563eb;
       --accent: #059669;
-      --bg: #f1f5f9;
+      --bg: #f8fafc;
       --card: #ffffff;
       --border: #cbd5e1;
     }
+    
+    /* HIGHLY POLISHED PROFESSIONAL AMBIENT BACKGROUND */
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(37, 99, 235, 0.05) 0%, transparent 60%),
+        radial-gradient(circle at 90% 90%, rgba(5, 150, 105, 0.05) 0%, transparent 60%),
+        radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.04) 0%, transparent 80%);
+      background-attachment: fixed;
       color: #334155;
       margin: 0;
       padding: 20px;
       display: flex;
       justify-content: center;
+      transition: background 0.5s ease;
     }
+    
+    /* VIBRANT SIMULATOR PRACTICE MODE */
+    body.practice-mode-active #simContainer {
+      background: linear-gradient(135deg, #e0f2fe, #ede9fe, #fae8ff);
+      background-size: 200% 200%;
+      border-color: #a78bfa;
+      box-shadow: 0 0 25px rgba(167, 139, 250, 0.4), inset 0 0 15px rgba(255,255,255,0.8);
+      animation: simGamifiedGlow 4s ease infinite;
+    }
+    @keyframes simGamifiedGlow {
+      0% { background-position: 0% 50%; box-shadow: 0 0 20px rgba(56, 189, 248, 0.5), inset 0 0 10px rgba(255,255,255,0.8); }
+      50% { background-position: 100% 50%; box-shadow: 0 0 35px rgba(192, 132, 252, 0.6), inset 0 0 10px rgba(255,255,255,0.8); }
+      100% { background-position: 0% 50%; box-shadow: 0 0 20px rgba(56, 189, 248, 0.5), inset 0 0 10px rgba(255,255,255,0.8); }
+    }
+
     .container {
       max-width: 820px;
       width: 100%;
     }
+    
+    /* ENHANCED GLASSMORPHISM CARD DESIGN */
     .card {
-      background: var(--card);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255,255,255,0.8);
+      margin-bottom: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      transition: box-shadow 0.3s ease;
     }
+    .card:hover {
+      box-shadow: 0 15px 45px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255,255,255,1);
+    }
+    
     .header-box {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      border-bottom: 2px solid #cbd5e1;
+      border-bottom: 2px solid rgba(203, 213, 225, 0.6);
       padding-bottom: 8px;
       margin-bottom: 20px;
     }
@@ -107,7 +139,7 @@
       color: var(--primary);
       margin-bottom: 10px;
       font-size: 1.05rem;
-      border-bottom: 2px solid #e2e8f0;
+      border-bottom: 2px solid rgba(226, 232, 240, 0.8);
       padding-bottom: 5px;
     }
     .form-group {
@@ -127,11 +159,19 @@
     select, input {
       width: 100%;
       padding: 10px;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(203, 213, 225, 0.8);
       border-radius: 6px;
       box-sizing: border-box;
       font-size: 0.95rem;
+      background: rgba(255,255,255,0.9);
+      transition: box-shadow 0.2s;
     }
+    select:focus, input:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+      border-color: var(--secondary);
+    }
+    
     .bulb-btn {
       background: #fef3c7;
       border: 1px solid #fde68a;
@@ -139,12 +179,16 @@
       padding: 8px 12px;
       font-size: 1.1rem;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
       flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
     }
     .bulb-btn:hover {
       background: #fde047;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
     }
+    
     .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -175,19 +219,23 @@
     .toggle-btn {
       flex: 1 1 calc(25% - 8px);
       padding: 10px 6px;
-      border: 1px solid var(--border);
-      background: #e2e8f0;
+      border: 1px solid rgba(203, 213, 225, 0.5);
+      background: rgba(226, 232, 240, 0.6);
       cursor: pointer;
       border-radius: 6px;
       font-weight: 600;
       font-size: 0.82rem;
       text-align: center;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
+    }
+    .toggle-btn:hover:not(.active) {
+      background: #cbd5e1;
     }
     .toggle-btn.active {
       background: var(--secondary);
       color: white;
       border-color: var(--secondary);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     }
     
     .sample-method-grid {
@@ -206,6 +254,7 @@
       border-radius: 6px;
       font-size: 0.88rem;
       margin-bottom: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
     }
     .unknown-note {
       background-color: #fef3c7;
@@ -220,7 +269,7 @@
     
     .chem-info-card {
       display: none;
-      background-color: #f8fafc;
+      background-color: rgba(248, 250, 252, 0.9);
       border: 1px dashed #94a3b8;
       border-radius: 8px;
       padding: 12px 15px;
@@ -228,6 +277,7 @@
       margin-bottom: 16px;
       font-size: 0.88rem;
       line-height: 1.5;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     }
     .chem-info-card strong {
       color: var(--primary);
@@ -235,37 +285,63 @@
 
     /* SIMULATOR STYLES */
     .sim-container {
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 8px;
+      background: linear-gradient(145deg, #ffffff, #f1f5f9);
+      border: 1px solid rgba(255,255,255,0.8);
+      border-radius: 12px;
       padding: 15px;
       margin-bottom: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
       position: relative;
-      transition: opacity 0.3s ease;
+      transition: all 0.5s ease;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05), inset 0 2px 10px rgba(255,255,255,0.9);
     }
     .sim-container.disabled-sim {
       opacity: 0.45;
+      box-shadow: none !important;
+      background: #f1f5f9 !important;
+      border-color: #e2e8f0 !important;
     }
+    
+    /* PRECIPITATION SIMULATOR AMBIENCE */
+    #simPrecipContainer {
+      background: linear-gradient(135deg, #f0fdfa, #e0f2fe, #eff6ff);
+      background-size: 200% 200%;
+      border-color: #bae6fd;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.25), inset 0 0 15px rgba(255,255,255,0.9);
+      animation: precipAmbience 6s ease infinite;
+    }
+    @keyframes precipAmbience {
+      0% { background-position: 0% 50%; box-shadow: 0 0 20px rgba(56, 189, 248, 0.25), inset 0 0 10px rgba(255,255,255,0.9); }
+      50% { background-position: 100% 50%; box-shadow: 0 0 35px rgba(99, 102, 241, 0.25), inset 0 0 10px rgba(255,255,255,0.9); }
+      100% { background-position: 0% 50%; box-shadow: 0 0 20px rgba(56, 189, 248, 0.25), inset 0 0 10px rgba(255,255,255,0.9); }
+    }
+    
+    /* Clean Viewport regardless of outer glow */
     .sim-viewport {
       width: 220px;
       height: 260px;
       background: #ffffff;
-      border: 1px solid #e2e8f0;
+      border: 2px solid #e2e8f0;
       border-radius: 6px;
       position: relative;
       display: flex;
       justify-content: center;
       margin-bottom: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+      z-index: 2;
     }
+    
     .sim-controls {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
       justify-content: center;
+      z-index: 2;
     }
+    
+    /* GLOWING OPERATIONAL BUTTONS */
     .sim-btn {
       background: #3b82f6;
       color: white;
@@ -275,31 +351,54 @@
       font-weight: bold;
       border-radius: 4px;
       cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(59, 130, 246, 0.35);
     }
-    .sim-btn:hover {
+    .sim-btn:hover:not(:disabled) {
       background: #1d4ed8;
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.6);
+      transform: translateY(-2px);
     }
+    
+    /* NEGATIVE (SUBTRACTION) BUTTONS */
+    .sim-btn-neg {
+      background: #f59e0b;
+      box-shadow: 0 4px 10px rgba(245, 158, 11, 0.35);
+    }
+    .sim-btn-neg:hover:not(:disabled) {
+      background: #d97706;
+      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.6);
+    }
+
     .sim-btn.refill {
       background: #10b981;
+      box-shadow: 0 4px 10px rgba(16, 185, 129, 0.35);
     }
-    .sim-btn.refill:hover {
+    .sim-btn.refill:hover:not(:disabled) {
       background: #059669;
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.6);
     }
     .sim-btn.reset {
       background: #ef4444;
+      box-shadow: 0 4px 10px rgba(239, 68, 68, 0.35);
     }
-    .sim-btn.reset:hover {
+    .sim-btn.reset:hover:not(:disabled) {
       background: #b91c1c;
+      box-shadow: 0 6px 16px rgba(239, 68, 68, 0.6);
     }
     .sim-btn:disabled {
       background: #94a3b8 !important;
+      box-shadow: none !important;
+      transform: none !important;
       cursor: not-allowed !important;
     }
+    
     .sim-readout {
       font-size: 0.88rem;
       font-weight: bold;
       color: var(--primary);
       margin-top: 6px;
+      z-index: 2;
     }
     
     .sim-freeze-banner, .sim-invalid-banner {
@@ -323,13 +422,35 @@
       color: #b91c1c;
     }
 
+    /* REALITY FLOATER FOR NEGATIVE BUTTONS */
+    .reality-floater {
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(4px);
+      color: #f8fafc;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(15, 23, 42, 0.2);
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      white-space: nowrap;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
     .collapsible-btn {
-      background-color: #e2e8f0;
+      background-color: rgba(226, 232, 240, 0.6);
       color: var(--primary);
       cursor: pointer;
       padding: 12px 15px;
       width: 100%;
-      border: none;
+      border: 1px solid rgba(203, 213, 225, 0.5);
       text-align: left;
       outline: none;
       font-size: 1rem;
@@ -338,6 +459,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      transition: all 0.3s ease;
+    }
+    .collapsible-btn:hover {
+      background-color: rgba(203, 213, 225, 0.8);
     }
     .collapsible-btn:after {
       content: '\276F';
@@ -350,12 +475,16 @@
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.3s ease-out;
-      background-color: #fff;
+      background-color: transparent;
     }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 15px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
     }
     th, td {
       border: 1px solid var(--border);
@@ -363,15 +492,18 @@
       text-align: center;
     }
     th {
-      background-color: #f8fafc;
+      background-color: rgba(248, 250, 252, 0.9);
       font-size: 0.85rem;
     }
+    
     .btn-action-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 10px;
       margin-top: 20px;
     }
+    
+    /* GLOWING ACTION BUTTONS */
     .btn-action {
       background-color: var(--secondary);
       color: white;
@@ -381,30 +513,48 @@
       font-weight: bold;
       border-radius: 6px;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
     }
     .btn-action:hover {
       background-color: var(--primary);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.65);
+      transform: translateY(-2px);
     }
     .btn-pdf {
       background-color: #059669;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);
     }
     .btn-pdf:hover {
       background-color: #047857;
+      box-shadow: 0 6px 20px rgba(5, 150, 105, 0.65);
     }
+    
+    /* GLOWING ROW BUTTON */
     .btn-row {
-      background: #cbd5e1;
-      border: none;
+      background: rgba(203, 213, 225, 0.8);
+      color: #334155;
+      font-weight: bold;
+      border: 1px solid rgba(148, 163, 184, 0.3);
       padding: 6px 12px;
       border-radius: 4px;
       cursor: pointer;
       margin-top: 8px;
       font-size: 0.8rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 6px rgba(148, 163, 184, 0.4);
     }
+    .btn-row:hover {
+      background: #94a3b8;
+      color: white;
+      box-shadow: 0 4px 12px rgba(148, 163, 184, 0.6);
+      transform: translateY(-1px);
+    }
+    
     .results-card {
       display: none;
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
+      background: rgba(236, 253, 245, 0.95);
+      border: 1px solid rgba(167, 243, 208, 0.8);
     }
     .res-val {
       font-size: 1.1rem;
@@ -412,14 +562,15 @@
       color: #065f46;
     }
     .factor-box {
-      background-color: #e0f2fe;
-      border: 1px solid #7dd3fc;
+      background-color: rgba(224, 242, 254, 0.9);
+      border: 1px solid rgba(125, 211, 252, 0.8);
       color: #0369a1;
       padding: 10px 12px;
       border-radius: 6px;
       font-weight: 600;
       font-size: 0.92rem;
       margin-top: 15px;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
     }
     .sync-status {
       font-size: 0.82rem;
@@ -455,7 +606,12 @@
       z-index: 1000;
       writing-mode: vertical-lr;
       transform: rotate(180deg);
-      box-shadow: -2px 2px 8px rgba(0,0,0,0.15);
+      box-shadow: -4px 2px 12px rgba(30, 58, 138, 0.4);
+      transition: all 0.3s ease;
+    }
+    .sidebar-toggle-btn:hover {
+      box-shadow: -6px 2px 16px rgba(30, 58, 138, 0.6);
+      background: #1e40af;
     }
     .sidebar-panel {
       position: fixed;
@@ -463,8 +619,9 @@
       top: 0;
       width: 320px;
       height: 100%;
-      background: white;
-      box-shadow: -4px 0 15px rgba(0,0,0,0.1);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: -4px 0 25px rgba(0,0,0,0.15);
       z-index: 1001;
       transition: right 0.3s ease;
       padding: 20px;
@@ -494,6 +651,10 @@
       font-size: 1.5rem;
       cursor: pointer;
       color: #64748b;
+      transition: color 0.2s;
+    }
+    .close-btn:hover {
+      color: #ef4444;
     }
 
     /* PRINT STYLES FOR CLIENT-SIDE PDF GENERATION */
@@ -514,7 +675,7 @@
         box-shadow: none !important;
         border: none !important;
       }
-      .sidebar-toggle-btn, .sidebar-panel, .btn-action-grid, .btn-pdf, .sim-container, .collapsible-btn, #tableContainer, div[style*="font-size: 0.75rem"], .glow-btn {
+      .sidebar-toggle-btn, .sidebar-panel, .btn-action-grid, .btn-pdf, .sim-container, .collapsible-btn, #tableContainer, div[style*="font-size: 0.75rem"], .glow-btn, .tour-floater {
         display: none !important;
       }
       #reportTableWrapper table {
@@ -543,7 +704,7 @@
       font-weight: bold;
       border-radius: 20px;
       cursor: pointer;
-      box-shadow: 0 0 10px #10b981, 0 0 20px #059669;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.6), 0 0 20px rgba(5, 150, 105, 0.4);
       animation: pulseGlow 1.5s infinite alternate;
       transition: transform 0.2s;
     }
@@ -551,19 +712,52 @@
       transform: scale(1.05);
     }
     @keyframes pulseGlow {
-      0% { box-shadow: 0 0 5px #10b981, 0 0 10px #059669; }
-      100% { box-shadow: 0 0 15px #10b981, 0 0 30px #059669; }
+      0% { box-shadow: 0 0 8px rgba(16, 185, 129, 0.5), 0 0 12px rgba(5, 150, 105, 0.3); }
+      100% { box-shadow: 0 0 16px rgba(16, 185, 129, 0.8), 0 0 25px rgba(5, 150, 105, 0.6); }
     }
+    
+    .tour-floater {
+      position: absolute;
+      right: 15px;
+      top: 110%; 
+      background: linear-gradient(45deg, #f59e0b, #d97706);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.6);
+      animation: pointAndGlow 1.5s infinite;
+      display: none;
+      z-index: 1000;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .tour-floater::before {
+      content: '▲';
+      position: absolute;
+      top: -12px;
+      right: 25%;
+      color: #f59e0b;
+      font-size: 1.2rem;
+      text-shadow: 0 -5px 10px rgba(245, 158, 11, 0.4);
+    }
+    @keyframes pointAndGlow {
+      0%, 100% { transform: translateY(0); box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
+      50% { transform: translateY(-6px); box-shadow: 0 0 25px rgba(245, 158, 11, 0.9); }
+    }
+
     .tour-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(2px);
       z-index: 9998; display: none;
       opacity: 0; transition: opacity 0.3s;
     }
     .tour-highlight {
       position: relative !important;
       z-index: 9999 !important;
-      box-shadow: 0 0 0 4px #f59e0b, 0 0 20px rgba(255,255,255,0.9) !important;
+      box-shadow: 0 0 0 4px #f59e0b, 0 0 25px rgba(255,255,255,0.9) !important;
       border-radius: 8px;
       background: white; 
       transition: all 0.3s ease;
@@ -573,7 +767,7 @@
       background: white;
       padding: 20px;
       border-radius: 8px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.4);
       z-index: 10000;
       width: calc(100vw - 40px);
       max-width: 320px;
@@ -600,7 +794,7 @@
     <button onclick="toggleSidebar()" class="close-btn">&times;</button>
   </div>
   <div class="sidebar-body" style="text-align: center;">
-    <canvas id="titrationChart" width="280" height="260" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px;"></canvas>
+    <canvas id="titrationChart" width="280" height="260" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);"></canvas>
     <div id="graphInfo" style="font-size: 0.85rem; margin-top: 15px; color: #475569; text-align: left; line-height: 1.5;"></div>
   </div>
 </div>
@@ -614,8 +808,11 @@
         <h2>Universal Dynamic Titration Calculator</h2>
         <span class="author-tag">by Joash Sam</span>
       </div>
-      <!-- ADDED QUICK TOUR BUTTON -->
-      <button id="quickTourBtn" class="glow-btn" onclick="startTour()">✨ Take a Quick Tour</button>
+      <!-- ADDED QUICK TOUR BUTTON WITH RELATIVE POSITION FOR FLOATER -->
+      <div style="position: relative; display: inline-block;">
+        <button id="quickTourBtn" class="glow-btn" onclick="startTour()">✨ Take a Quick Tour</button>
+        <div id="tourFloater" class="tour-floater">Try the Quick Tour!</div>
+      </div>
     </div>
   </div>
 
@@ -764,7 +961,7 @@
         
         <div id="containerFlaskGame" class="game-note" style="display: none;">
           🎮 <strong>Digital Titration Practice Active:</strong> A secret, random concentration has been generated for the flask. Use the simulator to drop titrant and carefully find the endpoint visual color change!<br><br>
-          <div style="margin-top: 10px; background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #c7d2fe;">
+          <div style="margin-top: 10px; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 6px; border: 1px solid #c7d2fe;">
             <label for="gameUserReading" style="display: inline-block; margin-right: 10px; color: #334155;">Your Titration Reading (mL):</label>
             <input type="number" id="gameUserReading" step="0.05" style="width: 100px; display: inline-block; padding: 6px;">
             <button class="btn-action" style="padding: 6px 12px; font-size: 0.85rem; margin-left: 10px; width: auto;" onclick="checkGameResult()">Check Result</button>
@@ -781,6 +978,9 @@
       <!-- 3. INTERACTIVE SIMULATOR PANEL -->
       <div class="section-title">3. Interactive Titration Simulator</div>
       <div class="sim-container disabled-sim" id="simContainer">
+        
+        <div class="reality-floater" id="realityFloater1">Hey this doesn't happen in reality</div>
+        
         <div class="sim-freeze-banner" id="simFreezeBanner">
           🔒 SIMULATOR FROZEN: Cannot simulate visual endpoint without a known concentration. Please enter your experimental lab burette readings manually into Section 4 below.
         </div>
@@ -817,10 +1017,12 @@
         </div>
 
         <div class="sim-controls">
-          <button type="button" class="sim-btn" id="btnSimAdd1" onclick="addTitrant(1.0)" disabled>+1.0 mL</button>
+          <button type="button" class="sim-btn sim-btn-neg" id="btnSimSub1" onclick="subTitrant(1.0)" disabled>-1.0 mL</button>
+          <button type="button" class="sim-btn sim-btn-neg" id="btnSimSub01" onclick="subTitrant(0.1)" disabled>-0.1 mL</button>
           <button type="button" class="sim-btn" id="btnSimAdd01" onclick="addTitrant(0.1)" disabled>+0.1 mL (Drop)</button>
-          <button type="button" class="sim-btn refill" id="btnSimRefill" onclick="refillBurette()" disabled>Refill & Continue</button>
-          <button type="button" class="sim-btn reset" id="btnSimReset" onclick="resetSim()">Reset Liquid</button>
+          <button type="button" class="sim-btn" id="btnSimAdd1" onclick="addTitrant(1.0)" disabled>+1.0 mL</button>
+          <button type="button" class="sim-btn refill" id="btnSimRefill" onclick="refillBurette()" disabled>Refill</button>
+          <button type="button" class="sim-btn reset" id="btnSimReset" onclick="resetSim()">Reset</button>
         </div>
         <div class="sim-readout">Burette Dispensed Volume: <span id="simDispensed">0.00</span> mL</div>
       </div>
@@ -895,7 +1097,7 @@
 
         <div class="form-group" style="margin-top: 15px; text-align: center;">
           <label style="text-align: left;">Titration Curve & Equivalence Point:</label>
-          <canvas id="reportCanvas" width="280" height="200" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; margin-top: 5px;"></canvas>
+          <canvas id="reportCanvas" width="280" height="200" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; margin-top: 5px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);"></canvas>
           <div id="reportGraphInfo" style="font-size: 0.85rem; margin-top: 5px; color: #475569; text-align: left; line-height: 1.5;"></div>
         </div>
 
@@ -1080,7 +1282,7 @@
       </div>
 
       <div class="chem-info-card" id="precipDetails" style="display:block;"></div>
-      <div class="chem-info-card" id="precipEduCard" style="display:none; background-color:#eef2ff; border-color:#818cf8;"></div>
+      <div class="chem-info-card" id="precipEduCard" style="display:none; background-color:rgba(238, 242, 255, 0.9); border-color:#818cf8;"></div>
 
       <div class="form-group">
         <label>Input Mode for Concentrations:</label>
@@ -1135,6 +1337,9 @@
 
       <div class="section-title">Precipitation Simulator</div>
       <div class="sim-container" id="simPrecipContainer">
+        
+        <div class="reality-floater" id="realityFloater2">Hey this doesn't happen in reality</div>
+        
         <div class="sim-viewport">
           <svg width="200" height="250" viewBox="0 0 200 250">
             <rect x="20" y="235" width="160" height="8" fill="#64748b" rx="2"/>
@@ -1156,9 +1361,11 @@
         </div>
 
         <div class="sim-controls">
-          <button type="button" class="sim-btn" onclick="addPrecipTitrant(1.0)">+1.0 mL</button>
+          <button type="button" class="sim-btn sim-btn-neg" id="btnPrecipSub1" onclick="subPrecipTitrant(1.0)">-1.0 mL</button>
+          <button type="button" class="sim-btn sim-btn-neg" id="btnPrecipSub01" onclick="subPrecipTitrant(0.1)">-0.1 mL</button>
           <button type="button" class="sim-btn" onclick="addPrecipTitrant(0.1)">+0.1 mL (Drop)</button>
-          <button type="button" class="sim-btn refill" onclick="resetPrecipSim()">Reset Experiment</button>
+          <button type="button" class="sim-btn" onclick="addPrecipTitrant(1.0)">+1.0 mL</button>
+          <button type="button" class="sim-btn refill" onclick="resetPrecipSim()">Reset Exp.</button>
         </div>
         <div class="sim-readout">Titrant Dispensed: <span id="simPrecipDispensed">0.00</span> mL</div>
       </div>
@@ -1180,7 +1387,7 @@
           <label class="radio-label" style="display:inline-flex; font-size:0.85rem; margin-left:10px;"><input type="radio" name="precipAxis" value="pX" onchange="calculatePrecipitation()"> pX (Halide)</label>
         </div>
 
-        <canvas id="precipCanvas" width="280" height="200" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px;"></canvas>
+        <canvas id="precipCanvas" width="280" height="200" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);"></canvas>
       </div>
 
       <div class="factor-box" id="precipDataBox"></div>
@@ -1215,6 +1422,8 @@
   let dispensedSinceRefill = 0.0;
   let gameSecretNormality = 0.1;
   let isTitrationValid = false;
+  let floaterTimeout;
+  let realityFloaterTimeouts = {};
 
   const buretteDb = {
     acetic: { name: "Acetic Acid (CH3COOH)", mw: 60.05, eq: 60.05, state: "Clear liquid solution", structure: "CH3-COOH", type: "Weak Acid Titrant", acidBaseType: "WA", pKa: 4.76, mp: "16.6 °C", bp: "117.9 °C", solubility: "Miscible in all proportions with H2O", color: "#93c5fd", indicator: "Phenolphthalein" },
@@ -1370,6 +1579,15 @@
     }
   }
 
+  // GLOBAL CLICK LISTENER FOR AUTO-CLOSING BULBS 
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.bulb-btn') && !e.target.closest('.chem-info-card')) {
+      document.querySelectorAll('.chem-info-card').forEach(c => {
+        c.style.display = 'none';
+      });
+    }
+  });
+
   document.addEventListener('input', (e) => {
       if ((e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') && !e.target.id.startsWith('precip')) saveAppSession();
   });
@@ -1377,7 +1595,31 @@
       if ((e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') && !e.target.id.startsWith('precip')) saveAppSession();
   });
 
-  // UPDATED APP SWITCHER
+  // REALITY FLOATER LOGIC
+  function showRealityFloater(id) {
+    const el = document.getElementById(id);
+    if(el) {
+        el.style.opacity = '1';
+        clearTimeout(realityFloaterTimeouts[id]);
+        realityFloaterTimeouts[id] = setTimeout(() => {
+            el.style.opacity = '0';
+        }, 3000);
+    }
+  }
+
+  // SHOW FLOATER 
+  function showQuickTourFloater() {
+    const floater = document.getElementById('tourFloater');
+    if(floater) {
+      floater.style.display = 'block';
+      clearTimeout(floaterTimeout);
+      floaterTimeout = setTimeout(() => {
+        floater.style.display = 'none';
+      }, 20000);
+    }
+  }
+
+  // APP SWITCHER
   function switchAppMode(mode) {
     document.getElementById('titrationApp').style.display = (mode === 'titration') ? 'block' : 'none';
     document.getElementById('reagentApp').style.display = (mode === 'reagent') ? 'block' : 'none';
@@ -1386,6 +1628,8 @@
     document.getElementById('tabTitration').classList.toggle('active', mode === 'titration');
     document.getElementById('tabReagent').classList.toggle('active', mode === 'reagent');
     document.getElementById('tabPrecipitation').classList.toggle('active', mode === 'precipitation');
+    
+    showQuickTourFloater();
   }
 
   function setBuretteInputMode(mode) {
@@ -1507,8 +1751,14 @@
     `;
   }
 
+  // AUTO-CLOSE OTHER BULBS
   function toggleInfo(cardId) {
     const card = document.getElementById(cardId);
+    
+    document.querySelectorAll('.chem-info-card').forEach(c => {
+      if (c.id !== cardId) c.style.display = 'none';
+    });
+
     const associatedSelectId = cardId === 'buretteInfoCard' ? 'buretteChem' : 'flaskChem';
     if(document.getElementById(associatedSelectId).value !== "") {
         card.style.display = (card.style.display === 'block') ? 'none' : 'block';
@@ -1536,6 +1786,71 @@
     const config = getPairConfig(bKey, fKey);
     if (simVol === 0.0 && config) {
       document.getElementById('simFlaskLiquid').setAttribute('fill', config.colors[0]);
+    }
+  }
+
+  // ADDED: REVERSE TITRANT ACTION
+  function subTitrant(amt) {
+    if (flaskInputMode === 'unknown' || !isTitrationValid) return;
+    if (simVol - amt < 0) return; 
+
+    simVol -= amt;
+    dispensedSinceRefill = Math.max(0, dispensedSinceRefill - amt);
+    document.getElementById('simDispensed').innerText = simVol.toFixed(2);
+
+    const liquidElem = document.getElementById('simBuretteLiquid');
+    const newHeight = Math.max(0, 128 - (dispensedSinceRefill * 5.12));
+    const newY = 21 + (128 - newHeight);
+    liquidElem.setAttribute('height', newHeight);
+    liquidElem.setAttribute('y', newY);
+
+    showRealityFloater('realityFloater1');
+
+    const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
+    const bKey = document.getElementById('buretteChem').value;
+    const bEqWt = buretteDb[bKey].eq;
+    const bMw = buretteDb[bKey].mw;
+    const bNFactor = bMw / bEqWt;
+    let N2 = (buretteInputMode === 'molarity') 
+      ? (parseFloat(document.getElementById('buretteMolarity').value) || 0.1) * bNFactor 
+      : (parseFloat(document.getElementById('buretteNormality').value) || 0.1);
+
+    let N1 = 0.1;
+    if (flaskInputMode === 'normality') {
+      N1 = parseFloat(document.getElementById('flaskNormality').value) || 0.1;
+    } else if (flaskInputMode === 'molarity') {
+      const M1 = parseFloat(document.getElementById('flaskMolarity').value) || 0.1;
+      const flaskKey = document.getElementById('flaskChem').value;
+      const eqWt = flaskDb[flaskKey].eq;
+      const mw = flaskDb[flaskKey].mw;
+      N1 = M1 * (mw / eqWt);
+    } else if (flaskInputMode === 'weight') {
+      const mass = parseFloat(document.getElementById('flaskMass').value) || 0.6303;
+      const volMade = parseFloat(document.getElementById('flaskVolMade').value) || 100;
+      const flaskKey = document.getElementById('flaskChem').value;
+      const eqWt = flaskDb[flaskKey].eq;
+      N1 = (mass * 1000) / (eqWt * volMade);
+    } else if (flaskInputMode === 'game') {
+      N1 = gameSecretNormality;
+    }
+
+    const eqVolume = (N1 * V1) / N2;
+
+    const flaskLiq = document.getElementById('simFlaskLiquid');
+    const fKey = document.getElementById('flaskChem').value;
+    const config = getPairConfig(bKey, fKey);
+
+    if (simVol >= eqVolume) {
+      flaskLiq.setAttribute('fill', config.colors[1]);
+    } else {
+      flaskLiq.setAttribute('fill', config.colors[0]);
+    }
+
+    const firstFinal = document.querySelector('.b-final');
+    if (firstFinal) {
+      firstFinal.value = simVol.toFixed(2);
+      updateTiter(firstFinal);
+      saveAppSession(); 
     }
   }
 
@@ -1642,10 +1957,15 @@
     document.getElementById('containerFlaskGame').style.display = (mode === 'game') ? 'block' : 'none';
     
     if (mode === 'game') {
+        document.body.classList.add('practice-mode-active');
+        document.querySelectorAll('.sim-btn-neg').forEach(btn => btn.style.display = 'none');
         gameSecretNormality = (Math.random() * (0.50 - 0.01) + 0.01).toFixed(4); 
         document.getElementById('gameResultDisplay').innerHTML = '';
         document.getElementById('gameUserReading').value = '';
         resetSim(); 
+    } else {
+        document.body.classList.remove('practice-mode-active');
+        document.querySelectorAll('.sim-btn-neg').forEach(btn => btn.style.display = 'inline-block');
     }
 
     const simFreezeBanner = document.getElementById('simFreezeBanner');
@@ -1774,7 +2094,6 @@
     }
   }
 
-  // UPDATED: Added isHTML flag to protect canvas drawing engines from receiving literal markup strings.
   function formatSci(val, isHTML = true) {
     if (val === 0) return "0.0000";
     const exp = Math.floor(Math.log10(Math.abs(val)));
@@ -2370,6 +2689,14 @@
     currentStep = 0;
     document.getElementById('tourOverlay').style.display = 'block';
     document.getElementById('tourTooltip').style.display = 'block';
+    
+    // Hide Floater during tour
+    const floater = document.getElementById('tourFloater');
+    if(floater) {
+        clearTimeout(floaterTimeout);
+        floater.style.display = 'none';
+    }
+
     setTimeout(() => {
       document.getElementById('tourOverlay').style.opacity = '1';
       document.getElementById('tourTooltip').style.opacity = '1';
@@ -2449,6 +2776,22 @@
   };
 
   // --- ADDED: PRECIPITATION ENGINE ---
+  // AUTO CLOSE FOR PRECIPITATION METHOD EDU CARD
+  function togglePrecipInfo() {
+    const card = document.getElementById('precipEduCard');
+    
+    document.querySelectorAll('.chem-info-card').forEach(c => {
+      if (c.id !== 'precipEduCard') c.style.display = 'none';
+    });
+
+    if(card.style.display === 'block') {
+        card.style.display = 'none';
+    } else {
+        updatePrecipEduInfo();
+        card.style.display = 'block';
+    }
+  }
+
   const precipMethods = {
     mohr: {
       titrant: "Silver Nitrate (AgNO3)", analyte: "Sodium Chloride (NaCl) / Halides",
@@ -2513,16 +2856,6 @@
     return { Nt, Na };
   }
 
-  function togglePrecipInfo() {
-    const card = document.getElementById('precipEduCard');
-    if(card.style.display === 'block') {
-        card.style.display = 'none';
-    } else {
-        updatePrecipEduInfo();
-        card.style.display = 'block';
-    }
-  }
-
   function updatePrecipEduInfo() {
       const m = document.getElementById('precipMethod').value;
       const data = precipMethods[m];
@@ -2546,6 +2879,45 @@
     }
     
     resetPrecipSim();
+  }
+
+  // ADDED: REVERSE PRECIP TITRANT ACTION
+  function subPrecipTitrant(amt) {
+    if (precipVol - amt < 0) return;
+    
+    precipVol -= amt;
+    dispensedPrecip = Math.max(0, dispensedPrecip - amt);
+    document.getElementById('simPrecipDispensed').innerText = precipVol.toFixed(2);
+
+    const liquidElem = document.getElementById('simPrecipBuretteLiquid');
+    const newHeight = Math.max(0, 128 - (dispensedPrecip * 5.12));
+    const newY = 21 + (128 - newHeight);
+    liquidElem.setAttribute('height', newHeight);
+    liquidElem.setAttribute('y', newY);
+
+    showRealityFloater('realityFloater2');
+
+    const { Nt, Na } = getPrecipConcentrations();
+    const V_a = parseFloat(document.getElementById('precipAnalyteV').value) || 10.0;
+    const mKey = document.getElementById('precipMethod').value;
+    
+    let eqVolume;
+    if (mKey === 'mod_volhard') {
+        const V_excess_Ag = 20.0; 
+        const N_excess_Ag = 0.1000;
+        eqVolume = ((N_excess_Ag * V_excess_Ag) - (Na * V_a)) / Nt;
+    } else {
+        eqVolume = (Na * V_a) / Nt;
+    }
+
+    const flaskLiq = document.getElementById('simPrecipFlaskLiquid');
+    const mData = precipMethods[mKey];
+
+    if (precipVol >= eqVolume) {
+      flaskLiq.setAttribute('fill', mData.endColor);
+    } else {
+      flaskLiq.setAttribute('fill', mData.startColor);
+    }
   }
 
   function addPrecipTitrant(amt) {
@@ -2719,13 +3091,11 @@
               pAg = -Math.log10(Ag);
           }
       } else if (mKey === 'mod_volhard') {
-          // 💡 TRUE RESIDUAL BACK-TITRATION PHASING:
+          // TRUE RESIDUAL BACK-TITRATION PHASING
           if (v < Veq) {
-              // Silver is dropping because SCN- is binding it into a solid precipitate
               let remainingAg = ((Veq - v) * Nt) / (Va + v);
               pAg = -Math.log10(Math.max(remainingAg, 1e-14));
           } else {
-              // Past endpoint: Excess SCN- floods the matrix, driving free Ag+ down
               let excessSCN = ((v - Veq) * Nt) / (Va + v);
               let Ag = Ksp / Math.max(excessSCN, 1e-14);
               pAg = -Math.log10(Ag);
