@@ -2789,8 +2789,19 @@
       let left = rect.left;
       
       if (top + tooltip.offsetHeight > window.innerHeight) {
-          top = rect.top - tooltip.offsetHeight - 15;
+          let topAbove = rect.top - tooltip.offsetHeight - 15;
+          if (topAbove > 15) {
+              top = topAbove;
+          } else {
+              top = Math.max(15, window.innerHeight - tooltip.offsetHeight - 15);
+          }
       }
+      
+      // Fallback safeguard to prevent it from ever hiding at the top
+      if (top < 15) {
+          top = 15;
+      }
+
       if (left + tooltip.offsetWidth > window.innerWidth) {
           left = window.innerWidth - tooltip.offsetWidth - 20;
       }
