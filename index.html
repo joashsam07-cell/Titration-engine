@@ -688,27 +688,33 @@
       color: #ef4444;
     }
 
-    /* PRINT STYLES FOR CLIENT-SIDE PDF GENERATION */
+    /* NEW ROBUST PDF PRINT LOGIC - FIXES WASTED WHITE SPACE */
     @media print {
-      body * {
-        visibility: hidden;
-      }
-      #printableReportArea, #printableReportArea * {
-        visibility: visible;
-      }
-      #printableReportArea {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        background: white !important;
-        padding: 20px;
-        box-shadow: none !important;
+      body > :not(.container) { display: none !important; }
+      .container > :not(#titrationApp) { display: none !important; }
+      #titrationApp > :not(#resultsBox) { display: none !important; }
+      
+      #resultsBox {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
         border: none !important;
+        box-shadow: none !important;
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
-      .sidebar-toggle-btn, .sidebar-panel, .btn-action-grid, .btn-pdf, .sim-container, .collapsible-btn, #tableContainer, div[style*="font-size: 0.75rem"], .glow-btn, .tour-floater {
+      
+      #printableReportArea, #printableReportArea * {
+        visibility: visible !important;
+      }
+      
+      .btn-pdf, .sync-status {
         display: none !important;
       }
+      
+      body { background: white !important; }
+      
       #reportTableWrapper table {
         width: 100%;
         border-collapse: collapse;
@@ -726,6 +732,12 @@
     }
 
     /* --- QUICK TOUR STYLES --- */
+    /* Prevents the card stacking context from covering the tour overlay highlight */
+    body.tour-active .card {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+
     .glow-btn {
       background: linear-gradient(45deg, #059669, #10b981);
       color: white;
@@ -843,7 +855,7 @@
         <h2 class="main-heading">Universal Dynamic Titration Calculator</h2>
         <span class="author-tag">by Joash Sam</span>
       </div>
-      <!-- ADDED QUICK TOUR BUTTON WITH RELATIVE POSITION FOR FLOATER -->
+      <!-- QUICK TOUR BUTTON WITH RELATIVE POSITION FOR FLOATER -->
       <div style="position: relative; display: inline-block;">
         <button id="quickTourBtn" class="glow-btn" onclick="startTour()">✨ Take a Quick Tour</button>
         <div id="tourFloater" class="tour-floater">Try the quick tour for titration engine</div>
@@ -856,7 +868,6 @@
     <div class="input-mode-toggle" style="margin-bottom: 0;">
       <div class="toggle-btn active" id="tabTitration" onclick="switchAppMode('titration')" style="font-size: 1rem; padding: 12px;">🧪 Titration Engine</div>
       <div class="toggle-btn" id="tabReagent" onclick="switchAppMode('reagent')" style="font-size: 1rem; padding: 12px;">⚖️ Reagent Maker</div>
-      <!-- ADDED: Precipitation Tab -->
       <div class="toggle-btn" id="tabPrecipitation" onclick="switchAppMode('precipitation')" style="font-size: 1rem; padding: 12px;">💧 Precipitation Titration Visualiser</div>
     </div>
   </div>
@@ -2731,6 +2742,7 @@
     }
 
     currentStep = 0;
+    document.body.classList.add('tour-active');
     document.getElementById('tourOverlay').style.display = 'block';
     document.getElementById('tourTooltip').style.display = 'block';
     
@@ -2797,6 +2809,7 @@
 
   function endTour() {
     if (highlightedElement) highlightedElement.classList.remove('tour-highlight');
+    document.body.classList.remove('tour-active');
     document.getElementById('tourOverlay').style.opacity = '0';
     document.getElementById('tourTooltip').style.opacity = '0';
     setTimeout(() => {
@@ -3093,7 +3106,7 @@
     for (let p = minY; p <= maxY; p += 2) {
       const y = mapY(p);
       ctx.beginPath(); ctx.moveTo(paddingLeft, y); ctx.lineTo(paddingLeft + plotWidth, y); ctx.stroke();
-      ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText(p.toFixed(0), paddingLeft - 5, y);
+      ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText(p.toFixed(isRedox ? 1 : 0), paddingLeft - 5, y);
     }
 
     ctx.strokeStyle = '#334155'; ctx.lineWidth = 1.5; ctx.beginPath();
