@@ -124,24 +124,55 @@
       padding-bottom: 8px;
       margin-bottom: 20px;
     }
-    .header-box h2 {
+    
+    /* MAIN HEADING DYNAMIC GLOW */
+    .main-heading {
       margin: 0;
       color: var(--primary);
+      animation: mainTitleGlow 3s infinite alternate;
     }
+    @keyframes mainTitleGlow {
+      0% { text-shadow: 0 0 5px rgba(37, 99, 235, 0.15), 0 0 10px rgba(37, 99, 235, 0.1); }
+      100% { text-shadow: 0 0 12px rgba(139, 92, 246, 0.5), 0 0 22px rgba(37, 99, 235, 0.35); }
+    }
+
     .author-tag {
       font-size: 0.82rem;
       font-weight: 600;
       color: #64748b;
       font-style: italic;
     }
-    .section-title {
+    
+    /* NEW GLOWING SECTION HEADINGS */
+    .section-title, .header-box h2:not(.main-heading) {
       font-weight: 700;
       color: var(--primary);
-      margin-bottom: 10px;
+      background: linear-gradient(135deg, rgba(241, 245, 249, 0.9), rgba(237, 233, 254, 0.9)); /* Cool glassy grey/purple fill */
+      border-left: 4px solid var(--secondary);
+      border-radius: 6px;
+      padding: 10px 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.25), 0 0 20px rgba(239, 68, 68, 0.2); /* Vibrant Orange/Red Glow */
+      border-bottom: none;
+      position: relative;
+      overflow: hidden;
       font-size: 1.05rem;
-      border-bottom: 2px solid rgba(226, 232, 240, 0.8);
-      padding-bottom: 5px;
     }
+    /* Subtle shine animation on the sections */
+    .section-title::after, .header-box h2:not(.main-heading)::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 50%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
+      animation: subtleShine 4s ease-in-out infinite;
+    }
+    @keyframes subtleShine {
+      0% { left: -100%; }
+      20% { left: 200%; }
+      100% { left: 200%; }
+    }
+
     .form-group {
       margin-bottom: 16px;
     }
@@ -718,8 +749,8 @@
     
     .tour-floater {
       position: absolute;
-      right: 15px;
-      top: 110%; 
+      right: 0;
+      top: 120%; 
       background: linear-gradient(45deg, #f59e0b, #d97706);
       color: white;
       padding: 8px 14px;
@@ -731,13 +762,17 @@
       display: none;
       z-index: 1000;
       pointer-events: none;
-      white-space: nowrap;
+      white-space: normal;
+      width: max-content;
+      max-width: 220px;
+      text-align: center;
+      line-height: 1.3;
     }
     .tour-floater::before {
       content: '▲';
       position: absolute;
       top: -12px;
-      right: 25%;
+      right: 20px;
       color: #f59e0b;
       font-size: 1.2rem;
       text-shadow: 0 -5px 10px rgba(245, 158, 11, 0.4);
@@ -805,13 +840,13 @@
   <div class="card">
     <div class="header-box" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0; flex-wrap: wrap; gap: 15px; align-items: center;">
       <div>
-        <h2>Universal Dynamic Titration Calculator</h2>
+        <h2 class="main-heading">Universal Dynamic Titration Calculator</h2>
         <span class="author-tag">by Joash Sam</span>
       </div>
       <!-- ADDED QUICK TOUR BUTTON WITH RELATIVE POSITION FOR FLOATER -->
       <div style="position: relative; display: inline-block;">
         <button id="quickTourBtn" class="glow-btn" onclick="startTour()">✨ Take a Quick Tour</button>
-        <div id="tourFloater" class="tour-floater">Try the Quick Tour!</div>
+        <div id="tourFloater" class="tour-floater">Try the quick tour for titration engine</div>
       </div>
     </div>
   </div>
@@ -1607,10 +1642,18 @@
     }
   }
 
-  // SHOW FLOATER 
-  function showQuickTourFloater() {
+  // SHOW FLOATER WITH DYNAMIC TEXT
+  function showQuickTourFloater(mode) {
     const floater = document.getElementById('tourFloater');
     if(floater) {
+      if (mode === 'titration') {
+        floater.innerText = "Try the quick tour for titration engine";
+      } else if (mode === 'reagent') {
+        floater.innerText = "Try the quick tour for reagent maker";
+      } else if (mode === 'precipitation') {
+        floater.innerText = "Try the quick tour for visualiser";
+      }
+      
       floater.style.display = 'block';
       clearTimeout(floaterTimeout);
       floaterTimeout = setTimeout(() => {
@@ -1629,7 +1672,7 @@
     document.getElementById('tabReagent').classList.toggle('active', mode === 'reagent');
     document.getElementById('tabPrecipitation').classList.toggle('active', mode === 'precipitation');
     
-    showQuickTourFloater();
+    showQuickTourFloater(mode);
   }
 
   function setBuretteInputMode(mode) {
@@ -1789,7 +1832,7 @@
     }
   }
 
-  // ADDED: REVERSE TITRANT ACTION
+  // REVERSE TITRANT ACTION
   function subTitrant(amt) {
     if (flaskInputMode === 'unknown' || !isTitrationValid) return;
     if (simVol - amt < 0) return; 
@@ -1956,6 +1999,7 @@
     document.getElementById('containerFlaskUnknown').style.display = (mode === 'unknown') ? 'block' : 'none';
     document.getElementById('containerFlaskGame').style.display = (mode === 'game') ? 'block' : 'none';
     
+    // PRACTICE MODE BACKGROUND TOGGLE
     if (mode === 'game') {
         document.body.classList.add('practice-mode-active');
         document.querySelectorAll('.sim-btn-neg').forEach(btn => btn.style.display = 'none');
@@ -2773,6 +2817,7 @@
     if (isTitrationValid && document.getElementById('buretteChem').value) {
         drawTitrationCurveOnCanvas('titrationChart', 'graphInfo');
     }
+    showQuickTourFloater('titration'); // Initial view trigger
   };
 
   // --- ADDED: PRECIPITATION ENGINE ---
@@ -2881,7 +2926,7 @@
     resetPrecipSim();
   }
 
-  // ADDED: REVERSE PRECIP TITRANT ACTION
+  // REVERSE PRECIP TITRANT ACTION
   function subPrecipTitrant(amt) {
     if (precipVol - amt < 0) return;
     
