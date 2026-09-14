@@ -3,7 +3,7 @@
 ---
 # Interactive Quantitative Titration Engine and Simulation Tool
 
-An open-source, web-based computational engine and simulation platform designed to support quantitative volumetric analysis in undergraduate chemistry and pharmacy curricula.
+An open-source, web-based computational engine and simulation platform designed to support quantitative volumetric analysis in undergraduate chemistry and pharmacy and basic engineering chemistry curricula.
 
 🌐 **Live Application:** [https://joashsam07-cell.github.io/Titration-engine/](https://joashsam07-cell.github.io/Titration-engine/)
 
