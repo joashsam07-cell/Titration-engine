@@ -1142,7 +1142,15 @@
         </div>
 
         <div class="form-group" style="margin-top: 15px; text-align: center;">
-          <label style="text-align: left;">Titration Curve & Equivalence Point:</label>
+          <label style="text-align: left; display: block; margin-bottom: 8px;">Titration Curve & Equivalence Point:</label>
+          
+          <!-- NEW: Graph Toggle Options -->
+          <div class="form-group" style="text-align: center; margin-bottom: 10px;">
+            <label class="radio-label" style="display:inline-flex; font-size:0.85rem; margin-right:10px;"><input type="radio" name="plotMode" value="both" checked onchange="drawTitrationCurveOnCanvas('reportCanvas', 'reportGraphInfo')"> Show Both</label>
+            <label class="radio-label" style="display:inline-flex; font-size:0.85rem; margin-right:10px;"><input type="radio" name="plotMode" value="experimental" onchange="drawTitrationCurveOnCanvas('reportCanvas', 'reportGraphInfo')"> Experimental Only</label>
+            <label class="radio-label" style="display:inline-flex; font-size:0.85rem;"><input type="radio" name="plotMode" value="theoretical" onchange="drawTitrationCurveOnCanvas('reportCanvas', 'reportGraphInfo')"> Theoretical Only</label>
+          </div>
+
           <canvas id="reportCanvas" width="280" height="200" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; margin-top: 5px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);"></canvas>
           <div id="reportGraphInfo" style="font-size: 0.85rem; margin-top: 5px; color: #475569; text-align: left; line-height: 1.5;"></div>
         </div>
@@ -2226,6 +2234,13 @@
       N1 = gameSecretNormality;
     }
 
+    // Determine Plot Mode from UI if available
+    let plotMode = 'both';
+    if (canvasId === 'reportCanvas') {
+        const plotModeRadio = document.querySelector('input[name="plotMode"]:checked');
+        if (plotModeRadio) plotMode = plotModeRadio.value;
+    }
+
     // 1. Calculate the ideal chemical baseline volume
     const theoreticalVeq = (N1 * V1) / N2;
     // 2. Fetch the manual table baseline volume safely
@@ -2400,37 +2415,41 @@
     // --- EXTRAPOLATION & EQUIVALENCE POINT DROP LINES ---
     
     // --- POINT A: PLOT THE THEORETICAL BASELINE (IDEAL) ---
-    const theoX = mapX(theoreticalVeq);
-    const theoY = mapY(eq_Y); // Uses your perfect thermodynamic equilibrium state
+    if (plotMode === 'both' || plotMode === 'theoretical') {
+        const theoX = mapX(theoreticalVeq);
+        const theoY = mapY(eq_Y); // Uses your perfect thermodynamic equilibrium state
 
-    ctx.strokeStyle = '#059669'; // Clean Science Green
-    ctx.lineWidth = 1.2;
-    ctx.setLineDash([4, 4]); // Dashed Line
-    ctx.beginPath();
-    ctx.moveTo(theoX, theoY); ctx.lineTo(theoX, paddingTop + plotHeight); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(paddingLeft, theoY); ctx.lineTo(theoX, theoY); ctx.stroke(); // Y Extrapolation
-    ctx.setLineDash([]); // Reset Line Style
+        ctx.strokeStyle = '#059669'; // Clean Science Green
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([4, 4]); // Dashed Line
+        ctx.beginPath();
+        ctx.moveTo(theoX, theoY); ctx.lineTo(theoX, paddingTop + plotHeight); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(paddingLeft, theoY); ctx.lineTo(theoX, theoY); ctx.stroke(); // Y Extrapolation
+        ctx.setLineDash([]); // Reset Line Style
 
-    // Draw Theoretical Target Node
-    ctx.fillStyle = '#059669';
-    ctx.beginPath(); ctx.arc(theoX, theoY, 4, 0, 2 * Math.PI); ctx.fill();
-    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+        // Draw Theoretical Target Node
+        ctx.fillStyle = '#059669';
+        ctx.beginPath(); ctx.arc(theoX, theoY, 4, 0, 2 * Math.PI); ctx.fill();
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+    }
 
     // --- POINT B: PLOT THE MANUAL EXPERIMENTAL BASELINE (USER TABLE) ---
-    const manualX = mapX(manualVeq);
     const manualYVal = getYForVolume(manualVeq); 
-    const manualY = mapY(manualYVal); 
+    if (plotMode === 'both' || plotMode === 'experimental') {
+        const manualX = mapX(manualVeq);
+        const manualY = mapY(manualYVal); 
 
-    ctx.strokeStyle = '#dc2626'; // High-Contrast Coral Red
-    ctx.lineWidth = 1.5; 
-    ctx.beginPath();
-    ctx.moveTo(manualX, manualY); ctx.lineTo(manualX, paddingTop + plotHeight); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(paddingLeft, manualY); ctx.lineTo(manualX, manualY); ctx.stroke(); // Y Extrapolation
+        ctx.strokeStyle = '#dc2626'; // High-Contrast Coral Red
+        ctx.lineWidth = 1.5; 
+        ctx.beginPath();
+        ctx.moveTo(manualX, manualY); ctx.lineTo(manualX, paddingTop + plotHeight); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(paddingLeft, manualY); ctx.lineTo(manualX, manualY); ctx.stroke(); // Y Extrapolation
 
-    // Draw Experimental Target Node
-    ctx.fillStyle = '#dc2626';
-    ctx.beginPath(); ctx.arc(manualX, manualY, 5, 0, 2 * Math.PI); ctx.fill();
-    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+        // Draw Experimental Target Node
+        ctx.fillStyle = '#dc2626';
+        ctx.beginPath(); ctx.arc(manualX, manualY, 5, 0, 2 * Math.PI); ctx.fill();
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+    }
 
     // --- TEXT READOUT ---
     const infoContainer = document.getElementById(infoId);
@@ -2438,11 +2457,17 @@
       let yType = isAcidBase ? 'pH' : (isRedox ? 'Potential (E)' : 'pM');
       let yUnit = isAcidBase ? '' : (isRedox ? ' V' : '');
       
-      infoContainer.innerHTML = `
-        🟢 <strong>Theoretical Ideal Endpoint:</strong> <span style="color: #059669; font-weight: bold;">${theoreticalVeq.toFixed(2)} mL</span> (at ${yType} <span style="color: #059669; font-weight: bold;">${eq_Y.toFixed(2)}${yUnit}</span>)<br>
-        🔴 <strong>Observed Experimental Titer:</strong> <span style="color: #dc2626; font-weight: bold;">${manualVeq.toFixed(2)} mL</span> (at ${yType} <span style="color: #dc2626; font-weight: bold;">${manualYVal.toFixed(2)}${yUnit}</span>)<br>
-        ⚠️ <strong>Absolute Method Error Margin:</strong> <span style="color: #7c2d12; font-weight: bold;">${Math.abs(theoreticalVeq - manualVeq).toFixed(2)} mL</span>
-      `;
+      let infoHTML = '';
+      if (plotMode === 'both' || plotMode === 'theoretical') {
+        infoHTML += `🟢 <strong>Theoretical Ideal Endpoint:</strong> <span style="color: #059669; font-weight: bold;">${theoreticalVeq.toFixed(2)} mL</span> (at ${yType} <span style="color: #059669; font-weight: bold;">${eq_Y.toFixed(2)}${yUnit}</span>)<br>`;
+      }
+      if (plotMode === 'both' || plotMode === 'experimental') {
+        infoHTML += `🔴 <strong>Observed Experimental Titer:</strong> <span style="color: #dc2626; font-weight: bold;">${manualVeq.toFixed(2)} mL</span> (at ${yType} <span style="color: #dc2626; font-weight: bold;">${manualYVal.toFixed(2)}${yUnit}</span>)<br>`;
+      }
+      if (plotMode === 'both') {
+        infoHTML += `⚠️ <strong>Absolute Method Error Margin:</strong> <span style="color: #7c2d12; font-weight: bold;">${Math.abs(theoreticalVeq - manualVeq).toFixed(2)} mL</span>`;
+      }
+      infoContainer.innerHTML = infoHTML;
     }
   }
 
@@ -3118,7 +3143,7 @@
     for (let p = minY; p <= maxY; p += 2) {
       const y = mapY(p);
       ctx.beginPath(); ctx.moveTo(paddingLeft, y); ctx.lineTo(paddingLeft + plotWidth, y); ctx.stroke();
-      ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText(p.toFixed(isRedox ? 1 : 0), paddingLeft - 5, y);
+      ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText(p.toFixed(0), paddingLeft - 5, y);
     }
 
     ctx.strokeStyle = '#334155'; ctx.lineWidth = 1.5; ctx.beginPath();
