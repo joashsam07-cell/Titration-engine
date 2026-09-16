@@ -14,10 +14,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="google-site-verification" content="P6Mdk1RGkNOp1FRiAvc_6n_WMnMY3mo2BvgtLaBA4hQ" />
   
-  <!-- PWA Meta Tags & Manifest -->
+  <!-- NEW PWA Meta Tags & Manifest -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1e3a8a">
-  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192x192.png">
   
   <title>Universal Dynamic Titration Calculator | Joash Sam</title>
   <meta name="author" content="Joash Sam">
@@ -867,10 +867,12 @@
         <div id="tourFloater" class="tour-floater">Try the quick tour for titration engine</div>
       </div>
     </div>
-    <!-- PWA Install Button (Hidden by default until the browser says it's ready) -->
+    
+    <!-- NEW PWA Install Button -->
     <button id="installAppBtn" class="btn-action" style="display: none; margin-top: 15px; width: 100%; background-color: #0ea5e9;">
-      📲 Install App to Home Screen
+      📲 Download as App
     </button>
+    
   </div>
 
   <!-- MAIN NAVIGATION TAB TOGGLE -->
@@ -3236,7 +3238,7 @@
     ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
   }
 
-  // --- PWA Service Worker & Install Logic ---
+  // --- NEW PWA Service Worker & Install Logic ---
   let deferredPrompt;
   const installBtn = document.getElementById('installAppBtn');
 
