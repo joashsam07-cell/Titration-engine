@@ -1,4 +1,4 @@
-const CACHE_NAME = 'titration-engine-v1';
+CACHE_NAME = 'titration-engine-v2';
 const urlsToCache = [
   './',
   './index.html', // (Assuming your trial.html is renamed to index.html on your server)
