@@ -1,48 +1,35 @@
-CACHE_NAME = 'titration-engine-v2';
+const CACHE_NAME = 'titration-pwa-v1';
 const urlsToCache = [
   './',
-  './index.html', // (Assuming your trial.html is renamed to index.html on your server)
+  './index.html',
   './manifest.json',
-  './icon-192.png',
-  './icon-512.png'
+  './icon-192x192.png',
+  './icon-512x512.png'
 ];
 
-// Install event - caches essential files
+// Install the Service Worker and cache files
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
+      .then(cache => cache.addAll(urlsToCache))
   );
 });
 
-// Fetch event - intercepts network requests to serve cached files offline
+// Intercept network requests and return cached files if available
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
-      .then(response => {
-        // Cache hit - return response
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      })
+      .then(response => response || fetch(event.request))
   );
 });
 
-// Activate event - cleans up old caches when you update the service worker version
+// Update the service worker and remove old caches
 self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-        })
+        cacheNames.filter(name => name !== CACHE_NAME)
+          .map(name => caches.delete(name))
       );
     })
   );
