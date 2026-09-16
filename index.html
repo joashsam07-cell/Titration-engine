@@ -14,6 +14,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="google-site-verification" content="P6Mdk1RGkNOp1FRiAvc_6n_WMnMY3mo2BvgtLaBA4hQ" />
   
+  <!-- PWA Meta Tags & Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1e3a8a">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  
   <title>Universal Dynamic Titration Calculator | Joash Sam</title>
   <meta name="author" content="Joash Sam">
   <meta name="description" content="Advanced Universal Dynamic Titration Calculator by Joash Sam. Features real-time simulation, redox titration, complexometric titration, acid-base curves, assay purity, and stoichiometry tools for chemistry and pharmacy.">
@@ -63,6 +68,7 @@
       --card: #ffffff;
       --border: #cbd5e1;
     }
+
     
     /* HIGHLY POLISHED PROFESSIONAL AMBIENT BACKGROUND */
     body {
@@ -853,7 +859,7 @@
     <div class="header-box" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0; flex-wrap: wrap; gap: 15px; align-items: center;">
       <div>
         <h2 class="main-heading">Universal Dynamic Titration Calculator</h2>
-        <span class="author-tag">by Joash Sam</span>
+        <span class="author-tag">by Joash Sam </span>
       </div>
       <!-- QUICK TOUR BUTTON WITH RELATIVE POSITION FOR FLOATER -->
       <div style="position: relative; display: inline-block;">
@@ -861,6 +867,10 @@
         <div id="tourFloater" class="tour-floater">Try the quick tour for titration engine</div>
       </div>
     </div>
+    <!-- PWA Install Button (Hidden by default until the browser says it's ready) -->
+    <button id="installAppBtn" class="btn-action" style="display: none; margin-top: 15px; width: 100%; background-color: #0ea5e9;">
+      📲 Install App to Home Screen
+    </button>
   </div>
 
   <!-- MAIN NAVIGATION TAB TOGGLE -->
@@ -3224,6 +3234,50 @@
 
     ctx.fillStyle = '#1e3a8a'; ctx.beginPath(); ctx.arc(eqX, eqY, 4, 0, 2 * Math.PI); ctx.fill();
     ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+  }
+
+  // --- PWA Service Worker & Install Logic ---
+  let deferredPrompt;
+  const installBtn = document.getElementById('installAppBtn');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent the mini-infobar from appearing on mobile
+    e.preventDefault();
+    // Stash the event so it can be triggered later.
+    deferredPrompt = e;
+    // Update UI notify the user they can install the PWA
+    if (installBtn) {
+      installBtn.style.display = 'block';
+    }
+  });
+
+  if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+      if (deferredPrompt !== null) {
+        // Show the install prompt
+        deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          console.log('User accepted the install prompt');
+        } else {
+          console.log('User dismissed the install prompt');
+        }
+        // We've used the prompt, and can't use it again, throw it away
+        deferredPrompt = null;
+        // Hide the button
+        installBtn.style.display = 'none';
+      }
+    });
+  }
+
+  // Register Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Service Worker registered', reg))
+        .catch(err => console.error('Service Worker registration failed', err));
+    });
   }
 </script>
 
