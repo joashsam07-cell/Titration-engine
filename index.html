@@ -37,28 +37,6 @@
   <link rel="canonical" href="https://joashsam07-cell.github.io/Titration-engine/">
   <link rel="author" href="https://joashsam07-cell.github.io/fitness-calculator/">
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Universal Dynamic Titration Calculator",
-    "author": {
-      "@type": "Person",
-      "name": "Joash Sam",
-      "StudentOf": {
-        "@type": "Organization",
-        "name": "MVP Samaj's College of Pharmacy, Nashik"
-      },
-      "description": "10th CBSE: 98%, 12th CBSE: 96.6%, MHTCET: 99.08%ile, NEET: 97.5%ile",
-      "sameAs": "https://joashsam07-cell.github.io/fitness-calculator/"
-    },
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "All",
-    "description": "An interactive web-based titration engine, redox & complexometric simulation tool for analytical chemistry, assay testing, and pharmaceutical calculations.",
-    "url": "https://joashsam07-cell.github.io/Titration-engine/"
-  }
-  </script>
-
   <style>
     :root {
       --primary: #1e3a8a;
@@ -153,18 +131,17 @@
     .section-title, .header-box h2:not(.main-heading) {
       font-weight: 700;
       color: var(--primary);
-      background: linear-gradient(135deg, rgba(241, 245, 249, 0.9), rgba(237, 233, 254, 0.9)); /* Cool glassy grey/purple fill */
+      background: linear-gradient(135deg, rgba(241, 245, 249, 0.9), rgba(237, 233, 254, 0.9));
       border-left: 4px solid var(--secondary);
       border-radius: 6px;
       padding: 10px 15px;
       margin-bottom: 15px;
-      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.25), 0 0 20px rgba(239, 68, 68, 0.2); /* Vibrant Orange/Red Glow */
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.25), 0 0 20px rgba(239, 68, 68, 0.2); 
       border-bottom: none;
       position: relative;
       overflow: hidden;
       font-size: 1.05rem;
     }
-    /* Subtle shine animation on the sections */
     .section-title::after, .header-box h2:not(.main-heading)::after {
       content: '';
       position: absolute;
@@ -341,7 +318,6 @@
       border-color: #e2e8f0 !important;
     }
     
-    /* PRECIPITATION SIMULATOR AMBIENCE */
     #simPrecipContainer {
       background: linear-gradient(135deg, #f0fdfa, #e0f2fe, #eff6ff);
       background-size: 200% 200%;
@@ -355,7 +331,6 @@
       100% { background-position: 0% 50%; box-shadow: 0 0 20px rgba(56, 189, 248, 0.25), inset 0 0 10px rgba(255,255,255,0.9); }
     }
     
-    /* Clean Viewport regardless of outer glow */
     .sim-viewport {
       width: 220px;
       height: 260px;
@@ -378,7 +353,6 @@
       z-index: 2;
     }
     
-    /* GLOWING OPERATIONAL BUTTONS */
     .sim-btn {
       background: #3b82f6;
       color: white;
@@ -397,7 +371,6 @@
       transform: translateY(-2px);
     }
     
-    /* NEGATIVE (SUBTRACTION) BUTTONS */
     .sim-btn-neg {
       background: #f59e0b;
       box-shadow: 0 4px 10px rgba(245, 158, 11, 0.35);
@@ -459,7 +432,6 @@
       color: #b91c1c;
     }
 
-    /* REALITY FLOATER FOR NEGATIVE BUTTONS */
     .reality-floater {
       position: absolute;
       top: 15px;
@@ -532,6 +504,21 @@
       background-color: rgba(248, 250, 252, 0.9);
       font-size: 0.85rem;
     }
+
+    /* Delete Row Button */
+    .btn-delete {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: background 0.3s ease;
+    }
+    .btn-delete:hover {
+      background: #b91c1c;
+    }
     
     .btn-action-grid {
       display: grid;
@@ -540,7 +527,6 @@
       margin-top: 20px;
     }
     
-    /* GLOWING ACTION BUTTONS */
     .btn-action {
       background-color: var(--secondary);
       color: white;
@@ -567,7 +553,6 @@
       box-shadow: 0 6px 20px rgba(5, 150, 105, 0.65);
     }
     
-    /* GLOWING ROW BUTTON */
     .btn-row {
       background: rgba(203, 213, 225, 0.8);
       color: #334155;
@@ -628,7 +613,6 @@
       margin-top: 2px;
     }
 
-    /* SIDEBAR STYLES FOR TITRATION GRAPH */
     .sidebar-toggle-btn {
       position: fixed;
       right: 0;
@@ -694,7 +678,6 @@
       color: #ef4444;
     }
 
-    /* NEW ROBUST PDF PRINT LOGIC - FIXES WASTED WHITE SPACE */
     @media print {
       body > :not(.container) { display: none !important; }
       .container > :not(#titrationApp) { display: none !important; }
@@ -731,14 +714,16 @@
         text-align: center;
         font-size: 0.85rem;
       }
+      /* Hide Action column in print */
+      #reportTableWrapper th:last-child, #reportTableWrapper td:last-child {
+        display: none;
+      }
       #reportCanvas {
         display: block;
         margin: 0 auto;
       }
     }
 
-    /* --- QUICK TOUR STYLES --- */
-    /* Prevents the card stacking context from covering the tour overlay highlight */
     body.tour-active .card {
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
@@ -854,28 +839,24 @@
 
 <div class="container">
   
-  <!-- MAIN HEADER -->
   <div class="card">
     <div class="header-box" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0; flex-wrap: wrap; gap: 15px; align-items: center;">
       <div>
         <h2 class="main-heading">Universal Dynamic Titration Calculator</h2>
         <span class="author-tag">by Joash Sam </span>
       </div>
-      <!-- QUICK TOUR BUTTON WITH RELATIVE POSITION FOR FLOATER -->
       <div style="position: relative; display: inline-block;">
         <button id="quickTourBtn" class="glow-btn" onclick="startTour()">✨ Take a Quick Tour</button>
         <div id="tourFloater" class="tour-floater">Try the quick tour for titration engine</div>
       </div>
     </div>
     
-    <!-- NEW PWA Install Button -->
     <button id="installAppBtn" class="btn-action" style="display: none; margin-top: 15px; width: 100%; background-color: #0ea5e9;">
       📲 Download as App
     </button>
     
   </div>
 
-  <!-- MAIN NAVIGATION TAB TOGGLE -->
   <div class="card" style="padding: 10px 24px;">
     <div class="input-mode-toggle" style="margin-bottom: 0;">
       <div class="toggle-btn active" id="tabTitration" onclick="switchAppMode('titration')" style="font-size: 1rem; padding: 12px;">🧪 Titration Engine</div>
@@ -1098,21 +1079,11 @@
               <th>Initial Reading (mL)</th>
               <th>Final Reading (mL)</th>
               <th>Titer (V2 mL)</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td><input type="number" class="b-init" value="0.00" step="0.05" oninput="updateTiter(this)"></td>
-              <td><input type="number" class="b-final" value="10.00" step="0.05" oninput="updateTiter(this)"></td>
-              <td class="titer-val">10.00</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td><input type="number" class="b-init" value="0.00" step="0.05" oninput="updateTiter(this)"></td>
-              <td><input type="number" class="b-final" value="9.95" step="0.05" oninput="updateTiter(this)"></td>
-              <td class="titer-val">9.95</td>
-            </tr>
+            <!-- Starts completely empty -->
           </tbody>
         </table>
         <button class="btn-row" onclick="addRow()">+ Add Trial Row</button>
@@ -1156,7 +1127,6 @@
         <div class="form-group" style="margin-top: 15px; text-align: center;">
           <label style="text-align: left; display: block; margin-bottom: 8px;">Titration Curve & Equivalence Point:</label>
           
-          <!-- NEW: Graph Toggle Options -->
           <div class="form-group" style="text-align: center; margin-bottom: 10px;">
             <label class="radio-label" style="display:inline-flex; font-size:0.85rem; margin-right:10px;"><input type="radio" name="plotMode" value="both" checked onchange="drawTitrationCurveOnCanvas('reportCanvas', 'reportGraphInfo')"> Show Both</label>
             <label class="radio-label" style="display:inline-flex; font-size:0.85rem; margin-right:10px;"><input type="radio" name="plotMode" value="experimental" onchange="drawTitrationCurveOnCanvas('reportCanvas', 'reportGraphInfo')"> Experimental Only</label>
@@ -1328,7 +1298,7 @@
     </div>
   </div>
 
-  <!-- ADDED: APP 3: PRECIPITATION TITRATION -->
+  <!-- APP 3: PRECIPITATION TITRATION -->
   <div id="precipitationApp" style="display: none;">
     <div class="card">
       <div class="header-box">
@@ -1446,7 +1416,6 @@
       <div class="form-group" style="margin-top: 15px; text-align: center;">
         <label style="text-align: left; display: block; margin-bottom: 5px;">Precipitation Curve:</label>
         
-        <!-- Y-Axis View Toggle -->
         <div class="form-group" style="text-align: center; margin-bottom: 10px;">
           <label style="display:inline-block; font-size:0.85rem; margin-right:10px;">Y-Axis View:</label>
           <label class="radio-label" style="display:inline-flex; font-size:0.85rem;"><input type="radio" name="precipAxis" value="pAg" checked onchange="calculatePrecipitation()"> pAg (Silver)</label>
@@ -1469,7 +1438,20 @@
 
 </div>
 
-<!-- ADDED: TOUR OVERLAY & TOOLTIP ELEMENTS -->
+<!-- CALCULATION CHOICE MODAL -->
+<div id="calcChoiceModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.75); backdrop-filter: blur(2px); z-index:10000; align-items:center; justify-content:center;">
+    <div class="card" style="max-width: 420px; text-align:center; padding: 30px;">
+        <h3 style="color: var(--primary); margin-top:0;">Choose Calculation Basis</h3>
+        <p style="font-size:0.95rem; color:#475569; margin-bottom:20px;">Do you want to calculate the results based on the <strong>exact theoretically simulated reading</strong>, or feed your own <strong>tabular physical lab readings</strong>?</p>
+        <div style="display:flex; flex-direction:column; gap:10px; justify-content:center;">
+            <button class="btn-action" style="width: 100%;" onclick="performCalculation('simulation')">🤖 Calculate from Simulated Theoretical Reading</button>
+            <button class="btn-action" style="width: 100%; background-color:#f59e0b; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);" onclick="performCalculation('table')">📋 Feed My Own Tabular Readings</button>
+        </div>
+        <button class="btn-row" style="margin-top:20px; width:100%;" onclick="closeCalcModal()">Cancel</button>
+    </div>
+</div>
+
+<!-- TOUR OVERLAY & TOOLTIP ELEMENTS -->
 <div id="tourOverlay" class="tour-overlay"></div>
 <div id="tourTooltip" class="tour-tooltip">
   <h4 id="tourTitle">Tour</h4>
@@ -1491,6 +1473,7 @@
   let isTitrationValid = false;
   let floaterTimeout;
   let realityFloaterTimeouts = {};
+  let pendingActionType = null;
 
   const buretteDb = {
     acetic: { name: "Acetic Acid (CH3COOH)", mw: 60.05, eq: 60.05, state: "Clear liquid solution", structure: "CH3-COOH", type: "Weak Acid Titrant", acidBaseType: "WA", pKa: 4.76, mp: "16.6 °C", bp: "117.9 °C", solubility: "Miscible in all proportions with H2O", color: "#93c5fd", indicator: "Phenolphthalein" },
@@ -1631,12 +1614,13 @@
         tbody.innerHTML = '';
         state.table.forEach((r, i) => {
           const tr = document.createElement('tr');
-          const diff = Math.max(0, parseFloat(r.fin) - parseFloat(r.init)).toFixed(2);
+          const diff = (r.init !== "" && r.fin !== "") ? Math.max(0, parseFloat(r.fin) - parseFloat(r.init)).toFixed(2) : "0.00";
           tr.innerHTML = `
-            <td>${i + 1}</td>
+            <td class="row-num">${i + 1}</td>
             <td><input type="number" class="b-init" value="${r.init}" step="0.05" oninput="updateTiter(this); saveAppSession();"></td>
             <td><input type="number" class="b-final" value="${r.fin}" step="0.05" oninput="updateTiter(this); saveAppSession();"></td>
             <td class="titer-val">${diff}</td>
+            <td><button class="btn-delete" onclick="deleteRow(this)">❌</button></td>
           `;
           tbody.appendChild(tr);
         });
@@ -1662,7 +1646,6 @@
       if ((e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') && !e.target.id.startsWith('precip')) saveAppSession();
   });
 
-  // REALITY FLOATER LOGIC
   function showRealityFloater(id) {
     const el = document.getElementById(id);
     if(el) {
@@ -1674,7 +1657,6 @@
     }
   }
 
-  // SHOW FLOATER WITH DYNAMIC TEXT
   function showQuickTourFloater(mode) {
     const floater = document.getElementById('tourFloater');
     if(floater) {
@@ -1694,7 +1676,6 @@
     }
   }
 
-  // APP SWITCHER
   function switchAppMode(mode) {
     document.getElementById('titrationApp').style.display = (mode === 'titration') ? 'block' : 'none';
     document.getElementById('reagentApp').style.display = (mode === 'reagent') ? 'block' : 'none';
@@ -1826,7 +1807,6 @@
     `;
   }
 
-  // AUTO-CLOSE OTHER BULBS
   function toggleInfo(cardId) {
     const card = document.getElementById(cardId);
     
@@ -1864,7 +1844,33 @@
     }
   }
 
-  // REVERSE TITRANT ACTION
+  function getTheoreticalVeq() {
+      const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
+      const bKey = document.getElementById('buretteChem').value;
+      const fKey = document.getElementById('flaskChem').value;
+      if (!bKey || !fKey) return null;
+
+      const bData = buretteDb[bKey];
+      const fData = flaskDb[fKey];
+      const N2 = (buretteInputMode === 'molarity')
+        ? (parseFloat(document.getElementById('buretteMolarity').value) || 0.1) * (bData.mw / bData.eq)
+        : (parseFloat(document.getElementById('buretteNormality').value) || 0.1);
+
+      let N1 = 0.1;
+      if (flaskInputMode === 'normality') {
+        N1 = parseFloat(document.getElementById('flaskNormality').value) || 0.1;
+      } else if (flaskInputMode === 'molarity') {
+        N1 = (parseFloat(document.getElementById('flaskMolarity').value) || 0.1) * (fData.mw / fData.eq);
+      } else if (flaskInputMode === 'weight') {
+        const mass = parseFloat(document.getElementById('flaskMass').value) || 0.6303;
+        const volMade = parseFloat(document.getElementById('flaskVolMade').value) || 100;
+        N1 = (mass * 1000) / (fData.eq * volMade);
+      } else if (flaskInputMode === 'game') {
+        N1 = gameSecretNormality;
+      }
+      return (N1 * V1) / N2;
+  }
+
   function subTitrant(amt) {
     if (flaskInputMode === 'unknown' || !isTitrationValid) return;
     if (simVol - amt < 0) return; 
@@ -1881,37 +1887,9 @@
 
     showRealityFloater('realityFloater1');
 
-    const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
-    const bKey = document.getElementById('buretteChem').value;
-    const bEqWt = buretteDb[bKey].eq;
-    const bMw = buretteDb[bKey].mw;
-    const bNFactor = bMw / bEqWt;
-    let N2 = (buretteInputMode === 'molarity') 
-      ? (parseFloat(document.getElementById('buretteMolarity').value) || 0.1) * bNFactor 
-      : (parseFloat(document.getElementById('buretteNormality').value) || 0.1);
-
-    let N1 = 0.1;
-    if (flaskInputMode === 'normality') {
-      N1 = parseFloat(document.getElementById('flaskNormality').value) || 0.1;
-    } else if (flaskInputMode === 'molarity') {
-      const M1 = parseFloat(document.getElementById('flaskMolarity').value) || 0.1;
-      const flaskKey = document.getElementById('flaskChem').value;
-      const eqWt = flaskDb[flaskKey].eq;
-      const mw = flaskDb[flaskKey].mw;
-      N1 = M1 * (mw / eqWt);
-    } else if (flaskInputMode === 'weight') {
-      const mass = parseFloat(document.getElementById('flaskMass').value) || 0.6303;
-      const volMade = parseFloat(document.getElementById('flaskVolMade').value) || 100;
-      const flaskKey = document.getElementById('flaskChem').value;
-      const eqWt = flaskDb[flaskKey].eq;
-      N1 = (mass * 1000) / (eqWt * volMade);
-    } else if (flaskInputMode === 'game') {
-      N1 = gameSecretNormality;
-    }
-
-    const eqVolume = (N1 * V1) / N2;
-
+    const eqVolume = getTheoreticalVeq();
     const flaskLiq = document.getElementById('simFlaskLiquid');
+    const bKey = document.getElementById('buretteChem').value;
     const fKey = document.getElementById('flaskChem').value;
     const config = getPairConfig(bKey, fKey);
 
@@ -1919,13 +1897,6 @@
       flaskLiq.setAttribute('fill', config.colors[1]);
     } else {
       flaskLiq.setAttribute('fill', config.colors[0]);
-    }
-
-    const firstFinal = document.querySelector('.b-final');
-    if (firstFinal) {
-      firstFinal.value = simVol.toFixed(2);
-      updateTiter(firstFinal);
-      saveAppSession(); 
     }
   }
 
@@ -1952,38 +1923,9 @@
     drop.style.opacity = '1';
     setTimeout(() => { drop.style.opacity = '0'; }, 200);
 
-    const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
-    
-    const bKey = document.getElementById('buretteChem').value;
-    const bEqWt = buretteDb[bKey].eq;
-    const bMw = buretteDb[bKey].mw;
-    const bNFactor = bMw / bEqWt;
-    let N2 = (buretteInputMode === 'molarity') 
-      ? (parseFloat(document.getElementById('buretteMolarity').value) || 0.1) * bNFactor 
-      : (parseFloat(document.getElementById('buretteNormality').value) || 0.1);
-
-    let N1 = 0.1;
-    if (flaskInputMode === 'normality') {
-      N1 = parseFloat(document.getElementById('flaskNormality').value) || 0.1;
-    } else if (flaskInputMode === 'molarity') {
-      const M1 = parseFloat(document.getElementById('flaskMolarity').value) || 0.1;
-      const flaskKey = document.getElementById('flaskChem').value;
-      const eqWt = flaskDb[flaskKey].eq;
-      const mw = flaskDb[flaskKey].mw;
-      N1 = M1 * (mw / eqWt);
-    } else if (flaskInputMode === 'weight') {
-      const mass = parseFloat(document.getElementById('flaskMass').value) || 0.6303;
-      const volMade = parseFloat(document.getElementById('flaskVolMade').value) || 100;
-      const flaskKey = document.getElementById('flaskChem').value;
-      const eqWt = flaskDb[flaskKey].eq;
-      N1 = (mass * 1000) / (eqWt * volMade);
-    } else if (flaskInputMode === 'game') {
-      N1 = gameSecretNormality;
-    }
-
-    const eqVolume = (N1 * V1) / N2;
-
+    const eqVolume = getTheoreticalVeq();
     const flaskLiq = document.getElementById('simFlaskLiquid');
+    const bKey = document.getElementById('buretteChem').value;
     const fKey = document.getElementById('flaskChem').value;
     const config = getPairConfig(bKey, fKey);
 
@@ -1991,13 +1933,6 @@
       flaskLiq.setAttribute('fill', config.colors[1]);
     } else {
       flaskLiq.setAttribute('fill', config.colors[0]);
-    }
-
-    const firstFinal = document.querySelector('.b-final');
-    if (firstFinal) {
-      firstFinal.value = simVol.toFixed(2);
-      updateTiter(firstFinal);
-      saveAppSession(); 
     }
   }
   
@@ -2031,7 +1966,6 @@
     document.getElementById('containerFlaskUnknown').style.display = (mode === 'unknown') ? 'block' : 'none';
     document.getElementById('containerFlaskGame').style.display = (mode === 'game') ? 'block' : 'none';
     
-    // PRACTICE MODE BACKGROUND TOGGLE
     if (mode === 'game') {
         document.body.classList.add('practice-mode-active');
         document.querySelectorAll('.sim-btn-neg').forEach(btn => btn.style.display = 'none');
@@ -2103,7 +2037,11 @@
     const btn = document.getElementById('toggleTableBtn');
     const container = document.getElementById('tableContainer');
     btn.classList.toggle('active');
-    container.style.maxHeight = container.style.maxHeight ? null : container.scrollHeight + "px";
+    if (btn.classList.contains('active')) {
+        container.style.maxHeight = container.scrollHeight + 500 + "px";
+    } else {
+        container.style.maxHeight = null;
+    }
   }
 
   function updateTiter(inputElem) {
@@ -2119,14 +2057,24 @@
     const rowCount = tbody.rows.length + 1;
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>${rowCount}</td>
-      <td><input type="number" class="b-init" value="0.00" step="0.05" oninput="updateTiter(this); saveAppSession();"></td>
-      <td><input type="number" class="b-final" value="0.00" step="0.05" oninput="updateTiter(this); saveAppSession();"></td>
+      <td class="row-num">${rowCount}</td>
+      <td><input type="number" class="b-init" value="" step="0.05" oninput="updateTiter(this); saveAppSession();"></td>
+      <td><input type="number" class="b-final" value="" step="0.05" oninput="updateTiter(this); saveAppSession();"></td>
       <td class="titer-val">0.00</td>
+      <td><button class="btn-delete" onclick="deleteRow(this)">❌</button></td>
     `;
     tbody.appendChild(tr);
     const container = document.getElementById('tableContainer');
-    container.style.maxHeight = container.scrollHeight + "px";
+    if (container.style.maxHeight) {
+        container.style.maxHeight = container.scrollHeight + 500 + "px";
+    }
+    saveAppSession();
+  }
+
+  function deleteRow(btn) {
+    btn.closest('tr').remove();
+    const rows = document.querySelectorAll('#readingTable tbody tr');
+    rows.forEach((r, idx) => { r.querySelector('.row-num').innerText = idx + 1; });
     saveAppSession();
   }
 
@@ -2136,8 +2084,12 @@
     const titers = [];
 
     for (let i = 0; i < inits.length; i++) {
-      const vInit = parseFloat(inits[i].value) || 0;
-      const vFinal = parseFloat(finals[i].value) || 0;
+      const initStr = inits[i].value;
+      const finalStr = finals[i].value;
+      if (initStr === "" || finalStr === "") continue;
+
+      const vInit = parseFloat(initStr) || 0;
+      const vFinal = parseFloat(finalStr) || 0;
       const diff = Math.max(0, vFinal - vInit);
       if (diff > 0) titers.push(parseFloat(diff.toFixed(2)));
     }
@@ -2148,7 +2100,7 @@
 
     if (selectedMethod === 'mean') {
       const sum = titers.reduce((a, b) => a + b, 0);
-      return { value: sum / titers.length, type: 'Mean Titer Volume (V2)' };
+      return { value: sum / titers.length, type: 'Mean Tabular Volume (V2)' };
     } else {
       const freq = {};
       let maxFreq = 0;
@@ -2166,7 +2118,7 @@
         alert('Notice: No identical concordant readings found. Using the first valid reading (' + concordantVal + ' mL).');
       }
 
-      return { value: concordantVal, type: 'Concordant Titer Volume (V2)' };
+      return { value: concordantVal, type: 'Concordant Tabular Volume (V2)' };
     }
   }
 
@@ -2221,45 +2173,28 @@
         return;
     }
 
-    const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
+    const theoreticalVeq = getTheoreticalVeq();
+    if (theoreticalVeq === null) return;
     
+    const titerData = getCalculatedTiter();
+    const manualVeq = titerData ? titerData.value : theoreticalVeq; 
+    
+    const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
     const bData = buretteDb[bKey];
     const fData = flaskDb[fKey];
-    const bEqWt = bData.eq;
-    const bMw = bData.mw;
-    const bNFactor = bMw / bEqWt;
+    
     const N2 = (buretteInputMode === 'molarity') 
-      ? (parseFloat(document.getElementById('buretteMolarity').value) || 0.1) * bNFactor 
+      ? (parseFloat(document.getElementById('buretteMolarity').value) || 0.1) * (bData.mw / bData.eq) 
       : (parseFloat(document.getElementById('buretteNormality').value) || 0.1);
 
-    let N1 = 0.1;
-    if (flaskInputMode === 'normality') {
-      N1 = parseFloat(document.getElementById('flaskNormality').value) || 0.1;
-    } else if (flaskInputMode === 'molarity') {
-      const M1 = parseFloat(document.getElementById('flaskMolarity').value) || 0.1;
-      N1 = M1 * (fData.mw / fData.eq);
-    } else if (flaskInputMode === 'weight') {
-      const mass = parseFloat(document.getElementById('flaskMass').value) || 0.6303;
-      const volMade = parseFloat(document.getElementById('flaskVolMade').value) || 100;
-      N1 = (mass * 1000) / (fData.eq * volMade);
-    } else if (flaskInputMode === 'game') {
-      N1 = gameSecretNormality;
-    }
+    const theoN1 = (theoreticalVeq * N2) / V1;
+    const expN1 = (manualVeq * N2) / V1;
 
-    // Determine Plot Mode from UI if available
     let plotMode = 'both';
     if (canvasId === 'reportCanvas') {
         const plotModeRadio = document.querySelector('input[name="plotMode"]:checked');
         if (plotModeRadio) plotMode = plotModeRadio.value;
     }
-
-    // 1. Calculate the ideal chemical baseline volume
-    const theoreticalVeq = (N1 * V1) / N2;
-    // 2. Fetch the manual table baseline volume safely
-    const titerData = getCalculatedTiter();
-    const manualVeq = titerData ? titerData.value : theoreticalVeq; // Fallback to ideal if table is blank
-    const eqVol = theoreticalVeq;
-    const maxVol = Math.max(eqVol * 1.8, 25.0); 
 
     const isBaseTitrant = bData.acidBaseType === 'SB' || bData.acidBaseType === 'WB';
     let isRedox = bData.type.includes("Redox") || bData.type.includes("Oxidizing") || bData.type.includes("Cerimetric") || bData.type.includes("Iodimetric");
@@ -2268,33 +2203,9 @@
 
     const minY = isRedox ? 0.0 : 0.0;
     const maxY = isRedox ? 1.6 : (isComplex ? 12.0 : 14.0);
+    
+    const maxVol = Math.max(Math.max(theoreticalVeq, manualVeq) * 1.8, 25.0); 
 
-    // --- EXACT EQUIVALENCE POINT CALCULATION ---
-    let eq_Y = 7.0; 
-    let cSalt = (N1 * V1) / (V1 + eqVol); 
-
-    if (isAcidBase) {
-        if ((bData.acidBaseType === 'SB' && fData.acidBaseType === 'WA') || (bData.acidBaseType === 'WA' && fData.acidBaseType === 'SB')) {
-            let pKa = fData.pKa || bData.pKa;
-            eq_Y = 7.0 + 0.5 * pKa + 0.5 * Math.log10(Math.max(cSalt, 1e-10));
-        } else if ((bData.acidBaseType === 'SA' && fData.acidBaseType === 'WB') || (bData.acidBaseType === 'WB' && fData.acidBaseType === 'SA')) {
-            let pKb = fData.pKb || bData.pKb;
-            eq_Y = 7.0 - 0.5 * pKb - 0.5 * Math.log10(Math.max(cSalt, 1e-10));
-        } else if ((bData.acidBaseType === 'WA' && fData.acidBaseType === 'WB') || (bData.acidBaseType === 'WB' && fData.acidBaseType === 'WA')) {
-            let pKa = fData.pKa || bData.pKa;
-            let pKb = fData.pKb || bData.pKb;
-            eq_Y = 7.0 + 0.5 * pKa - 0.5 * pKb; 
-        } else {
-             eq_Y = 7.0; 
-        }
-    } else if (isRedox) {
-        eq_Y = 0.8; // Estimated exact eq potential for standard plots 
-    } else if (isComplex) {
-        eq_Y = 6.0; // Estimated pM exact equivalence
-    }
-    eq_Y = Math.max(minY, Math.min(maxY, eq_Y)); 
-
-    // --- PADDING & PLOTTING AREA ---
     const paddingLeft = 35;
     const paddingRight = 15;
     const paddingTop = 15;
@@ -2306,7 +2217,6 @@
     const mapX = (v) => paddingLeft + (v / maxVol) * plotWidth;
     const mapY = (val) => paddingTop + plotHeight - ((val - minY) / (maxY - minY)) * plotHeight;
 
-    // --- DRAW GRID ---
     ctx.lineWidth = 1;
     ctx.strokeStyle = '#e2e8f0';
     ctx.fillStyle = '#64748b';
@@ -2335,135 +2245,151 @@
     ctx.save(); ctx.translate(10, paddingTop + plotHeight / 2); ctx.rotate(-Math.PI / 2);
     ctx.fillText(isAcidBase ? 'pH' : (isRedox ? 'Potential (E) in V' : 'pM (Metal Ion)'), 0, 0); ctx.restore();
 
-    // --- GENERATE EXACT LAB-LEVEL TITRATION CURVE ---
-    ctx.strokeStyle = '#2563eb';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
+    function drawSpecificCurve(eqVol, currentN1, colorMain) {
+        let current_eq_Y = 7.0; 
+        let cSalt = (currentN1 * V1) / (V1 + eqVol); 
 
-    function getYForVolume(v) {
-        let yVal = 7.0;
-        if (Math.abs(v - eqVol) < 1e-5) {
-            yVal = eq_Y;
-        } else if (isAcidBase) {
-            if (isBaseTitrant) {
-                if (v < eqVol) {
-                    if (fData.acidBaseType === 'WA') {
-                        let Ka = Math.pow(10, -fData.pKa);
-                        let Ca = ((eqVol - v) * N2) / (V1 + v);
-                        let Cb = (v * N2) / (V1 + v);
-                        let H = (-(Cb + Ka) + Math.sqrt(Math.pow(Cb + Ka, 2) + 4 * Ka * Ca)) / 2;
-                        yVal = -Math.log10(Math.max(H, 1e-14));
-                    } else {
-                        let excessH = ((eqVol - v) * N2) / (V1 + v);
-                        yVal = -Math.log10(Math.max(excessH, 1e-14));
-                    }
-                } else {
-                    if (bData.acidBaseType === 'WB') {
-                        let Kb = Math.pow(10, -bData.pKb);
-                        let Cb = ((v - eqVol) * N2) / (V1 + v);
-                        let Ca = (eqVol * N2) / (V1 + v);
-                        let OH = (-(Ca + Kb) + Math.sqrt(Math.pow(Ca + Kb, 2) + 4 * Kb * Cb)) / 2;
-                        yVal = 14.0 + Math.log10(Math.max(OH, 1e-14));
-                    } else {
-                        let excessOH = ((v - eqVol) * N2) / (V1 + v);
-                        yVal = 14.0 + Math.log10(Math.max(excessOH, 1e-14));
-                    }
-                }
-            } else { 
-                if (v < eqVol) { 
-                    if (fData.acidBaseType === 'WB') {
-                        let Kb = Math.pow(10, -fData.pKb);
-                        let Cb = ((eqVol - v) * N2) / (V1 + v);
-                        let Ca = (v * N2) / (V1 + v);
-                        let OH = (-(Ca + Kb) + Math.sqrt(Math.pow(Ca + Kb, 2) + 4 * Kb * Cb)) / 2;
-                        yVal = 14.0 + Math.log10(Math.max(OH, 1e-14));
-                    } else {
-                        let excessOH = ((eqVol - v) * N2) / (V1 + v);
-                        yVal = 14.0 + Math.log10(Math.max(excessOH, 1e-14));
-                    }
-                } else {
-                    if (bData.acidBaseType === 'WA') {
-                        let Ka = Math.pow(10, -bData.pKa);
-                        let Ca = ((v - eqVol) * N2) / (V1 + v);
-                        let Cb = (eqVol * N2) / (V1 + v);
-                        let H = (-(Cb + Ka) + Math.sqrt(Math.pow(Cb + Ka, 2) + 4 * Ka * Ca)) / 2;
-                        yVal = -Math.log10(Math.max(H, 1e-14));
-                    } else {
-                        let excessH = ((v - eqVol) * N2) / (V1 + v);
-                        yVal = -Math.log10(Math.max(excessH, 1e-14));
-                    }
-                }
+        if (isAcidBase) {
+            if ((bData.acidBaseType === 'SB' && fData.acidBaseType === 'WA') || (bData.acidBaseType === 'WA' && fData.acidBaseType === 'SB')) {
+                let pKa = fData.pKa || bData.pKa;
+                current_eq_Y = 7.0 + 0.5 * pKa + 0.5 * Math.log10(Math.max(cSalt, 1e-10));
+            } else if ((bData.acidBaseType === 'SA' && fData.acidBaseType === 'WB') || (bData.acidBaseType === 'WB' && fData.acidBaseType === 'SA')) {
+                let pKb = fData.pKb || bData.pKb;
+                current_eq_Y = 7.0 - 0.5 * pKb - 0.5 * Math.log10(Math.max(cSalt, 1e-10));
+            } else if ((bData.acidBaseType === 'WA' && fData.acidBaseType === 'WB') || (bData.acidBaseType === 'WB' && fData.acidBaseType === 'WA')) {
+                let pKa = fData.pKa || bData.pKa;
+                let pKb = fData.pKb || bData.pKb;
+                current_eq_Y = 7.0 + 0.5 * pKa - 0.5 * pKb; 
+            } else {
+                 current_eq_Y = 7.0; 
             }
         } else if (isRedox) {
-            if (v < eqVol) {
-                let ratio = Math.max(v / Math.max(eqVol - v, 1e-6), 1e-6);
-                yVal = 0.4 + 0.059 * Math.log10(ratio);
-            } else {
-                let ratio = Math.max((v - eqVol) / Math.max(eqVol, 1e-6), 1e-6);
-                yVal = 1.2 - 0.059 * Math.log10(1 / ratio);
-            }
+            current_eq_Y = 0.8; 
         } else if (isComplex) {
-            if (v < eqVol) {
-                let excessM = ((eqVol - v) * N2) / (V1 + v);
-                yVal = -Math.log10(Math.max(excessM, 1e-12));
-            } else {
-                yVal = 10.0 - 0.059 * Math.log10((v - eqVol)/eqVol); 
-            }
+            current_eq_Y = 6.0;
         }
-        return Math.max(minY, Math.min(maxY, yVal));
-    }
+        current_eq_Y = Math.max(minY, Math.min(maxY, current_eq_Y)); 
 
-    for (let i = 0; i <= 500; i++) {
-      const v = (i / 500) * maxVol;
-      const yVal = getYForVolume(v);
-      const px = mapX(v);
-      const py = mapY(yVal);
+        function getYForVolume(v) {
+            let yVal = 7.0;
+            if (Math.abs(v - eqVol) < 1e-5) {
+                yVal = current_eq_Y;
+            } else if (isAcidBase) {
+                if (isBaseTitrant) {
+                    if (v < eqVol) {
+                        if (fData.acidBaseType === 'WA') {
+                            let Ka = Math.pow(10, -fData.pKa);
+                            let Ca = ((eqVol - v) * N2) / (V1 + v);
+                            let Cb = (v * N2) / (V1 + v);
+                            let H = (-(Cb + Ka) + Math.sqrt(Math.pow(Cb + Ka, 2) + 4 * Ka * Ca)) / 2;
+                            yVal = -Math.log10(Math.max(H, 1e-14));
+                        } else {
+                            let excessH = ((eqVol - v) * N2) / (V1 + v);
+                            yVal = -Math.log10(Math.max(excessH, 1e-14));
+                        }
+                    } else {
+                        if (bData.acidBaseType === 'WB') {
+                            let Kb = Math.pow(10, -bData.pKb);
+                            let Cb = ((v - eqVol) * N2) / (V1 + v);
+                            let Ca = (eqVol * N2) / (V1 + v);
+                            let OH = (-(Ca + Kb) + Math.sqrt(Math.pow(Ca + Kb, 2) + 4 * Kb * Cb)) / 2;
+                            yVal = 14.0 + Math.log10(Math.max(OH, 1e-14));
+                        } else {
+                            let excessOH = ((v - eqVol) * N2) / (V1 + v);
+                            yVal = 14.0 + Math.log10(Math.max(excessOH, 1e-14));
+                        }
+                    }
+                } else { 
+                    if (v < eqVol) { 
+                        if (fData.acidBaseType === 'WB') {
+                            let Kb = Math.pow(10, -fData.pKb);
+                            let Cb = ((eqVol - v) * N2) / (V1 + v);
+                            let Ca = (v * N2) / (V1 + v);
+                            let OH = (-(Ca + Kb) + Math.sqrt(Math.pow(Ca + Kb, 2) + 4 * Kb * Cb)) / 2;
+                            yVal = 14.0 + Math.log10(Math.max(OH, 1e-14));
+                        } else {
+                            let excessOH = ((eqVol - v) * N2) / (V1 + v);
+                            yVal = 14.0 + Math.log10(Math.max(excessOH, 1e-14));
+                        }
+                    } else {
+                        if (bData.acidBaseType === 'WA') {
+                            let Ka = Math.pow(10, -bData.pKa);
+                            let Ca = ((v - eqVol) * N2) / (V1 + v);
+                            let Cb = (eqVol * N2) / (V1 + v);
+                            let H = (-(Cb + Ka) + Math.sqrt(Math.pow(Cb + Ka, 2) + 4 * Ka * Ca)) / 2;
+                            yVal = -Math.log10(Math.max(H, 1e-14));
+                        } else {
+                            let excessH = ((v - eqVol) * N2) / (V1 + v);
+                            yVal = -Math.log10(Math.max(excessH, 1e-14));
+                        }
+                    }
+                }
+            } else if (isRedox) {
+                if (v < eqVol) {
+                    let ratio = Math.max(v / Math.max(eqVol - v, 1e-6), 1e-6);
+                    yVal = 0.4 + 0.059 * Math.log10(ratio);
+                } else {
+                    let ratio = Math.max((v - eqVol) / Math.max(eqVol, 1e-6), 1e-6);
+                    yVal = 1.2 - 0.059 * Math.log10(1 / ratio);
+                }
+            } else if (isComplex) {
+                if (v < eqVol) {
+                    let excessM = ((eqVol - v) * N2) / (V1 + v);
+                    yVal = -Math.log10(Math.max(excessM, 1e-12));
+                } else {
+                    yVal = 10.0 - 0.059 * Math.log10((v - eqVol)/eqVol); 
+                }
+            }
+            return Math.max(minY, Math.min(maxY, yVal));
+        }
 
-      if (i === 0) ctx.moveTo(px, py);
-      else ctx.lineTo(px, py);
-    }
-    ctx.stroke();
+        ctx.strokeStyle = colorMain;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let i = 0; i <= 500; i++) {
+          const v = (i / 500) * maxVol;
+          const yVal = getYForVolume(v);
+          const px = mapX(v);
+          const py = mapY(yVal);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
 
-    // --- EXTRAPOLATION & EQUIVALENCE POINT DROP LINES ---
-    
-    // --- POINT A: PLOT THE THEORETICAL BASELINE (IDEAL) ---
-    if (plotMode === 'both' || plotMode === 'theoretical') {
-        const theoX = mapX(theoreticalVeq);
-        const theoY = mapY(eq_Y); // Uses your perfect thermodynamic equilibrium state
+        const eqX = mapX(eqVol);
+        const eqY = mapY(current_eq_Y); 
 
-        ctx.strokeStyle = '#059669'; // Clean Science Green
+        ctx.strokeStyle = colorMain; 
         ctx.lineWidth = 1.2;
-        ctx.setLineDash([4, 4]); // Dashed Line
+        ctx.setLineDash([4, 4]); 
         ctx.beginPath();
-        ctx.moveTo(theoX, theoY); ctx.lineTo(theoX, paddingTop + plotHeight); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(paddingLeft, theoY); ctx.lineTo(theoX, theoY); ctx.stroke(); // Y Extrapolation
-        ctx.setLineDash([]); // Reset Line Style
+        ctx.moveTo(eqX, eqY); ctx.lineTo(eqX, paddingTop + plotHeight); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(paddingLeft, eqY); ctx.lineTo(eqX, eqY); ctx.stroke(); 
+        ctx.setLineDash([]); 
 
-        // Draw Theoretical Target Node
-        ctx.fillStyle = '#059669';
-        ctx.beginPath(); ctx.arc(theoX, theoY, 4, 0, 2 * Math.PI); ctx.fill();
+        ctx.fillStyle = colorMain;
+        ctx.beginPath(); ctx.arc(eqX, eqY, 4, 0, 2 * Math.PI); ctx.fill();
         ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+
+        return current_eq_Y;
     }
 
-    // --- POINT B: PLOT THE MANUAL EXPERIMENTAL BASELINE (USER TABLE) ---
-    const manualYVal = getYForVolume(manualVeq); 
+    let theoY = 7.0;
+    let expY = 7.0;
+
+    if (plotMode === 'both' || plotMode === 'theoretical') {
+        theoY = drawSpecificCurve(theoreticalVeq, theoN1, '#059669'); // Green
+    }
+    
     if (plotMode === 'both' || plotMode === 'experimental') {
-        const manualX = mapX(manualVeq);
-        const manualY = mapY(manualYVal); 
-
-        ctx.strokeStyle = '#dc2626'; // High-Contrast Coral Red
-        ctx.lineWidth = 1.5; 
-        ctx.beginPath();
-        ctx.moveTo(manualX, manualY); ctx.lineTo(manualX, paddingTop + plotHeight); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(paddingLeft, manualY); ctx.lineTo(manualX, manualY); ctx.stroke(); // Y Extrapolation
-
-        // Draw Experimental Target Node
-        ctx.fillStyle = '#dc2626';
-        ctx.beginPath(); ctx.arc(manualX, manualY, 5, 0, 2 * Math.PI); ctx.fill();
-        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+        // Draw the experimental red curve ONLY if it's distinctly different or if theoretical wasn't drawn
+        if (plotMode === 'experimental' || Math.abs(theoreticalVeq - manualVeq) > 0.02) {
+            expY = drawSpecificCurve(manualVeq, expN1, '#dc2626'); // Red
+        } else {
+            expY = theoY; // If they are exactly the same, don't overlap two identical curves
+        }
     }
 
-    // --- TEXT READOUT ---
     const infoContainer = document.getElementById(infoId);
     if (infoContainer) {
       let yType = isAcidBase ? 'pH' : (isRedox ? 'Potential (E)' : 'pM');
@@ -2471,10 +2397,10 @@
       
       let infoHTML = '';
       if (plotMode === 'both' || plotMode === 'theoretical') {
-        infoHTML += `🟢 <strong>Theoretical Ideal Endpoint:</strong> <span style="color: #059669; font-weight: bold;">${theoreticalVeq.toFixed(2)} mL</span> (at ${yType} <span style="color: #059669; font-weight: bold;">${eq_Y.toFixed(2)}${yUnit}</span>)<br>`;
+        infoHTML += `🟢 <strong>Theoretical Ideal Curve:</strong> Eq Pt at <span style="color: #059669; font-weight: bold;">${theoreticalVeq.toFixed(2)} mL</span> (${yType} <span style="color: #059669; font-weight: bold;">${theoY.toFixed(2)}${yUnit}</span>)<br>`;
       }
       if (plotMode === 'both' || plotMode === 'experimental') {
-        infoHTML += `🔴 <strong>Observed Experimental Titer:</strong> <span style="color: #dc2626; font-weight: bold;">${manualVeq.toFixed(2)} mL</span> (at ${yType} <span style="color: #dc2626; font-weight: bold;">${manualYVal.toFixed(2)}${yUnit}</span>)<br>`;
+        infoHTML += `🔴 <strong>Observed Experimental Curve:</strong> Eq Pt at <span style="color: #dc2626; font-weight: bold;">${manualVeq.toFixed(2)} mL</span> (${yType} <span style="color: #dc2626; font-weight: bold;">${expY.toFixed(2)}${yUnit}</span>)<br>`;
       }
       if (plotMode === 'both') {
         infoHTML += `⚠️ <strong>Absolute Method Error Margin:</strong> <span style="color: #7c2d12; font-weight: bold;">${Math.abs(theoreticalVeq - manualVeq).toFixed(2)} mL</span>`;
@@ -2483,18 +2409,50 @@
     }
   }
 
+  // --- CALCULATION ROUTING LOGIC ---
   function calculate(actionType) {
     if (!isTitrationValid) {
         alert("Invalid Titrant-Sample combination. Please select a chemically compatible pair before calculating.");
         return;
     }
+    pendingActionType = actionType;
+    document.getElementById('calcChoiceModal').style.display = 'flex';
+  }
 
-    const titerData = getCalculatedTiter();
-    if (!titerData) {
-      alert('Please enter at least one valid set of burette readings.');
-      return;
+  function closeCalcModal() {
+    document.getElementById('calcChoiceModal').style.display = 'none';
+    pendingActionType = null;
+  }
+
+  function performCalculation(mode) {
+    document.getElementById('calcChoiceModal').style.display = 'none';
+    let titerData = null;
+
+    if (mode === 'table') {
+        titerData = getCalculatedTiter();
+        if (!titerData) {
+            const btn = document.getElementById('toggleTableBtn');
+            const container = document.getElementById('tableContainer');
+            if (!btn.classList.contains('active')) {
+                btn.classList.add('active');
+                container.style.maxHeight = container.scrollHeight + 500 + "px";
+            }
+            alert('Please enter at least one valid set of burette readings in the table.');
+            return;
+        }
+    } else if (mode === 'simulation') {
+        const theoV2 = getTheoreticalVeq();
+        if (theoV2 === null || isNaN(theoV2)) {
+            alert('Cannot calculate theoretical reading based on current inputs.');
+            return;
+        }
+        titerData = { value: theoV2, type: 'Simulated Theoretical Volume (V2)' };
     }
 
+    executeCalculation(pendingActionType, titerData);
+  }
+
+  function executeCalculation(actionType, titerData) {
     const V2 = titerData.value;
     const V1 = parseFloat(document.getElementById('pipettedVol').value) || 0;
 
@@ -2558,12 +2516,18 @@
     const originalTable = document.getElementById('readingTable');
     const reportTableWrapper = document.getElementById('reportTableWrapper');
     reportTableWrapper.innerHTML = '';
-    const clonedTable = originalTable.cloneNode(true);
-    clonedTable.querySelectorAll('input').forEach(input => {
-      const td = input.closest('td');
-      td.innerText = input.value;
-    });
-    reportTableWrapper.appendChild(clonedTable);
+    
+    // Check if table contains data to print, if empty (like via simulation bypass), just show a notice
+    if(originalTable.querySelector('tbody').rows.length > 0) {
+        const clonedTable = originalTable.cloneNode(true);
+        clonedTable.querySelectorAll('input').forEach(input => {
+          const td = input.closest('td');
+          td.innerText = input.value;
+        });
+        reportTableWrapper.appendChild(clonedTable);
+    } else {
+        reportTableWrapper.innerHTML = `<em style="color:#64748b; font-size:0.9rem;">(Tabular readings not utilized for this calculation basis)</em>`;
+    }
 
     drawTitrationCurveOnCanvas('reportCanvas', 'reportGraphInfo');
 
@@ -2740,7 +2704,6 @@
     box.style.display = 'block';
   }
 
-  // --- ADDED: QUICK TOUR LOGIC ---
   const titrationTourSteps = [
     { sel: '.header-box', title: 'Welcome to the Engine! ✨', text: 'This Quick Tour will guide you through the process of simulating and calculating a full titration experiment without leaving this page.' },
     { sel: '#tour-target-burette', title: 'Step 1: The Burette', text: 'Start by selecting your Titrant (the solution in the burette). You can set its concentration exactness by switching between standard input modes.' },
@@ -2784,7 +2747,6 @@
     document.getElementById('tourOverlay').style.display = 'block';
     document.getElementById('tourTooltip').style.display = 'block';
     
-    // Hide Floater during tour
     const floater = document.getElementById('tourFloater');
     if(floater) {
         clearTimeout(floaterTimeout);
@@ -2835,7 +2797,6 @@
           }
       }
       
-      // Fallback safeguard to prevent it from ever hiding at the top
       if (top < 15) {
           top = 15;
       }
@@ -2879,11 +2840,9 @@
     if (isTitrationValid && document.getElementById('buretteChem').value) {
         drawTitrationCurveOnCanvas('titrationChart', 'graphInfo');
     }
-    showQuickTourFloater('titration'); // Initial view trigger
+    showQuickTourFloater('titration'); 
   };
 
-  // --- ADDED: PRECIPITATION ENGINE ---
-  // AUTO CLOSE FOR PRECIPITATION METHOD EDU CARD
   function togglePrecipInfo() {
     const card = document.getElementById('precipEduCard');
     
@@ -2921,7 +2880,7 @@
       ksp: 1.0e-12, // Ksp of AgSCN
       startColor: "#f8fafc", endColor: "#991b1b", ind: "Ferric Alum (Fe3+) [Nitrobenzene coated]", 
       type: "volhard",
-      analyteEq: 58.44, // Changed to NaCl equivalent weight for Back-Titration mathematically
+      analyteEq: 58.44, 
       edu: "<strong>pH Limitation:</strong> Back-titration for halides. Must be performed in highly acidic medium (HNO3).<br><br><strong>Drawbacks:</strong> AgCl is more soluble than AgSCN, so the thiocyanate titrant will slowly dissolve the AgCl precipitate, fading the endpoint. To prevent this, nitrobenzene is typically added to coat and isolate the AgCl precipitate."
     }
   };
@@ -2988,7 +2947,6 @@
     resetPrecipSim();
   }
 
-  // REVERSE PRECIP TITRANT ACTION
   function subPrecipTitrant(amt) {
     if (precipVol - amt < 0) return;
     
@@ -3198,7 +3156,6 @@
               pAg = -Math.log10(Ag);
           }
       } else if (mKey === 'mod_volhard') {
-          // TRUE RESIDUAL BACK-TITRATION PHASING
           if (v < Veq) {
               let remainingAg = ((Veq - v) * Nt) / (Va + v);
               pAg = -Math.log10(Math.max(remainingAg, 1e-14));
@@ -3238,16 +3195,12 @@
     ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
   }
 
-  // --- NEW PWA Service Worker & Install Logic ---
   let deferredPrompt;
   const installBtn = document.getElementById('installAppBtn');
 
   window.addEventListener('beforeinstallprompt', (e) => {
-    // Prevent the mini-infobar from appearing on mobile
     e.preventDefault();
-    // Stash the event so it can be triggered later.
     deferredPrompt = e;
-    // Update UI notify the user they can install the PWA
     if (installBtn) {
       installBtn.style.display = 'block';
     }
@@ -3256,24 +3209,19 @@
   if (installBtn) {
     installBtn.addEventListener('click', async () => {
       if (deferredPrompt !== null) {
-        // Show the install prompt
         deferredPrompt.prompt();
-        // Wait for the user to respond to the prompt
         const { outcome } = await deferredPrompt.userChoice;
         if (outcome === 'accepted') {
           console.log('User accepted the install prompt');
         } else {
           console.log('User dismissed the install prompt');
         }
-        // We've used the prompt, and can't use it again, throw it away
         deferredPrompt = null;
-        // Hide the button
         installBtn.style.display = 'none';
       }
     });
   }
 
-  // Register Service Worker
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js')
