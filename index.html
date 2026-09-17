@@ -3231,5 +3231,118 @@
   }
 </script>
 
+<!-- Floating AI Chat Widget Styles -->
+<style>
+  #ai-chat-launcher {
+    position: fixed; bottom: 20px; right: 20px; background: #007bff; color: white;
+    padding: 12px 20px; border-radius: 50px; cursor: pointer; font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 9999; font-family: sans-serif;
+  }
+  #ai-chat-box {
+    position: fixed; bottom: 80px; right: 20px; width: 320px; height: 400px;
+    background: white; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+    display: flex; flex-direction: column; overflow: hidden; z-index: 9999; font-family: sans-serif;
+  }
+  .chat-header { background: #007bff; color: white; padding: 12px; font-weight: bold; display: flex; justify-content: space-between; }
+  .chat-logs { flex: 1; padding: 10px; overflow-y: auto; background: #f8f9fa; font-size: 14px; }
+  .chat-input-area { display: flex; border-top: 1px solid #eee; }
+  .chat-input-area input { flex: 1; border: none; padding: 10px; outline: none; }
+  .chat-input-area button { background: #007bff; color: white; border: none; padding: 10px 15px; cursor: pointer; }
+  .chat-input-area button:disabled { background: #ccc; }
+  .msg { margin-bottom: 8px; padding: 8px; border-radius: 6px; }
+  .msg.user { background: #e1f5fe; align-self: flex-end; margin-left: 20px; }
+  .msg.ai { background: #ffffff; border: 1px solid #eee; margin-right: 20px; }
+  .status-text { font-size: 11px; color: #666; text-align: center; margin-bottom: 5px; }
+</style>
+
+<!-- Floating AI Chat Interface Structure -->
+<div id="ai-chat-launcher" onclick="toggleAiChat()">🤖 Ask Lab AI</div>
+
+<div id="ai-chat-box" style="display: none;">
+  <div class="chat-header">
+    <span>Offline Chemistry Assistant</span>
+    <span style="cursor:pointer;" onclick="toggleAiChat()">✕</span>
+  </div>
+  <div id="ai-chat-logs" class="chat-logs">
+    <div class="msg ai">Hello! I am your offline lab assistant. Ask me anything about your current titration experiment.</div>
+  </div>
+  <div id="ai-status" class="status-text">Initializing AI engine...</div>
+  <div class="chat-input-area">
+    <input type="text" id="ai-user-input" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendAiMessage()">
+    <button id="ai-send-btn" onclick="sendAiMessage()" disabled>Send</button>
+  </div>
+</div>
+
+<!-- Offline AI Engine Logic -->
+<script type="module">
+  import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers';
+
+  let aiGenerator = null;
+  const chatLogs = document.getElementById('ai-chat-logs');
+  const statusDiv = document.getElementById('ai-status');
+  const sendBtn = document.getElementById('ai-send-btn');
+
+  window.toggleAiChat = function() {
+    const box = document.getElementById('ai-chat-box');
+    box.style.display = box.style.display === 'none' ? 'flex' : 'none';
+  }
+
+  // Initialize model in the background completely client-side
+  async function loadLocalModel() {
+    try {
+      statusDiv.innerText = "Downloading local brain (happens once)...";
+      aiGenerator = await pipeline('text-generation', 'Xenova/Qwen1.5-0.5B-Chat');
+      statusDiv.innerText = "⚡ AI Engine Online & 100% Offline";
+      sendBtn.disabled = false;
+    } catch (err) {
+      statusDiv.innerText = "Failed to load model locally.";
+      console.error(err);
+    }
+  }
+
+  window.sendAiMessage = async function() {
+    const inputEl = document.getElementById('ai-user-input');
+    const query = inputEl.value.trim();
+    if (!query || !aiGenerator) return;
+
+    // Display user text immediately
+    appendMessage(query, 'user');
+    inputEl.value = '';
+    statusDiv.innerText = "AI is thinking locally...";
+
+    // Context Scraping: Grabs chosen chemical directly from your existing dropdown elements!
+    const activeTitrantElement = document.querySelector('select'); // Target your burette select dropdown
+    const chosenTitrant = activeTitrantElement ? activeTitrantElement.value : "Unknown";
+
+    // Frame the prompt injecting real-time page configurations
+    const systemPrompt = `You are an expert chemistry assistant. The user is currently running a titration application with the Titrant set to: ${chosenTitrant}. Answer the user concisely based on this setup. Question: ${query}`;
+
+    try {
+      const output = await aiGenerator(systemPrompt, { 
+        max_new_tokens: 60,
+        temperature: 0.6 
+      });
+      
+      // Clean system junk and render just the generated reply text
+      let reply = output[0].generated_text.replace(systemPrompt, "").trim();
+      appendMessage(reply, 'ai');
+      statusDiv.innerText = "⚡ AI Engine Online & 100% Offline";
+    } catch (e) {
+      appendMessage("Sorry, I encountered a local processing error.", 'ai');
+      statusDiv.innerText = "Ready";
+    }
+  }
+
+  function appendMessage(text, sender) {
+    const div = document.createElement('div');
+    div.className = `msg ${sender}`;
+    div.innerText = text;
+    chatLogs.appendChild(div);
+    chatLogs.scrollTop = chatLogs.scrollHeight;
+  }
+
+  // Trigger loading process when page resources finish loading
+  window.addEventListener('DOMContentLoaded', loadLocalModel);
+</script>
 </body>
 </html>
