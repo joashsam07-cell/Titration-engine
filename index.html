@@ -820,6 +820,132 @@
     .tour-btn { background: var(--secondary); color: white; border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold;}
     .tour-btn:hover { background: var(--primary); }
     .tour-skip { background: none; color: #64748b; border: none; cursor: pointer; font-size: 0.85rem; text-decoration: underline; }
+
+    /* FLOATING SCIENTIFIC CALCULATOR STYLES */
+    #sci-calc-launcher {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+      z-index: 9999;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+    }
+    #sci-calc-launcher:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.6);
+    }
+    #sci-calc-box {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 340px;
+      max-width: calc(100vw - 40px);
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(16px);
+      border-radius: 16px;
+      box-shadow: 0 15px 45px rgba(15, 23, 42, 0.25);
+      border: 1px solid rgba(203, 213, 225, 0.8);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 9999;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    .calc-header {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: white;
+      padding: 12px 16px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .calc-display-area {
+      background: #0f172a;
+      color: #38bdf8;
+      padding: 12px 16px;
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 64px;
+    }
+    .calc-expr {
+      font-size: 0.88rem;
+      color: #94a3b8;
+      min-height: 18px;
+      word-wrap: break-word;
+      font-family: monospace;
+    }
+    .calc-res {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #f8fafc;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-family: monospace;
+    }
+    .calc-pad {
+      padding: 10px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      background: #f8fafc;
+    }
+    .c-btn {
+      padding: 10px 4px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: white;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      color: #334155;
+      text-align: center;
+      user-select: none;
+    }
+    .c-btn:hover {
+      background: #e2e8f0;
+      transform: translateY(-1px);
+    }
+    .c-btn:active {
+      transform: translateY(1px);
+    }
+    .c-btn.fn {
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 0.8rem;
+    }
+    .c-btn.op {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .c-btn.equal {
+      background: #059669;
+      color: white;
+      border-color: #047857;
+      grid-column: span 2;
+    }
+    .c-btn.equal:hover {
+      background: #047857;
+    }
+    .c-btn.clear {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
   </style>
 </head>
 <body>
@@ -1213,7 +1339,7 @@
             <option value="f_khp">Potassium Hydrogen Phthalate (KHP)</option>
             <option value="f_na2co3">Sodium Carbonate</option>
             <option value="f_na_benzoate">Sodium Benzoate</option>
-            <option value="f_nahco3">Sodium Bicarbonate</option>
+            <option value="nahco3">Sodium Bicarbonate</option>
             <option value="f_naoh_flask">Sodium Hydroxide Solution</option>
             <option value="f_nh4cl">Ammonium Chloride</option>
             <option value="f_oxalic">Oxalic Acid Dihydrate</option>
@@ -1459,6 +1585,62 @@
   <div class="tour-nav">
     <button class="tour-skip" onclick="endTour()">Skip Tour</button>
     <button id="tourNextBtn" class="tour-btn" onclick="nextTourStep()">Next ➔</button>
+  </div>
+</div>
+
+<!-- FLOATING SCIENTIFIC CALCULATOR WIDGET -->
+<div id="sci-calc-launcher" onclick="toggleSciCalc()">🧮 Lab Calculator</div>
+
+<div id="sci-calc-box">
+  <div class="calc-header">
+    <span>Scientific Lab Calculator</span>
+    <span style="cursor:pointer; font-size:1.2rem;" onclick="toggleSciCalc()">✕</span>
+  </div>
+  <div class="calc-display-area">
+    <div class="calc-expr" id="sciCalcExpr"></div>
+    <div class="calc-res" id="sciCalcRes">0</div>
+  </div>
+  <div class="calc-pad">
+    <button class="c-btn fn" onclick="sciInput('degRad')">DEG</button>
+    <button class="c-btn fn" onclick="sciInput('sin(')">sin</button>
+    <button class="c-btn fn" onclick="sciInput('cos(')">cos</button>
+    <button class="c-btn fn" onclick="sciInput('tan(')">tan</button>
+    <button class="c-btn clear" onclick="sciClear()">AC</button>
+
+    <button class="c-btn fn" onclick="sciInput('pH')">-log</button>
+    <button class="c-btn fn" onclick="sciInput('log10(')">log</button>
+    <button class="c-btn fn" onclick="sciInput('log(')">ln</button>
+    <button class="c-btn fn" onclick="sciInput('10^(')">10ˣ</button>
+    <button class="c-btn clear" onclick="sciBackspace()">⌫</button>
+
+    <button class="c-btn fn" onclick="sciInput('(')">(</button>
+    <button class="c-btn fn" onclick="sciInput(')')">)</button>
+    <button class="c-btn fn" onclick="sciInput('sqrt(')">√</button>
+    <button class="c-btn fn" onclick="sciInput('^2')">x²</button>
+    <button class="c-btn op" onclick="sciInput('/')">÷</button>
+
+    <button class="c-btn" onclick="sciInput('7')">7</button>
+    <button class="c-btn" onclick="sciInput('8')">8</button>
+    <button class="c-btn" onclick="sciInput('9')">9</button>
+    <button class="c-btn fn" onclick="sciInput('^')">xʸ</button>
+    <button class="c-btn op" onclick="sciInput('*')">×</button>
+
+    <button class="c-btn" onclick="sciInput('4')">4</button>
+    <button class="c-btn" onclick="sciInput('5')">5</button>
+    <button class="c-btn" onclick="sciInput('6')">6</button>
+    <button class="c-btn fn" onclick="sciInput('PI')">π</button>
+    <button class="c-btn op" onclick="sciInput('-')">−</button>
+
+    <button class="c-btn" onclick="sciInput('1')">1</button>
+    <button class="c-btn" onclick="sciInput('2')">2</button>
+    <button class="c-btn" onclick="sciInput('3')">3</button>
+    <button class="c-btn fn" onclick="sciInput('E')">e</button>
+    <button class="c-btn op" onclick="sciInput('+')">+</button>
+
+    <button class="c-btn" onclick="sciInput('0')">0</button>
+    <button class="c-btn" onclick="sciInput('.')">.</button>
+    <button class="c-btn fn" onclick="sciInput('e')">EXP</button>
+    <button class="c-btn equal" onclick="sciEvaluate()">=</button>
   </div>
 </div>
 
@@ -3228,6 +3410,90 @@
         .then(reg => console.log('Service Worker registered', reg))
         .catch(err => console.error('Service Worker registration failed', err));
     });
+  }
+
+  /* -------------------------------------------------------------
+     EMBEDDED SCIENTIFIC CALCULATOR LOGIC (100% FREE & ZERO-LAG)
+  ------------------------------------------------------------- */
+  let sciExpr = '';
+  let sciAngleMode = 'DEG'; // DEG or RAD
+
+  function toggleSciCalc() {
+    const box = document.getElementById('sci-calc-box');
+    box.style.display = (box.style.display === 'none' || box.style.display === '') ? 'flex' : 'none';
+  }
+
+  function sciUpdateDisplay() {
+    document.getElementById('sciCalcExpr').innerText = sciExpr;
+  }
+
+  function sciInput(token) {
+    if (token === 'degRad') {
+      sciAngleMode = (sciAngleMode === 'DEG') ? 'RAD' : 'DEG';
+      event.target.innerText = sciAngleMode;
+      return;
+    }
+    if (token === 'pH') {
+      sciExpr += '-log10(';
+    } else if (token === '10^(') {
+      sciExpr += '10^(';
+    } else {
+      sciExpr += token;
+    }
+    sciUpdateDisplay();
+  }
+
+  function sciClear() {
+    sciExpr = '';
+    document.getElementById('sciCalcRes').innerText = '0';
+    sciUpdateDisplay();
+  }
+
+  function sciBackspace() {
+    sciExpr = sciExpr.slice(0, -1);
+    sciUpdateDisplay();
+  }
+
+  function sciEvaluate() {
+    if (!sciExpr.trim()) return;
+    try {
+      let parsed = sciExpr;
+
+      // Handle custom math tokens
+      parsed = parsed.replace(/PI/g, 'Math.PI');
+      parsed = parsed.replace(/\bE\b/g, 'Math.E');
+      parsed = parsed.replace(/\blog10\(/g, 'Math.log10(');
+      parsed = parsed.replace(/\blog\(/g, 'Math.log(');
+      parsed = parsed.replace(/\bsqrt\(/g, 'Math.sqrt(');
+      parsed = parsed.replace(/\^/g, '**');
+
+      // Trigonometry with DEG/RAD awareness
+      if (sciAngleMode === 'DEG') {
+        parsed = parsed.replace(/\bsin\(([^)]+)\)/g, 'Math.sin(($1) * Math.PI / 180)');
+        parsed = parsed.replace(/\bcos\(([^)]+)\)/g, 'Math.cos(($1) * Math.PI / 180)');
+        parsed = parsed.replace(/\btan\(([^)]+)\)/g, 'Math.tan(($1) * Math.PI / 180)');
+      } else {
+        parsed = parsed.replace(/\bsin\(/g, 'Math.sin(');
+        parsed = parsed.replace(/\bcos\(/g, 'Math.cos(');
+        parsed = parsed.replace(/\btan\(/g, 'Math.tan(');
+      }
+
+      // Safe evaluation using Function
+      const evaluated = Function('"use strict"; return (' + parsed + ')')();
+      
+      let outStr = "";
+      if (Number.isInteger(evaluated)) {
+        outStr = evaluated.toString();
+      } else if (Math.abs(evaluated) < 1e-4 || Math.abs(evaluated) > 1e6) {
+        outStr = evaluated.toExponential(4);
+      } else {
+        outStr = Number(evaluated.toFixed(6)).toString();
+      }
+
+      document.getElementById('sciCalcRes').innerText = outStr;
+    } catch (e) {
+      document.getElementById('sciCalcRes').innerText = 'Error';
+    }
   }
 </script>
 
