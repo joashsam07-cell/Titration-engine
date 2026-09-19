@@ -958,6 +958,19 @@
     <button onclick="toggleSidebar()" class="close-btn">&times;</button>
   </div>
   <div class="sidebar-body" style="text-align: center;">
+    
+    <!-- Added Derivative Controls for Sidebar -->
+    <div class="form-group" style="text-align: center; margin-bottom: 5px;">
+      <label class="radio-label" style="display:inline-flex; font-size:0.8rem; margin-right:5px;"><input type="radio" name="sideGraphDeriv" value="none" checked onchange="document.querySelector('input[name=\'graphDerivative\'][value=\'none\']').checked=true; drawTitrationCurveOnCanvas('titrationChart', 'graphInfo')"> Std</label>
+      <label class="radio-label" style="display:inline-flex; font-size:0.8rem; margin-right:5px;"><input type="radio" name="sideGraphDeriv" value="first" onchange="document.querySelector('input[name=\'graphDerivative\'][value=\'first\']').checked=true; drawTitrationCurveOnCanvas('titrationChart', 'graphInfo')"> 1st Deriv</label>
+      <label class="radio-label" style="display:inline-flex; font-size:0.8rem;"><input type="radio" name="sideGraphDeriv" value="second" onchange="document.querySelector('input[name=\'graphDerivative\'][value=\'second\']').checked=true; drawTitrationCurveOnCanvas('titrationChart', 'graphInfo')"> 2nd Deriv</label>
+    </div>
+    
+    <div class="form-group" style="text-align: center; margin-bottom: 10px; background:#f1f5f9; padding:5px; border-radius:5px;">
+       <label style="font-size: 0.75rem; margin-right: 10px;">Zoom X: <input type="range" id="zoomX_side" min="1" max="10" value="1" step="0.1" oninput="drawTitrationCurveOnCanvas('titrationChart', 'graphInfo')" style="width:60px; vertical-align:middle;"></label>
+       <label style="font-size: 0.75rem;">Zoom Y: <input type="range" id="zoomY_side" min="1" max="10" value="1" step="0.1" oninput="drawTitrationCurveOnCanvas('titrationChart', 'graphInfo')" style="width:60px; vertical-align:middle;"></label>
+    </div>
+
     <canvas id="titrationChart" width="280" height="260" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);"></canvas>
     <div id="graphInfo" style="font-size: 0.85rem; margin-top: 15px; color: #475569; text-align: left; line-height: 1.5;"></div>
   </div>
@@ -1064,10 +1077,12 @@
             <option value="boric">Boric Acid</option>
             <option value="feso4">Ferrous Sulphate (FeSO4)</option>
             <option value="h2o2">Hydrogen Peroxide (H2O2)</option>
+            <option value="h3po4">Phosphoric Acid (H3PO4) [Polyprotic]</option>
             <option value="hcl">Hydrochloric Acid (HCl)</option>
+            <option value="h2so4_flask">Sulphuric Acid (H2SO4) [Polyprotic]</option>
             <option value="i2_flask">Iodine Solution (I2)</option>
             <option value="khp">Potassium Hydrogen Phthalate (KHP)</option>
-            <option value="na2co3">Sodium Carbonate (Na2CO3)</option>
+            <option value="na2co3">Sodium Carbonate (Na2CO3) [Polyprotic]</option>
             <option value="na_benzoate">Sodium Benzoate</option>
             <option value="nahco3">Sodium Bicarbonate (NaHCO3)</option>
             <option value="naoh_flask">Sodium Hydroxide Solution (Standardisation)</option>
@@ -1138,6 +1153,21 @@
           <label for="pipettedVol">Volume Pipetted into Conical Flask (V1 in mL):</label>
           <input type="number" id="pipettedVol" value="10.0" step="0.1">
         </div>
+        
+        <!-- NEW INDICATOR SELECTOR -->
+        <div class="form-group" style="margin-top: 12px; background: #e0f2fe; padding: 10px; border-radius: 6px; border: 1px solid #bae6fd;">
+            <label for="customIndicator">Select Reaction Indicator (For Experimentation):</label>
+            <select id="customIndicator" onchange="updateCustomIndicator()">
+                <option value="auto" selected>Recommended Indicator (Auto-selected)</option>
+                <option value="phenolphthalein">Phenolphthalein (pH 8.2 - 10.0 | Colourless ➔ Pink)</option>
+                <option value="methyl_orange">Methyl Orange (pH 3.1 - 4.4 | Red ➔ Yellow)</option>
+                <option value="bromothymol_blue">Bromothymol Blue (pH 6.0 - 7.6 | Yellow ➔ Blue)</option>
+                <option value="methyl_red">Methyl Red (pH 4.4 - 6.2 | Red ➔ Yellow)</option>
+                <option value="crystal_violet">Crystal Violet (pH 0.0 - 2.0 | Yellow ➔ Violet)</option>
+            </select>
+            <div id="indicatorDisplayInfo" style="margin-top: 8px; font-size: 0.85rem; color: #0369a1; font-weight: bold;"></div>
+        </div>
+
       </div>
 
       <!-- 3. INTERACTIVE SIMULATOR PANEL -->
@@ -1189,7 +1219,12 @@
           <button type="button" class="sim-btn refill" id="btnSimRefill" onclick="refillBurette()" disabled>Refill</button>
           <button type="button" class="sim-btn reset" id="btnSimReset" onclick="resetSim()">Reset</button>
         </div>
-        <div class="sim-readout">Burette Dispensed Volume: <span id="simDispensed">0.00</span> mL</div>
+        <div class="sim-readout" style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+          <div>Burette Dispensed Volume: <span id="simDispensed">0.00</span> mL</div>
+          <div style="background: #e0f2fe; border: 1px solid #bae6fd; padding: 5px 15px; border-radius: 20px; color: #0369a1; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); font-weight: bold; letter-spacing: 0.5px;">
+             Live Monitor: <span id="simLiveMonitor">--</span>
+          </div>
+        </div>
       </div>
 
       <!-- 4. TITRATION READINGS TABLE -->
@@ -1257,6 +1292,19 @@
             <label class="radio-label" style="display:inline-flex; font-size:0.85rem; margin-right:10px;"><input type="radio" name="plotMode" value="both" checked onchange="drawTitrationCurveOnCanvas('reportCanvas', 'reportGraphInfo')"> Show Both</label>
             <label class="radio-label" style="display:inline-flex; font-size:0.85rem; margin-right:10px;"><input type="radio" name="plotMode" value="experimental" onchange="drawTitrationCurveOnCanvas('reportCanvas', 'reportGraphInfo')"> Experimental Only</label>
             <label class="radio-label" style="display:inline-flex; font-size:0.85rem;"><input type="radio" name="plotMode" value="theoretical" onchange="drawTitrationCurveOnCanvas('reportCanvas', 'reportGraphInfo')"> Theoretical Only</label>
+          </div>
+          
+          <!-- NEW DERIVATIVE & ZOOM RADIO TOGGLE -->
+          <div class="form-group" style="text-align: center; margin-bottom: 10px; background:#e0f2fe; padding:5px; border-radius:5px;">
+            <span style="font-size:0.85rem; font-weight:bold; margin-right:10px;">Graph Advanced Mode:</span>
+            <label class="radio-label" style="display:inline-flex; font-size:0.85rem; margin-right:10px;"><input type="radio" name="graphDerivative" value="none" checked onchange="document.querySelector('input[name=\'sideGraphDeriv\'][value=\'none\']').checked=true; drawTitrationCurveOnCanvas('reportCanvas', 'reportGraphInfo')"> Standard Curve</label>
+            <label class="radio-label" style="display:inline-flex; font-size:0.85rem; margin-right:10px;"><input type="radio" name="graphDerivative" value="first" onchange="document.querySelector('input[name=\'sideGraphDeriv\'][value=\'first\']').checked=true; drawTitrationCurveOnCanvas('reportCanvas', 'reportGraphInfo')"> 1st Derivative</label>
+            <label class="radio-label" style="display:inline-flex; font-size:0.85rem;"><input type="radio" name="graphDerivative" value="second" onchange="document.querySelector('input[name=\'sideGraphDeriv\'][value=\'second\']').checked=true; drawTitrationCurveOnCanvas('reportCanvas', 'reportGraphInfo')"> 2nd Derivative</label>
+            
+            <br><br>
+            <span style="font-size:0.85rem; font-weight:bold; margin-right:10px;">Graph Zoom:</span>
+            <label style="font-size: 0.8rem; margin-right: 10px;">X-Axis: <input type="range" id="zoomX_report" min="1" max="10" value="1" step="0.1" oninput="drawTitrationCurveOnCanvas('reportCanvas', 'reportGraphInfo')" style="width:80px; vertical-align:middle;"></label>
+            <label style="font-size: 0.8rem;">Y-Axis: <input type="range" id="zoomY_report" min="1" max="10" value="1" step="0.1" oninput="drawTitrationCurveOnCanvas('reportCanvas', 'reportGraphInfo')" style="width:80px; vertical-align:middle;"></label>
           </div>
 
           <canvas id="reportCanvas" width="280" height="200" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; margin-top: 5px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);"></canvas>
@@ -1334,7 +1382,9 @@
             <option value="f_boric">Boric Acid</option>
             <option value="f_feso4">Ferrous Sulphate Heptahydrate</option>
             <option value="f_h2o2">Hydrogen Peroxide</option>
+            <option value="f_h3po4">Phosphoric Acid</option>
             <option value="f_hcl">Hydrochloric Acid</option>
+            <option value="f_h2so4_flask">Sulphuric Acid</option>
             <option value="f_i2_flask">Iodine Solution</option>
             <option value="f_khp">Potassium Hydrogen Phthalate (KHP)</option>
             <option value="f_na2co3">Sodium Carbonate</option>
@@ -1491,6 +1541,16 @@
           <input type="number" id="precipAnalyteVolMade" value="100" step="1">
         </div>
       </div>
+<div id="containerModVolhardInputs" class="grid-2 form-group" style="margin-top: 15px; display: none;">
+      <div>
+        <label>Excess AgNO3 Volume (mL):</label>
+        <input type="number" id="precipExcessAgV" value="20.0" step="0.1">
+      </div>
+      <div>
+        <label>Excess AgNO3 Normality (N):</label>
+        <input type="number" id="precipExcessAgN" value="0.1000" step="0.0001">
+      </div>
+    </div>
 
       <div class="form-group">
         <label>Volume of Analyte pipetted (mL):</label>
@@ -1656,6 +1716,15 @@
   let floaterTimeout;
   let realityFloaterTimeouts = {};
   let pendingActionType = null;
+  let globalSelectedIndicator = 'auto'; // Tracks user indicator override
+
+  const indicatorLibrary = {
+    phenolphthalein: { name: 'Phenolphthalein', text: 'Phenolphthalein (Colourless to Pink) [pH 8.2-10.0]' },
+    methyl_orange: { name: 'Methyl Orange', text: 'Methyl Orange (Red to Yellow) [pH 3.1-4.4]' },
+    bromothymol_blue: { name: 'Bromothymol Blue', text: 'Bromothymol Blue (Yellow to Blue) [pH 6.0-7.6]' },
+    methyl_red: { name: 'Methyl Red', text: 'Methyl Red (Red to Yellow) [pH 4.4-6.2]' },
+    crystal_violet: { name: 'Crystal Violet', text: 'Crystal Violet (Yellow to Violet) [pH 0.0-2.0]' }
+  };
 
   const buretteDb = {
     acetic: { name: "Acetic Acid (CH3COOH)", mw: 60.05, eq: 60.05, state: "Clear liquid solution", structure: "CH3-COOH", type: "Weak Acid Titrant", acidBaseType: "WA", pKa: 4.76, mp: "16.6 °C", bp: "117.9 °C", solubility: "Miscible in all proportions with H2O", color: "#93c5fd", indicator: "Phenolphthalein" },
@@ -1684,10 +1753,12 @@
     boric: { name: "Boric Acid", formula: "H3BO3", mw: 61.83, eq: 61.83, state: "Crystalline powder", structure: "B(OH)3", acidBaseType: "WA", pKa: 9.24, mp: "170.9 °C", bp: "Decomposes above 170.9 °C to metaboric acid", solubility: "47.2 g/L (at 20 °C in H2O)", reaction: "H3BO3 + Glycerol + NaOH → Sodium Glyceroborate + H2O", indicator: "Phenolphthalein + Glycerol (Colourless to Distinct Pink)" },
     feso4: { name: "Ferrous Sulphate Heptahydrate", formula: "FeSO4·7H2O", mw: 278.01, eq: 278.01, state: "Blue-green crystals", structure: "[Fe]2+ [SO4]2- · 7H2O", acidBaseType: null, mp: "64 °C (loses hydration water)", bp: "Decomposes > 300 °C", solubility: "295 g/L (at 20 °C in H2O)", reaction: "10 FeSO4 + 2 KMnO4 + 8 H2O4 → 5 Fe2(SO4)3 + 2 MnSO4 + K2SO4 + 8 H2O", indicator: "Self-indicator (Very Pale Green to Pink Flash) / Ferroin (Intense Red to Pale Blue)" },
     h2o2: { name: "Hydrogen Peroxide", formula: "H2O2", mw: 34.015, eq: 17.008, state: "Clear liquid", structure: "H-O-O-H", acidBaseType: null, mp: "-0.43 °C", bp: "150.2 °C", solubility: "Miscible in all proportions with H2O", reaction: "5 H2O2 + 2 KMnO4 + 3 H2SO4 → 2 MnSO4 + K2SO4 + 5 O2 + 8 H2O", indicator: "Self-indicator in H2SO4 (Colourless to Persistent Pale Pink)" },
+    h3po4: { name: "Phosphoric Acid", formula: "H3PO4", mw: 97.99, eq: 32.66, state: "Clear viscous liquid", structure: "PO(OH)3", acidBaseType: "WA", pKa: 2.15, pKa2: 7.20, mp: "42.3 °C", bp: "158 °C", solubility: "Miscible", reaction: "H3PO4 + 2 NaOH → Na2HPO4 + 2 H2O", indicator: "Methyl Orange / Phenolphthalein" },
     hcl: { name: "Hydrochloric Acid", formula: "HCl", mw: 36.46, eq: 36.46, state: "Aqueous solution", structure: "H+ Cl-", acidBaseType: "SA", mp: "-30 °C", bp: "108.5 °C", solubility: "Miscible in H2O", reaction: "HCl + NaOH → NaCl + H2O", indicator: "Phenolphthalein / Methyl Orange" },
+    h2so4_flask: { name: "Sulphuric Acid", formula: "H2SO4", mw: 98.08, eq: 49.04, state: "Clear viscous liquid", structure: "2 H+ [SO4]2-", acidBaseType: "SA", pKa2: 1.99, mp: "10.31 °C", bp: "337 °C", solubility: "Miscible", reaction: "H2SO4 + 2 NaOH → Na2SO4 + 2 H2O", indicator: "Phenolphthalein" },
     i2_flask: { name: "Iodine Solution", formula: "I2", mw: 253.81, eq: 126.90, state: "Deep brown solution in KI", structure: "I3- (Triiodide complex)", acidBaseType: null, mp: "113.7 °C (pure I2)", bp: "184.3 °C (pure I2)", solubility: "Highly soluble in aqueous KI solution", reaction: "I2 + 2 Na2S2O3 → 2 NaI + Na2S4O6", indicator: "Starch Mucilage (Dark Blue-Black to Completely Colourless)" },
     khp: { name: "Potassium Hydrogen Phthalate (KHP)", formula: "C8H5KO4", mw: 204.22, eq: 204.22, state: "Crystalline powder (White)", structure: "C6H4(COOK)(COOH)", acidBaseType: "WA", pKa: 5.4, mp: "295 °C (decomposes)", bp: "Decomposes", solubility: "80 g/L (at 20 °C in H2O)", reaction: "C8H5KO4 + NaOH → C8H4KNaO4 + H2O", indicator: "Phenolphthalein (Colourless to Light Pink)" },
-    na2co3: { name: "Sodium Carbonate", formula: "Na2CO3", mw: 105.99, eq: 52.99, state: "Fine powder (White)", structure: "Na+ [O-C(=O)-O]- Na+", acidBaseType: "WB", pKb: 7.63, mp: "851 °C", bp: "1600 °C (decomposes)", solubility: "215 g/L (at 20 °C in H2O)", reaction: "Na2CO3 + 2 HCl → 2 NaCl + CO2 + H2O", indicator: "Methyl Orange (Yellow to Faint Reddish-Orange)" },
+    na2co3: { name: "Sodium Carbonate", formula: "Na2CO3", mw: 105.99, eq: 52.99, state: "Fine powder (White)", structure: "Na+ [O-C(=O)-O]- Na+", acidBaseType: "WB", pKb: 3.6, pKb2: 7.7, mp: "851 °C", bp: "1600 °C (decomposes)", solubility: "215 g/L (at 20 °C in H2O)", reaction: "Na2CO3 + 2 HCl → 2 NaCl + CO2 + H2O", indicator: "Methyl Orange (Yellow to Faint Reddish-Orange)" },
     na_benzoate: { name: "Sodium Benzoate", formula: "C7H5NaO2", mw: 144.11, eq: 144.11, state: "Crystalline powder", structure: "C6H5-COO- Na+", acidBaseType: "WB", pKb: 9.8, mp: "> 300 °C", bp: "410 °C", solubility: "629 g/L (at 20 °C in H2O)", reaction: "C6H5COONa + HClO4 → C6H5COOH + NaClO4", indicator: "Methyl Orange in Ether-Water Biphasic System (Yellow to Orange-Pink) / Crystal Violet (Violet to Yellowish-Green)" },
     nahco3: { name: "Sodium Bicarbonate", formula: "NaHCO3", mw: 84.01, eq: 84.01, state: "Crystalline powder", structure: "Na+ [HO-C(=O)-O]-", acidBaseType: "WB", pKb: 7.63, mp: "50 °C (decomposes)", bp: "Decomposes", solubility: "96 g/L (at 20 °C in H2O)", reaction: "NaHCO3 + HCl → NaCl + CO2 + H2O", indicator: "Methyl Orange (Yellow to Pinkish-Orange)" },
     naoh_flask: { name: "Sodium Hydroxide Solution", formula: "NaOH", mw: 40.00, eq: 40.00, state: "Aqueous solution", structure: "Na+ OH-", acidBaseType: "SB", mp: "318 °C", bp: "1388 °C", solubility: "1090 g/L", reaction: "NaOH + HCl → NaCl + H2O", indicator: "Phenolphthalein (Pink to Colourless) / Methyl Red (Yellow to Red)" },
@@ -1697,8 +1768,7 @@
     salicylic: { name: "Salicylic Acid", formula: "C7H6O3", mw: 138.12, eq: 138.12, state: "Needle-like crystals", structure: "2-(HO)-C6H4-COOH", acidBaseType: "WA", pKa: 2.97, mp: "158.6 °C", bp: "211 °C (at 20 mmHg)", solubility: "2.24 g/L (at 25 °C in H2O)", reaction: "C6H4(OH)COOH + NaOH → C6H4(OH)COONa + H2O", indicator: "Phenolphthalein (Colourless to Pink) / Crystal Violet in Nonaqueous (Violet to Emerald Green)" },
     znso4: { name: "Zinc Sulphate Heptahydrate", formula: "ZnSO4·7H2O", mw: 287.54, eq: 287.54, state: "Crystalline solid", structure: "[Zn(H2O)6]2+ [SO4]2- · H2O", acidBaseType: null, mp: "100 °C", bp: "740 °C", solubility: "960 g/L", reaction: "ZnSO4 + Na2H2EDTA → Na2[ZnEDTA] + H2SO4", indicator: "Mordant Black II / Eriochrome Black T / EBT at pH 10 Buffer (Wine-Red to Clean Distinct Blue)" }
   };
-
-  const pairConfigMap = {
+const pairConfigMap = {
     'naoh_oxalic': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Phenolphthalein (Colourless to Permanent Pale Pink)' },
     'naoh_khp': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Phenolphthalein (Colourless to Light Pink)' },
     'naoh_benzoic': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Pink)' },
@@ -1707,6 +1777,7 @@
     'naoh_acetic': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Phenolphthalein (Colourless to Light Pink)' },
     'naoh_boric': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein + Glycerol (Colourless to Distinct Pink)' },
     'naoh_nh4cl': { colors: ['#e2e8f0', '#f472b6'], indicator: 'Phenolphthalein - Formol Titration (Colourless to Pale Pink)' },
+    'naoh_h3po4': { colors: ['#e2e8f0', '#facc15'], indicator: 'Methyl Orange (or Phenolphthalein depending on exact target)' },
     'hcl_na2co3': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange (Yellow to Faint Reddish-Orange)' },
     'hno3_na2co3': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange (Yellow to Faint Reddish-Orange)' },
     'h2so4_na2co3': { colors: ['#facc15', '#f97316'], indicator: 'Methyl Orange (Yellow to Faint Reddish-Orange)' },
@@ -1719,6 +1790,7 @@
     'hcl_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless)' },
     'hno3_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless)' },
     'h2so4_naoh_flask': { colors: ['#ec4899', '#e2e8f0'], indicator: 'Phenolphthalein (Pink to Colourless)' },
+    'naoh_h2so4_flask': { colors: ['#e2e8f0', '#ec4899'], indicator: 'Phenolphthalein (Colourless to Pink)' },
     'hcl_ammonia': { colors: ['#e2e8f0', '#38bdf8'], indicator: 'Methyl Orange / Mixed Indicator' },
     'hno3_ammonia': { colors: ['#e2e8f0', '#38bdf8'], indicator: 'Methyl Orange / Mixed Indicator' },
     'h2so4_ammonia': { colors: ['#e2e8f0', '#38bdf8'], indicator: 'Methyl Orange / Mixed Indicator' },
@@ -1812,7 +1884,6 @@
     }
   }
 
-  // GLOBAL CLICK LISTENER FOR AUTO-CLOSING BULBS 
   document.addEventListener('click', function(e) {
     if (!e.target.closest('.bulb-btn') && !e.target.closest('.chem-info-card')) {
       document.querySelectorAll('.chem-info-card').forEach(c => {
@@ -1822,10 +1893,10 @@
   });
 
   document.addEventListener('input', (e) => {
-      if ((e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') && !e.target.id.startsWith('precip')) saveAppSession();
+      if ((e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') && !e.target.id.startsWith('precip') && !e.target.id.startsWith('zoom')) saveAppSession();
   });
   document.addEventListener('change', (e) => {
-      if ((e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') && !e.target.id.startsWith('precip')) saveAppSession();
+      if ((e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') && !e.target.id.startsWith('precip') && !e.target.id.startsWith('zoom')) saveAppSession();
   });
 
   function showRealityFloater(id) {
@@ -1912,6 +1983,22 @@
     return null;
   }
   
+  function updateCustomIndicator() {
+    globalSelectedIndicator = document.getElementById('customIndicator').value;
+    const infoDiv = document.getElementById('indicatorDisplayInfo');
+    const bKey = document.getElementById('buretteChem').value;
+    const fKey = document.getElementById('flaskChem').value;
+    const config = getPairConfig(bKey, fKey);
+    let recIndicator = config ? config.indicator : 'N/A';
+    
+    if (globalSelectedIndicator === 'auto') {
+      infoDiv.innerText = (bKey && fKey && config) ? `Auto-selected: ${recIndicator}` : '';
+    } else {
+      infoDiv.innerText = indicatorLibrary[globalSelectedIndicator].text;
+    }
+    updateSimColors();
+  }
+
   function checkValidity() {
     const bKey = document.getElementById('buretteChem').value;
     const fKey = document.getElementById('flaskChem').value;
@@ -1947,6 +2034,7 @@
       if (wasInvalid) resetSim();
       else updateSimColors();
     }
+    updateCustomIndicator();
   }
 
   function updateBuretteInfo() {
@@ -2010,7 +2098,7 @@
     }
   }
 
-  function updateSimColors() {
+ function updateSimColors() {
     if(!isTitrationValid) return;
     const bKey = document.getElementById('buretteChem').value;
     const fKey = document.getElementById('flaskChem').value;
@@ -2021,8 +2109,26 @@
     document.getElementById('simDrop').setAttribute('stroke', bColor);
 
     const config = getPairConfig(bKey, fKey);
+    
     if (simVol === 0.0 && config) {
-      document.getElementById('simFlaskLiquid').setAttribute('fill', config.colors[0]);
+      let startColor = config.colors[0];
+      
+      const bData = buretteDb[bKey];
+      const fData = flaskDb[fKey];
+      const isAcidBase = bData.acidBaseType && fData.acidBaseType;
+
+      if (globalSelectedIndicator !== 'auto' && isAcidBase) {
+          const eqVolume = getTheoreticalVeq() || 10.0;
+          const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
+          const N2 = (buretteInputMode === 'molarity') ? (parseFloat(document.getElementById('buretteMolarity').value) || 0.1) * (bData.mw / bData.eq) : (parseFloat(document.getElementById('buretteNormality').value) || 0.1);
+          const N1 = (eqVolume * N2) / V1;
+          const isBaseTitrant = bData.acidBaseType === 'SB' || bData.acidBaseType === 'WB';
+          
+          let start_Y = getGlobalSimpH(0, eqVolume, N1, N2, V1, bKey, fKey, bData, fData, isAcidBase, false, false, isBaseTitrant);
+          startColor = getIndicatorColor(globalSelectedIndicator, start_Y);
+      }
+      
+      document.getElementById('simFlaskLiquid').setAttribute('fill', startColor);
     }
   }
 
@@ -2052,6 +2158,224 @@
       }
       return (N1 * V1) / N2;
   }
+  
+  function getGlobalSimpH(v, eqVol, currentN1, N2, V1, bKey, fKey, bData, fData, isAcidBase, isRedox, isComplex, isBaseTitrant) {
+      let yVal = 7.0;
+      let isPoly = false;
+      let polyVeq1, polyVeq2, polyVeq3;
+
+      if (fKey === 'na2co3') { polyVeq1 = eqVol / 2; polyVeq2 = eqVol; isPoly = true; }
+      else if (fKey === 'h3po4') { polyVeq1 = eqVol / 3; polyVeq2 = (2 * eqVol) / 3; polyVeq3 = eqVol; isPoly = true; }
+      else if (fKey === 'h2so4_flask' || bKey === 'h2so4') { polyVeq1 = eqVol / 2; polyVeq2 = eqVol; isPoly = true; }
+
+      if (fKey === 'h3po4' && isAcidBase) {
+          if (Math.abs(v - polyVeq1) < 1e-4) return (fData.pKa + fData.pKa2) / 2;
+          if (Math.abs(v - polyVeq2) < 1e-4) return (fData.pKa2 + 12.35) / 2;
+          if (Math.abs(v - polyVeq3) < 1e-4) return 14.0;
+          
+          if (v < polyVeq1) {
+              let ratio = Math.max(v / Math.max(polyVeq1 - v, 1e-6), 1e-6);
+              yVal = fData.pKa + Math.log10(ratio);
+          } else if (v < polyVeq2) {
+              let ratio = Math.max((v - polyVeq1) / Math.max(polyVeq2 - v, 1e-6), 1e-6);
+              yVal = fData.pKa2 + Math.log10(ratio);
+          } else if (v < polyVeq3) {
+              let ratio = Math.max((v - polyVeq2) / Math.max(polyVeq3 - v, 1e-6), 1e-6);
+              yVal = 12.35 + Math.log10(ratio);
+          } else {
+              let excessOH = ((v - polyVeq3) * N2) / (V1 + v);
+              yVal = 14.0 + Math.log10(Math.max(excessOH, 1e-14));
+          }
+          return Math.max(0, Math.min(14, yVal));
+      }
+      else if (fKey === 'na2co3' && isAcidBase) {
+          let pKa1_co3 = 6.3, pKa2_co3 = 10.4;
+          if (Math.abs(v - polyVeq1) < 1e-4) return (pKa1_co3 + pKa2_co3) / 2;
+          if (Math.abs(v - polyVeq2) < 1e-4) {
+              let cAcid = (N2 * v) / (V1 + v);
+              return 0.5 * pKa1_co3 - 0.5 * Math.log10(Math.max(cAcid, 1e-10));
+          }
+          
+          if (v < polyVeq1) {
+              let ratio = Math.max((polyVeq1 - v) / Math.max(v, 1e-6), 1e-6);
+              yVal = pKa2_co3 + Math.log10(ratio);
+          } else if (v < polyVeq2) {
+              let ratio = Math.max((polyVeq2 - v) / Math.max(v - polyVeq1, 1e-6), 1e-6);
+              yVal = pKa1_co3 + Math.log10(ratio);
+          } else {
+              let excessH = ((v - polyVeq2) * N2) / (V1 + v);
+              yVal = -Math.log10(Math.max(excessH, 1e-14));
+          }
+          return Math.max(0, Math.min(14, yVal));
+      }
+      else if ((fKey === 'h2so4_flask' || bKey === 'h2so4') && isAcidBase) {
+          if (Math.abs(v - polyVeq1) < 1e-4) return isBaseTitrant ? 1.0 : 13.0; 
+          if (Math.abs(v - polyVeq2) < 1e-4) return 7.0;
+
+          if (isBaseTitrant) {
+               if (v < polyVeq1) {
+                   let excessH = ((polyVeq1 - v) * N2) / (V1 + v);
+                   yVal = -Math.log10(Math.max(excessH, 1e-14));
+               } else if (v < polyVeq2) {
+                   let ratio = Math.max(v / Math.max(polyVeq2 - v, 1e-6), 1e-6);
+                   yVal = 1.99 + Math.log10(ratio); 
+               } else {
+                   let excessOH = ((v - polyVeq2) * N2) / (V1 + v);
+                   yVal = 14.0 + Math.log10(Math.max(excessOH, 1e-14));
+               }
+          } else {
+               if (v < polyVeq1) {
+                   let excessOH = ((polyVeq1 - v) * N2) / (V1 + v);
+                   yVal = 14.0 + Math.log10(Math.max(excessOH, 1e-14));
+               } else if (v < polyVeq2) {
+                   let ratio = Math.max(v / Math.max(polyVeq2 - v, 1e-6), 1e-6);
+                   yVal = 14.0 - (1.99 + Math.log10(ratio)); 
+               } else {
+                   let excessH = ((v - polyVeq2) * N2) / (V1 + v);
+                   yVal = -Math.log10(Math.max(excessH, 1e-14));
+               }
+          }
+          return Math.max(0, Math.min(14, yVal));
+      }
+      else if (Math.abs(v - eqVol) < 1e-5) {
+          if (isAcidBase) {
+              let cSalt = (currentN1 * V1) / (V1 + eqVol);
+              if ((bData.acidBaseType === 'SB' && fData.acidBaseType === 'WA') || (bData.acidBaseType === 'WA' && fData.acidBaseType === 'SB')) {
+                  let pKa = fData.pKa || bData.pKa;
+                  yVal = 7.0 + 0.5 * pKa + 0.5 * Math.log10(Math.max(cSalt, 1e-10));
+              } else if ((bData.acidBaseType === 'SA' && fData.acidBaseType === 'WB') || (bData.acidBaseType === 'WB' && fData.acidBaseType === 'SA')) {
+                  let pKb = fData.pKb || bData.pKb;
+                  yVal = 7.0 - 0.5 * pKb - 0.5 * Math.log10(Math.max(cSalt, 1e-10));
+              } else if ((bData.acidBaseType === 'WA' && fData.acidBaseType === 'WB') || (bData.acidBaseType === 'WB' && fData.acidBaseType === 'WA')) {
+                  let pKa = fData.pKa || bData.pKa;
+                  let pKb = fData.pKb || bData.pKb;
+                  yVal = 7.0 + 0.5 * pKa - 0.5 * pKb; 
+              } else {
+                   yVal = 7.0; 
+              }
+          } else if (isRedox) { yVal = 0.8; }
+          else if (isComplex) { yVal = 6.0; }
+          return Math.max(isRedox ? 0 : 0, Math.min(isRedox ? 1.6 : 14, yVal));
+      } 
+      else if (isAcidBase) {
+          if (isBaseTitrant) {
+              if (v < eqVol) {
+                  if (fData.acidBaseType === 'WA') {
+                      let Ka = Math.pow(10, -fData.pKa);
+                      let Ca = ((eqVol - v) * N2) / (V1 + v);
+                      let Cb = (v * N2) / (V1 + v);
+                      let H = (-(Cb + Ka) + Math.sqrt(Math.pow(Cb + Ka, 2) + 4 * Ka * Ca)) / 2;
+                      yVal = -Math.log10(Math.max(H, 1e-14));
+                  } else {
+                      let excessH = ((eqVol - v) * N2) / (V1 + v);
+                      yVal = -Math.log10(Math.max(excessH, 1e-14));
+                  }
+              } else {
+                  if (bData.acidBaseType === 'WB') {
+                      let Kb = Math.pow(10, -bData.pKb);
+                      let Cb = ((v - eqVol) * N2) / (V1 + v);
+                      let Ca = (eqVol * N2) / (V1 + v);
+                      let OH = (-(Ca + Kb) + Math.sqrt(Math.pow(Ca + Kb, 2) + 4 * Kb * Cb)) / 2;
+                      yVal = 14.0 + Math.log10(Math.max(OH, 1e-14));
+                  } else {
+                      let excessOH = ((v - eqVol) * N2) / (V1 + v);
+                      yVal = 14.0 + Math.log10(Math.max(excessOH, 1e-14));
+                  }
+              }
+          } else { 
+              if (v < eqVol) { 
+                  if (fData.acidBaseType === 'WB') {
+                      let Kb = Math.pow(10, -fData.pKb);
+                      let Cb = ((eqVol - v) * N2) / (V1 + v);
+                      let Ca = (v * N2) / (V1 + v);
+                      let OH = (-(Ca + Kb) + Math.sqrt(Math.pow(Ca + Kb, 2) + 4 * Kb * Cb)) / 2;
+                      yVal = 14.0 + Math.log10(Math.max(OH, 1e-14));
+                  } else {
+                      let excessOH = ((eqVol - v) * N2) / (V1 + v);
+                      yVal = 14.0 + Math.log10(Math.max(excessOH, 1e-14));
+                  }
+              } else {
+                  if (bData.acidBaseType === 'WA') {
+                      let Ka = Math.pow(10, -bData.pKa);
+                      let Ca = ((v - eqVol) * N2) / (V1 + v);
+                      let Cb = (eqVol * N2) / (V1 + v);
+                      let H = (-(Cb + Ka) + Math.sqrt(Math.pow(Cb + Ka, 2) + 4 * Ka * Ca)) / 2;
+                      yVal = -Math.log10(Math.max(H, 1e-14));
+                  } else {
+                      let excessH = ((v - eqVol) * N2) / (V1 + v);
+                      yVal = -Math.log10(Math.max(excessH, 1e-14));
+                  }
+              }
+          }
+          return Math.max(0, Math.min(14, yVal));
+      } 
+      else if (isRedox) {
+          if (v < eqVol) {
+              let ratio = Math.max(v / Math.max(eqVol - v, 1e-6), 1e-6);
+              yVal = 0.4 + 0.059 * Math.log10(ratio);
+          } else {
+              let ratio = Math.max((v - eqVol) / Math.max(eqVol, 1e-6), 1e-6);
+              yVal = 1.2 - 0.059 * Math.log10(1 / ratio);
+          }
+          return Math.max(0, Math.min(1.6, yVal));
+      } 
+      else if (isComplex) {
+          if (v < eqVol) {
+              let excessM = ((eqVol - v) * N2) / (V1 + v);
+              yVal = -Math.log10(Math.max(excessM, 1e-12));
+          } else {
+              yVal = 10.0 - 0.059 * Math.log10((v - eqVol)/eqVol); 
+          }
+          return Math.max(0, Math.min(14, yVal));
+      }
+      return yVal;
+  }
+
+  function updateLiveMonitor(current_Y, isAcidBase, isRedox, isComplex) {
+    const monitor = document.getElementById('simLiveMonitor');
+    if (!monitor) return;
+    if (isAcidBase) monitor.innerText = `pH: ${current_Y.toFixed(2)}`;
+    else if (isRedox) monitor.innerText = `Potential: ${current_Y.toFixed(3)} V`;
+    else if (isComplex) monitor.innerText = `pM: ${current_Y.toFixed(2)}`;
+    else monitor.innerText = `--`;
+  }
+
+  function getIndicatorColor(indicator, pH) {
+      if (indicator === 'phenolphthalein') {
+          if (pH < 8.2) return '#e2e8f0'; // Colorless
+          if (pH > 10.0) return '#f472b6'; // Pink
+          return '#fbcfe8'; // Mid transition
+      }
+      if (indicator === 'methyl_orange') {
+          if (pH < 3.1) return '#ef4444'; // Red
+          if (pH > 4.4) return '#facc15'; // Yellow
+          return '#f97316'; // Orange
+      }
+      if (indicator === 'bromothymol_blue') {
+          if (pH < 6.0) return '#facc15'; // Yellow
+          if (pH > 7.6) return '#3b82f6'; // Blue
+          return '#22c55e'; // Green
+      }
+      if (indicator === 'methyl_red') {
+          if (pH < 4.4) return '#ef4444'; // Red
+          if (pH > 6.2) return '#facc15'; // Yellow
+          return '#f97316'; // Orange
+      }
+      if (indicator === 'crystal_violet') {
+          if (pH < 0.5) return '#eab308'; // Yellow
+          if (pH > 2.0) return '#6b21a8'; // Violet
+          return '#8b5cf6'; // Blue-violet mid
+      }
+      return '#e2e8f0';
+  }
+
+  function applyIndicatorColor(flaskLiq, current_Y, eqVolume, isAcidBase, startColor, endColor) {
+      if (globalSelectedIndicator === 'auto' || !isAcidBase) {
+          flaskLiq.setAttribute('fill', (simVol >= eqVolume) ? endColor : startColor);
+          return;
+      }
+      flaskLiq.setAttribute('fill', getIndicatorColor(globalSelectedIndicator, current_Y));
+  }
 
   function subTitrant(amt) {
     if (flaskInputMode === 'unknown' || !isTitrationValid) return;
@@ -2070,16 +2394,25 @@
     showRealityFloater('realityFloater1');
 
     const eqVolume = getTheoreticalVeq();
-    const flaskLiq = document.getElementById('simFlaskLiquid');
     const bKey = document.getElementById('buretteChem').value;
     const fKey = document.getElementById('flaskChem').value;
+    const bData = buretteDb[bKey];
+    const fData = flaskDb[fKey];
     const config = getPairConfig(bKey, fKey);
+    const flaskLiq = document.getElementById('simFlaskLiquid');
+    const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
+    const N2 = (buretteInputMode === 'molarity') ? (parseFloat(document.getElementById('buretteMolarity').value) || 0.1) * (bData.mw / bData.eq) : (parseFloat(document.getElementById('buretteNormality').value) || 0.1);
+    
+    const isBaseTitrant = bData.acidBaseType === 'SB' || bData.acidBaseType === 'WB';
+    const isAcidBase = bData.acidBaseType && fData.acidBaseType;
+    const isRedox = bData.type.includes("Redox") || bData.type.includes("Oxidizing") || bData.type.includes("Cerimetric") || bData.type.includes("Iodimetric");
+    const isComplex = bData.type.includes("Complexometric");
+    const N1 = (eqVolume * N2) / V1;
 
-    if (simVol >= eqVolume) {
-      flaskLiq.setAttribute('fill', config.colors[1]);
-    } else {
-      flaskLiq.setAttribute('fill', config.colors[0]);
-    }
+    let current_Y = getGlobalSimpH(simVol, eqVolume, N1, N2, V1, bKey, fKey, bData, fData, isAcidBase, isRedox, isComplex, isBaseTitrant);
+
+    updateLiveMonitor(current_Y, isAcidBase, isRedox, isComplex);
+    applyIndicatorColor(flaskLiq, current_Y, eqVolume, isAcidBase, config.colors[0], config.colors[1]);
   }
 
   function addTitrant(amt) {
@@ -2106,16 +2439,25 @@
     setTimeout(() => { drop.style.opacity = '0'; }, 200);
 
     const eqVolume = getTheoreticalVeq();
-    const flaskLiq = document.getElementById('simFlaskLiquid');
     const bKey = document.getElementById('buretteChem').value;
     const fKey = document.getElementById('flaskChem').value;
+    const bData = buretteDb[bKey];
+    const fData = flaskDb[fKey];
     const config = getPairConfig(bKey, fKey);
+    const flaskLiq = document.getElementById('simFlaskLiquid');
+    const V1 = parseFloat(document.getElementById('pipettedVol').value) || 10.0;
+    const N2 = (buretteInputMode === 'molarity') ? (parseFloat(document.getElementById('buretteMolarity').value) || 0.1) * (bData.mw / bData.eq) : (parseFloat(document.getElementById('buretteNormality').value) || 0.1);
+    
+    const isBaseTitrant = bData.acidBaseType === 'SB' || bData.acidBaseType === 'WB';
+    const isAcidBase = bData.acidBaseType && fData.acidBaseType;
+    const isRedox = bData.type.includes("Redox") || bData.type.includes("Oxidizing") || bData.type.includes("Cerimetric") || bData.type.includes("Iodimetric");
+    const isComplex = bData.type.includes("Complexometric");
+    const N1 = (eqVolume * N2) / V1;
 
-    if (simVol >= eqVolume) {
-      flaskLiq.setAttribute('fill', config.colors[1]);
-    } else {
-      flaskLiq.setAttribute('fill', config.colors[0]);
-    }
+    let current_Y = getGlobalSimpH(simVol, eqVolume, N1, N2, V1, bKey, fKey, bData, fData, isAcidBase, isRedox, isComplex, isBaseTitrant);
+
+    updateLiveMonitor(current_Y, isAcidBase, isRedox, isComplex);
+    applyIndicatorColor(flaskLiq, current_Y, eqVolume, isAcidBase, config.colors[0], config.colors[1]);
   }
   
   function refillBurette() {
@@ -2129,10 +2471,14 @@
     simVol = 0.0;
     dispensedSinceRefill = 0.0;
     document.getElementById('simDispensed').innerText = "0.00";
+    
+    // Clear live monitor text on reset
+    const monitor = document.getElementById('simLiveMonitor');
+    if(monitor) monitor.innerText = "--";
+    
     refillBurette();
     updateSimColors();
   }
-
   function setFlaskInputMode(mode) {
     flaskInputMode = mode;
     
@@ -2378,15 +2724,51 @@
         if (plotModeRadio) plotMode = plotModeRadio.value;
     }
 
+    // Determine Derivative Mode
+    let derivMode = 'none';
+    let inputName = (canvasId === 'titrationChart') ? 'sideGraphDeriv' : 'graphDerivative';
+    const derivRadio = document.querySelector(`input[name="${inputName}"]:checked`);
+    if(derivRadio) derivMode = derivRadio.value;
+    
+    let zX = 1, zY = 1;
+    if (canvasId === 'reportCanvas') {
+        zX = parseFloat(document.getElementById('zoomX_report')?.value) || 1;
+        zY = parseFloat(document.getElementById('zoomY_report')?.value) || 1;
+    } else if (canvasId === 'titrationChart') {
+        zX = parseFloat(document.getElementById('zoomX_side')?.value) || 1;
+        zY = parseFloat(document.getElementById('zoomY_side')?.value) || 1;
+    }
+
     const isBaseTitrant = bData.acidBaseType === 'SB' || bData.acidBaseType === 'WB';
     let isRedox = bData.type.includes("Redox") || bData.type.includes("Oxidizing") || bData.type.includes("Cerimetric") || bData.type.includes("Iodimetric");
     let isComplex = bData.type.includes("Complexometric");
     let isAcidBase = (bData.acidBaseType && fData.acidBaseType);
 
-    const minY = isRedox ? 0.0 : 0.0;
-    const maxY = isRedox ? 1.6 : (isComplex ? 12.0 : 14.0);
+    // FIX 2: Dynamic Y-Axis limits for Zooming and proper Derivative scaling
+    let minY = isRedox ? 0.0 : 0.0;
+    let maxY = isRedox ? 1.6 : (isComplex ? 12.0 : 14.0);
+
+    if (derivMode === 'first') {
+        minY = 0; maxY = 1; // 1st derivative is absolute (always positive)
+    } else if (derivMode === 'second') {
+        minY = -1; maxY = 1; // 2nd derivative crosses zero
+    } else if (zY > 1) {
+        // Standard Curve Y-Zoom: Center around the equivalence point
+        let center_Y = getGlobalSimpH(theoreticalVeq, theoreticalVeq, theoN1, N2, V1, bKey, fKey, bData, fData, isAcidBase, isRedox, isComplex, isBaseTitrant);
+        let range = (maxY - minY) / zY;
+        minY = Math.max(0, center_Y - (range / 2));
+        maxY = minY + range;
+    }
     
-    const maxVol = Math.max(Math.max(theoreticalVeq, manualVeq) * 1.8, 25.0); 
+    const baseMaxVol = Math.max(Math.max(theoreticalVeq, manualVeq) * 1.8, 25.0); 
+    const windowVol = baseMaxVol / zX;
+    
+    let startV = Math.max(0, theoreticalVeq - windowVol / 2);
+    let endV = startV + windowVol;
+    if (endV > baseMaxVol && zX > 1) {
+        endV = baseMaxVol;
+        startV = Math.max(0, endV - windowVol);
+    }
 
     const paddingLeft = 35;
     const paddingRight = 15;
@@ -2396,7 +2778,7 @@
     const plotWidth = width - paddingLeft - paddingRight;
     const plotHeight = height - paddingTop - paddingBottom;
 
-    const mapX = (v) => paddingLeft + (v / maxVol) * plotWidth;
+    const mapX = (v) => paddingLeft + ((v - startV) / windowVol) * plotWidth;
     const mapY = (val) => paddingTop + plotHeight - ((val - minY) / (maxY - minY)) * plotHeight;
 
     ctx.lineWidth = 1;
@@ -2404,18 +2786,24 @@
     ctx.fillStyle = '#64748b';
     ctx.font = '9px Segoe UI, sans-serif';
 
-    const xStep = maxVol <= 15 ? 2 : (maxVol <= 30 ? 5 : 10);
-    for (let v = 0; v <= maxVol; v += xStep) {
+    const xStep = windowVol <= 15 ? 2 : (windowVol <= 30 ? 5 : 10);
+    let firstTick = Math.ceil(startV / xStep) * xStep;
+    for (let v = firstTick; v <= endV; v += xStep) {
       const x = mapX(v);
-      ctx.beginPath(); ctx.moveTo(x, paddingTop); ctx.lineTo(x, paddingTop + plotHeight); ctx.stroke();
-      ctx.textAlign = 'center'; ctx.fillText(v.toFixed(0), x, paddingTop + plotHeight + 12);
+      if (x >= paddingLeft && x <= paddingLeft + plotWidth) {
+          ctx.beginPath(); ctx.moveTo(x, paddingTop); ctx.lineTo(x, paddingTop + plotHeight); ctx.stroke();
+          ctx.textAlign = 'center'; ctx.fillText(v.toFixed(0), x, paddingTop + plotHeight + 12);
+      }
     }
 
-    const yStep = isRedox ? 0.2 : 2;
-    for (let p = minY; p <= maxY; p += yStep) {
+    const yStep = isRedox ? 0.2 : (derivMode !== 'none' ? 0.5 : ((maxY - minY) / 7));
+    for (let p = minY; p <= maxY + 0.01; p += yStep) {
       const y = mapY(p);
-      ctx.beginPath(); ctx.moveTo(paddingLeft, y); ctx.lineTo(paddingLeft + plotWidth, y); ctx.stroke();
-      ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText(p.toFixed(isRedox ? 1 : 0), paddingLeft - 5, y);
+      if (y >= paddingTop && y <= paddingTop + plotHeight) {
+          ctx.beginPath(); ctx.moveTo(paddingLeft, y); ctx.lineTo(paddingLeft + plotWidth, y); ctx.stroke();
+          ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; 
+          ctx.fillText(p.toFixed(isRedox ? 1 : (derivMode !== 'none' ? 1 : 1)), paddingLeft - 5, y);
+      }
     }
 
     ctx.strokeStyle = '#334155'; ctx.lineWidth = 1.5; ctx.beginPath();
@@ -2425,133 +2813,130 @@
     ctx.textAlign = 'center'; ctx.fillText('Titrant Volume V₂ (mL)', paddingLeft + plotWidth / 2, height - 3);
 
     ctx.save(); ctx.translate(10, paddingTop + plotHeight / 2); ctx.rotate(-Math.PI / 2);
-    ctx.fillText(isAcidBase ? 'pH' : (isRedox ? 'Potential (E) in V' : 'pM (Metal Ion)'), 0, 0); ctx.restore();
+    let yLabel = isAcidBase ? 'pH' : (isRedox ? 'Potential (E) in V' : 'pM (Metal Ion)');
+    if (derivMode === 'first') yLabel = '|1st Deriv| |dY/dV|';
+    if (derivMode === 'second') yLabel = '2nd Deriv (d²Y/dV²)';
+    ctx.fillText(yLabel, 0, 0); ctx.restore();
 
     function drawSpecificCurve(eqVol, currentN1, colorMain) {
-        let current_eq_Y = 7.0; 
-        let cSalt = (currentN1 * V1) / (V1 + eqVol); 
+        let current_eq_Y = getGlobalSimpH(eqVol, eqVol, currentN1, N2, V1, bKey, fKey, bData, fData, isAcidBase, isRedox, isComplex, isBaseTitrant);
 
-        if (isAcidBase) {
-            if ((bData.acidBaseType === 'SB' && fData.acidBaseType === 'WA') || (bData.acidBaseType === 'WA' && fData.acidBaseType === 'SB')) {
-                let pKa = fData.pKa || bData.pKa;
-                current_eq_Y = 7.0 + 0.5 * pKa + 0.5 * Math.log10(Math.max(cSalt, 1e-10));
-            } else if ((bData.acidBaseType === 'SA' && fData.acidBaseType === 'WB') || (bData.acidBaseType === 'WB' && fData.acidBaseType === 'SA')) {
-                let pKb = fData.pKb || bData.pKb;
-                current_eq_Y = 7.0 - 0.5 * pKb - 0.5 * Math.log10(Math.max(cSalt, 1e-10));
-            } else if ((bData.acidBaseType === 'WA' && fData.acidBaseType === 'WB') || (bData.acidBaseType === 'WB' && fData.acidBaseType === 'WA')) {
-                let pKa = fData.pKa || bData.pKa;
-                let pKb = fData.pKb || bData.pKb;
-                current_eq_Y = 7.0 + 0.5 * pKa - 0.5 * pKb; 
-            } else {
-                 current_eq_Y = 7.0; 
-            }
-        } else if (isRedox) {
-            current_eq_Y = 0.8; 
-        } else if (isComplex) {
-            current_eq_Y = 6.0;
-        }
-        current_eq_Y = Math.max(minY, Math.min(maxY, current_eq_Y)); 
+        let isPoly = false;
+        let polyVeq1, polyVeq2, polyVeq3;
+        if (fKey === 'na2co3') { isPoly = true; polyVeq1 = eqVol / 2; polyVeq2 = eqVol; } 
+        else if (fKey === 'h3po4') { isPoly = true; polyVeq1 = eqVol / 3; polyVeq2 = (2 * eqVol) / 3; polyVeq3 = eqVol; } 
+        else if (fKey === 'h2so4_flask' || bKey === 'h2so4') { isPoly = true; polyVeq1 = eqVol / 2; polyVeq2 = eqVol; }
 
         function getYForVolume(v) {
-            let yVal = 7.0;
-            if (Math.abs(v - eqVol) < 1e-5) {
-                yVal = current_eq_Y;
-            } else if (isAcidBase) {
-                if (isBaseTitrant) {
-                    if (v < eqVol) {
-                        if (fData.acidBaseType === 'WA') {
-                            let Ka = Math.pow(10, -fData.pKa);
-                            let Ca = ((eqVol - v) * N2) / (V1 + v);
-                            let Cb = (v * N2) / (V1 + v);
-                            let H = (-(Cb + Ka) + Math.sqrt(Math.pow(Cb + Ka, 2) + 4 * Ka * Ca)) / 2;
-                            yVal = -Math.log10(Math.max(H, 1e-14));
-                        } else {
-                            let excessH = ((eqVol - v) * N2) / (V1 + v);
-                            yVal = -Math.log10(Math.max(excessH, 1e-14));
-                        }
-                    } else {
-                        if (bData.acidBaseType === 'WB') {
-                            let Kb = Math.pow(10, -bData.pKb);
-                            let Cb = ((v - eqVol) * N2) / (V1 + v);
-                            let Ca = (eqVol * N2) / (V1 + v);
-                            let OH = (-(Ca + Kb) + Math.sqrt(Math.pow(Ca + Kb, 2) + 4 * Kb * Cb)) / 2;
-                            yVal = 14.0 + Math.log10(Math.max(OH, 1e-14));
-                        } else {
-                            let excessOH = ((v - eqVol) * N2) / (V1 + v);
-                            yVal = 14.0 + Math.log10(Math.max(excessOH, 1e-14));
-                        }
-                    }
-                } else { 
-                    if (v < eqVol) { 
-                        if (fData.acidBaseType === 'WB') {
-                            let Kb = Math.pow(10, -fData.pKb);
-                            let Cb = ((eqVol - v) * N2) / (V1 + v);
-                            let Ca = (v * N2) / (V1 + v);
-                            let OH = (-(Ca + Kb) + Math.sqrt(Math.pow(Ca + Kb, 2) + 4 * Kb * Cb)) / 2;
-                            yVal = 14.0 + Math.log10(Math.max(OH, 1e-14));
-                        } else {
-                            let excessOH = ((eqVol - v) * N2) / (V1 + v);
-                            yVal = 14.0 + Math.log10(Math.max(excessOH, 1e-14));
-                        }
-                    } else {
-                        if (bData.acidBaseType === 'WA') {
-                            let Ka = Math.pow(10, -bData.pKa);
-                            let Ca = ((v - eqVol) * N2) / (V1 + v);
-                            let Cb = (eqVol * N2) / (V1 + v);
-                            let H = (-(Cb + Ka) + Math.sqrt(Math.pow(Cb + Ka, 2) + 4 * Ka * Ca)) / 2;
-                            yVal = -Math.log10(Math.max(H, 1e-14));
-                        } else {
-                            let excessH = ((v - eqVol) * N2) / (V1 + v);
-                            yVal = -Math.log10(Math.max(excessH, 1e-14));
-                        }
-                    }
-                }
-            } else if (isRedox) {
-                if (v < eqVol) {
-                    let ratio = Math.max(v / Math.max(eqVol - v, 1e-6), 1e-6);
-                    yVal = 0.4 + 0.059 * Math.log10(ratio);
-                } else {
-                    let ratio = Math.max((v - eqVol) / Math.max(eqVol, 1e-6), 1e-6);
-                    yVal = 1.2 - 0.059 * Math.log10(1 / ratio);
-                }
-            } else if (isComplex) {
-                if (v < eqVol) {
-                    let excessM = ((eqVol - v) * N2) / (V1 + v);
-                    yVal = -Math.log10(Math.max(excessM, 1e-12));
-                } else {
-                    yVal = 10.0 - 0.059 * Math.log10((v - eqVol)/eqVol); 
-                }
-            }
-            return Math.max(minY, Math.min(maxY, yVal));
+            return getGlobalSimpH(v, eqVol, currentN1, N2, V1, bKey, fKey, bData, fData, isAcidBase, isRedox, isComplex, isBaseTitrant);
         }
 
-        ctx.strokeStyle = colorMain;
-        ctx.lineWidth = 2;
+        // FIX 1 & 3: Smooth Array Generation & Anomaly Spike Removal
+        // Inject exact equivalence points to prevent array resolution gaps from creating vertical lines
+        let pts = 600;
+        let curveData = [];
+        for (let i = 0; i <= pts; i++) {
+          let v = (i / pts) * baseMaxVol;
+          curveData.push({v: v, y: getYForVolume(v)});
+        }
+        curveData.push({v: eqVol, y: current_eq_Y});
+        if(isPoly) {
+            if(polyVeq1) curveData.push({v: polyVeq1, y: getYForVolume(polyVeq1)});
+            if(polyVeq2) curveData.push({v: polyVeq2, y: getYForVolume(polyVeq2)});
+            if(polyVeq3) curveData.push({v: polyVeq3, y: getYForVolume(polyVeq3)});
+        }
+        curveData.sort((a, b) => a.v - b.v);
+
+       // Numerically compute derivatives
+        let renderData = [];
+        if (derivMode === 'none') {
+            renderData = curveData;
+        } else {
+            let dyData = [];
+            for (let i = 1; i < curveData.length - 1; i++) {
+                let dv = curveData[i+1].v - curveData[i-1].v;
+                if (dv === 0) continue;
+                let dy = (curveData[i+1].y - curveData[i-1].y) / dv;
+                dyData.push({v: curveData[i].v, y: dy});
+            }
+            
+            if (derivMode === 'first') {
+                // Fix: Plot Math.abs(dy) so acid-base downwards spikes project upwards correctly
+                let maxDy = Math.max(...dyData.map(d => Math.abs(d.y)));
+                if (maxDy === 0) maxDy = 1;
+                renderData = dyData.map(d => ({ v: d.v, y: (Math.abs(d.y) / maxDy) * zY }));
+            } else if (derivMode === 'second') {
+                let d2yData = [];
+                for (let i = 1; i < dyData.length - 1; i++) {
+                    let dv = dyData[i+1].v - dyData[i-1].v;
+                    if (dv === 0) continue;
+                    let d2y = (dyData[i+1].y - dyData[i-1].y) / dv;
+                    d2yData.push({v: dyData[i].v, y: d2y});
+                }
+                let maxD2y = Math.max(...d2yData.map(d => Math.abs(d.y)));
+                if (maxD2y === 0) maxD2y = 1;
+                renderData = d2yData.map(d => ({ v: d.v, y: (d.y / maxD2y) * zY }));
+                renderData.unshift({v: 0, y: 0}); 
+                renderData.push({v: baseMaxVol, y: 0});
+            }
+        }
+
+        ctx.save();
         ctx.beginPath();
-        for (let i = 0; i <= 500; i++) {
-          const v = (i / 500) * maxVol;
-          const yVal = getYForVolume(v);
-          const px = mapX(v);
-          const py = mapY(yVal);
-          if (i === 0) ctx.moveTo(px, py);
-          else ctx.lineTo(px, py);
+        ctx.rect(paddingLeft, paddingTop, plotWidth, plotHeight);
+        ctx.clip();
+
+        // Render Loop
+        ctx.strokeStyle = colorMain;
+        ctx.lineWidth = (derivMode === 'none') ? 2 : 1.5;
+        ctx.beginPath();
+        
+        let hasMoved = false;
+        for (let i = 0; i < renderData.length; i++) {
+          const px = mapX(renderData[i].v);
+          const py = mapY(renderData[i].y);
+          if (px >= paddingLeft && px <= paddingLeft + plotWidth) {
+              if (!hasMoved) { ctx.moveTo(px, py); hasMoved = true; }
+              else { ctx.lineTo(px, py); }
+          }
         }
         ctx.stroke();
+        ctx.restore();
 
+        // Markers & Guidelines at Equivalence points
         const eqX = mapX(eqVol);
-        const eqY = mapY(current_eq_Y); 
-
-        ctx.strokeStyle = colorMain; 
-        ctx.lineWidth = 1.2;
-        ctx.setLineDash([4, 4]); 
-        ctx.beginPath();
-        ctx.moveTo(eqX, eqY); ctx.lineTo(eqX, paddingTop + plotHeight); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(paddingLeft, eqY); ctx.lineTo(eqX, eqY); ctx.stroke(); 
-        ctx.setLineDash([]); 
-
-        ctx.fillStyle = colorMain;
-        ctx.beginPath(); ctx.arc(eqX, eqY, 4, 0, 2 * Math.PI); ctx.fill();
-        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+        const eqY = mapY(derivMode === 'none' ? current_eq_Y : (derivMode === 'first' ? 1 : 0)); 
+        
+        if (eqX >= paddingLeft && eqX <= paddingLeft + plotWidth) {
+            ctx.strokeStyle = colorMain; 
+            ctx.lineWidth = 1.2;
+            ctx.setLineDash([4, 4]); 
+            
+            if(isPoly && derivMode === 'none') {
+                 [polyVeq1, polyVeq2, polyVeq3].forEach(pV => {
+                     if(pV && pV <= baseMaxVol) {
+                         let px = mapX(pV);
+                         let py = mapY(getYForVolume(pV));
+                         if (px >= paddingLeft && px <= paddingLeft + plotWidth) {
+                             ctx.beginPath();
+                             ctx.moveTo(px, py); ctx.lineTo(px, paddingTop + plotHeight); ctx.stroke();
+                             ctx.fillStyle = colorMain;
+                             ctx.beginPath(); ctx.arc(px, py, 3, 0, 2 * Math.PI); ctx.fill();
+                         }
+                     }
+                 });
+            } else {
+                 ctx.beginPath();
+                 ctx.moveTo(eqX, eqY); ctx.lineTo(eqX, paddingTop + plotHeight); ctx.stroke();
+                 if (derivMode === 'none') {
+                     ctx.beginPath(); ctx.moveTo(paddingLeft, eqY); ctx.lineTo(eqX, eqY); ctx.stroke(); 
+                 }
+                 ctx.fillStyle = colorMain;
+                 ctx.beginPath(); ctx.arc(eqX, eqY, 4, 0, 2 * Math.PI); ctx.fill();
+                 ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+            }
+            ctx.setLineDash([]); 
+        }
 
         return current_eq_Y;
     }
@@ -2564,11 +2949,10 @@
     }
     
     if (plotMode === 'both' || plotMode === 'experimental') {
-        // Draw the experimental red curve ONLY if it's distinctly different or if theoretical wasn't drawn
         if (plotMode === 'experimental' || Math.abs(theoreticalVeq - manualVeq) > 0.02) {
             expY = drawSpecificCurve(manualVeq, expN1, '#dc2626'); // Red
         } else {
-            expY = theoY; // If they are exactly the same, don't overlap two identical curves
+            expY = theoY; 
         }
     }
 
@@ -2578,19 +2962,22 @@
       let yUnit = isAcidBase ? '' : (isRedox ? ' V' : '');
       
       let infoHTML = '';
-      if (plotMode === 'both' || plotMode === 'theoretical') {
-        infoHTML += `🟢 <strong>Theoretical Ideal Curve:</strong> Eq Pt at <span style="color: #059669; font-weight: bold;">${theoreticalVeq.toFixed(2)} mL</span> (${yType} <span style="color: #059669; font-weight: bold;">${theoY.toFixed(2)}${yUnit}</span>)<br>`;
-      }
-      if (plotMode === 'both' || plotMode === 'experimental') {
-        infoHTML += `🔴 <strong>Observed Experimental Curve:</strong> Eq Pt at <span style="color: #dc2626; font-weight: bold;">${manualVeq.toFixed(2)} mL</span> (${yType} <span style="color: #dc2626; font-weight: bold;">${expY.toFixed(2)}${yUnit}</span>)<br>`;
-      }
-      if (plotMode === 'both') {
-        infoHTML += `⚠️ <strong>Absolute Method Error Margin:</strong> <span style="color: #7c2d12; font-weight: bold;">${Math.abs(theoreticalVeq - manualVeq).toFixed(2)} mL</span>`;
+      if (derivMode !== 'none') {
+          infoHTML += `📈 <strong>Advanced Plot Active:</strong> Displaying normalized analytical ${derivMode} derivative to visually isolate equivalence inflection zones.<br>`;
+      } else {
+          if (plotMode === 'both' || plotMode === 'theoretical') {
+            infoHTML += `🟢 <strong>Theoretical Ideal Curve:</strong> Eq Pt at <span style="color: #059669; font-weight: bold;">${theoreticalVeq.toFixed(2)} mL</span> (${yType} <span style="color: #059669; font-weight: bold;">${theoY.toFixed(2)}${yUnit}</span>)<br>`;
+          }
+          if (plotMode === 'both' || plotMode === 'experimental') {
+            infoHTML += `🔴 <strong>Observed Experimental Curve:</strong> Eq Pt at <span style="color: #dc2626; font-weight: bold;">${manualVeq.toFixed(2)} mL</span> (${yType} <span style="color: #dc2626; font-weight: bold;">${expY.toFixed(2)}${yUnit}</span>)<br>`;
+          }
+          if (plotMode === 'both') {
+            infoHTML += `⚠️ <strong>Absolute Method Error Margin:</strong> <span style="color: #7c2d12; font-weight: bold;">${Math.abs(theoreticalVeq - manualVeq).toFixed(2)} mL</span>`;
+          }
       }
       infoContainer.innerHTML = infoHTML;
     }
   }
-
   // --- CALCULATION ROUTING LOGIC ---
   function calculate(actionType) {
     if (!isTitrationValid) {
@@ -2662,7 +3049,10 @@
     const buretteNFactor = buretteMw / buretteEqWt;
 
     const pairConfig = getPairConfig(buretteKey, flaskKey);
-    const indicatorText = pairConfig ? pairConfig.indicator : 'Invalid Titration';
+    let indicatorText = pairConfig ? pairConfig.indicator : 'Invalid Titration';
+    if (globalSelectedIndicator !== 'auto') {
+        indicatorText = indicatorLibrary[globalSelectedIndicator].name + " (Manual Override)";
+    }
 
     const factorGrams = (flaskEqWt / 1000).toFixed(5);
     const factorSentence = `📌 Volumetric Factor Standard: 1 mL of 1 N ${buretteName} ≡ ${factorGrams} g of ${flaskData.name} | Indicator: ${indicatorText}`;
@@ -3126,6 +3516,11 @@
        updatePrecipEduInfo();
     }
     
+    const modVolhardInputs = document.getElementById('containerModVolhardInputs');
+    if (modVolhardInputs) {
+      modVolhardInputs.style.display = (m === 'mod_volhard') ? 'grid' : 'none';
+    }
+
     resetPrecipSim();
   }
 
@@ -3148,15 +3543,14 @@
     const V_a = parseFloat(document.getElementById('precipAnalyteV').value) || 10.0;
     const mKey = document.getElementById('precipMethod').value;
     
-    let eqVolume;
+   let eqVolume;
     if (mKey === 'mod_volhard') {
-        const V_excess_Ag = 20.0; 
-        const N_excess_Ag = 0.1000;
+        const V_excess_Ag = parseFloat(document.getElementById('precipExcessAgV').value) || 20.0;
+        const N_excess_Ag = parseFloat(document.getElementById('precipExcessAgN').value) || 0.1000;
         eqVolume = ((N_excess_Ag * V_excess_Ag) - (Na * V_a)) / Nt;
     } else {
         eqVolume = (Na * V_a) / Nt;
     }
-
     const flaskLiq = document.getElementById('simPrecipFlaskLiquid');
     const mData = precipMethods[mKey];
 
@@ -3233,15 +3627,14 @@
     const mKey = document.getElementById('precipMethod').value;
     const mData = precipMethods[mKey];
     
-    let V_eq;
+   let V_eq;
     if (mKey === 'mod_volhard') {
-        const V_excess_Ag = 20.0; 
-        const N_excess_Ag = 0.1000;
+        const V_excess_Ag = parseFloat(document.getElementById('precipExcessAgV').value) || 20.0;
+        const N_excess_Ag = parseFloat(document.getElementById('precipExcessAgN').value) || 0.1000;
         V_eq = ((N_excess_Ag * V_excess_Ag) - (Na * V_a)) / Nt;
     } else {
         V_eq = (Na * V_a) / Nt;
     }
-
     document.getElementById('precipResultsBox').style.display = 'block';
     
     const activeAxis = document.querySelector('input[name="precipAxis"]:checked').value;
